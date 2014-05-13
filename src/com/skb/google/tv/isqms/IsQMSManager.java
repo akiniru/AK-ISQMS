@@ -8,21 +8,16 @@ public class IsQMSManager {
 	private static final String LOGD = IsQMSManager.class.getSimpleName();
 
 	private static IsQMSManager mIsQMSManager;
+	private IsQMSCommon mIsQMSCommon;
+	private IsQMSCurrentStatus mIsQMSCurrentStatus;
 
-	private String mSTBVersion;
-	private String mSTBId;
-
-	private String mMacAddress;
-	private String mSWVersion;
-	private String mXPGVersion;
-	private String mEPGVersion;
-	private String mModelName;
-	private boolean mIsSTBAuth;
-
-	private String mSVCMode;
+	public IsQMSManager() {
+		mIsQMSCommon = new IsQMSCommon();
+		mIsQMSCurrentStatus = new IsQMSCurrentStatus();
+	}
 
 	public static IsQMSManager getInstance() {
-		if (mIsQMSManager == null) {
+		if (null == mIsQMSManager) {
 			mIsQMSManager = new IsQMSManager();
 		}
 
@@ -46,6 +41,9 @@ public class IsQMSManager {
 		return eventTS;
 	}
 
+	// =========================================================================
+	// < setter IsQMS COMMON
+	// =========================================================================
 	/**
 	 * <pre>
 	 * Data Define :
@@ -57,7 +55,7 @@ public class IsQMSManager {
 	 */
 	public void setSTBVersion(String stbVersion) { // IsQMSData.ISQMS_STRING_TAG_STB_VER;
 		LogUtil.debug(LOGD, "setSTBVersion() called. stbVersion : " + stbVersion);
-		this.mSTBVersion = stbVersion;
+		mIsQMSCommon.STB_VER = stbVersion;
 	}
 
 	/**
@@ -75,7 +73,7 @@ public class IsQMSManager {
 			stbId = stbId.replace("}", "");
 		}
 		LogUtil.debug(LOGD, "setSTBId() called. stbId : " + stbId);
-		this.mSTBId = stbId;
+		mIsQMSCommon.STB_ID = stbId;
 	}
 
 	/**
@@ -88,7 +86,7 @@ public class IsQMSManager {
 	 */
 	public void setMacAddress(String macAddress) { // String value = STBAPIManager.getInstance().getMacAddress();
 		LogUtil.debug(LOGD, "setMacAddress() called. macAddress : " + macAddress);
-		this.mMacAddress = macAddress;
+		mIsQMSCommon.STB_MAC = macAddress;
 	}
 
 	/**
@@ -101,7 +99,7 @@ public class IsQMSManager {
 	 */
 	public void setSWVersion(String swVersion) {
 		LogUtil.debug(LOGD, "setSWVersion() called. swVersion : " + swVersion);
-		this.mSWVersion = swVersion;
+		mIsQMSCommon.STB_SW_VER = swVersion;
 	}
 
 	/**
@@ -115,21 +113,7 @@ public class IsQMSManager {
 	 */
 	public void setXPGVersion(String xpgVersion) {
 		LogUtil.debug(LOGD, "setXPGVersion() called. xpgVersion : " + xpgVersion);
-		this.mXPGVersion = xpgVersion;
-	}
-
-	/**
-	 * <pre>
-	 * Data Define :
-	 * YYMMDDXXXXXX
-	 * 
-	 * 12자리로 구성된 DVB-SI EPG Version
-	 * -뒤6자리는 시간으로추정되나 의미 없음
-	 * </pre>
-	 */
-	public void setEPGVersion(String epgVersion) {
-		LogUtil.debug(LOGD, "setEPGVersion() called. epgVersion : " + epgVersion);
-		this.mEPGVersion = epgVersion;
+		mIsQMSCommon.STB_XPG_VER = xpgVersion;
 	}
 
 	/**
@@ -142,7 +126,7 @@ public class IsQMSManager {
 	 */
 	public void setModelName(String modelName) {
 		LogUtil.debug(LOGD, "setModelName() called. modelName : " + modelName);
-		this.mModelName = modelName;
+		mIsQMSCommon.STB_MODEL = modelName;
 	}
 
 	/**
@@ -156,7 +140,7 @@ public class IsQMSManager {
 	 */
 	public void setSTBAuth(boolean isSTBAuth) {
 		LogUtil.debug(LOGD, "setSTBAuth() called. isSTBAuth : " + isSTBAuth);
-		this.mIsSTBAuth = isSTBAuth;
+		mIsQMSCommon.STB_AUTH = Boolean.toString(isSTBAuth);
 	}
 
 	/**
@@ -170,7 +154,7 @@ public class IsQMSManager {
 	 */
 	public void setIPTVArea(String iptvArea) {
 		LogUtil.debug(LOGD, "setIPTVArea() called. iptvArea : " + iptvArea);
-		this.mSVCMode = iptvArea;
+		mIsQMSCommon.STB_IPTV_AREA = iptvArea;
 	}
 
 	/**
@@ -178,12 +162,35 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX
 	 * 
-	 * 지상파지역 구분 코드 값
-	 * 000~999
+	 * STB의 서비스 제공 상태 모드 정보
+	 * 3자리의 상태 코드 값
 	 * </pre>
 	 */
-	public void setSVCMode(String svcMode) {
-		LogUtil.debug(LOGD, "setSVCMode() called. svcMode : " + svcMode);
-		this.mSVCMode = svcMode;
+	public void setSVCMode(IsQMSEnumData.eSCV_MODE scv_MODE) {
+		LogUtil.debug(LOGD, "setSVCMode() called. scv_MODE : " + scv_MODE);
+		if (null == scv_MODE) {
+			return;
+		}
+
+		String scvModeName = scv_MODE.name();
+		scvModeName = scvModeName.replace(IsQMSEnumData.PREFIX_SCV_MODE, "");
+		mIsQMSCommon.STB_SVC_MODE = scvModeName;
+	}
+
+	// =========================================================================
+	// < setter IsQMS CURRENT STATUS
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX
+	 * 
+	 * STB의 서비스 제공 상태 모드 정보
+	 * 3자리의 상태 코드 값
+	 * </pre>
+	 */
+	public void setNetDhcpMode(boolean isDhcpMode) {
+		LogUtil.debug(LOGD, "setNetDhcpMode() called. isDhcpMode : " + isDhcpMode);
+		mIsQMSCurrentStatus.S_NET_DHCP_MODE = Boolean.toString(isDhcpMode);
 	}
 }

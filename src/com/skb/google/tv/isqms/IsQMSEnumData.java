@@ -5,6 +5,8 @@ public class IsQMSEnumData {
 	// < DEFINITION Enumerate variables
 	// =========================================================================
 	// < SCS mode type
+	public static String PREFIX_SCV_MODE = "SCV_MODE_";
+
 	public static enum eSCV_MODE {
 		SCV_MODE_NONE, //
 		SCV_MODE_SLP, //

@@ -8,6 +8,7 @@ public class IsQMSCurrentStatus {
 	public String S_NET_IPGW;
 	public String S_NET_DNS1;
 	public String S_NET_DNS2;
+
 	/** CONF */
 	public String STB_SCR_RESOLUTION;
 	public String STB_SCR_TV;
@@ -16,6 +17,7 @@ public class IsQMSCurrentStatus {
 	public String STB_AGE_LIMIT;
 	public String STB_AGE_TIME;
 	public String STB_AUTONEXT;
+
 	/** XPG_2 */
 	public String XPG_FULL;
 }

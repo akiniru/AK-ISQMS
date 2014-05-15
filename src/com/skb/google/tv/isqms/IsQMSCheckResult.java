@@ -10,6 +10,7 @@ public class IsQMSCheckResult {
 	public String SVC_C_VOD_AID;
 
 	/** VOD1 */
+	public String VOD1_C_VOD_SCS_IP; // 미정
 	public String VOD1_C_VOD_SCS_RT;
 	public String VOD1_C_VOD_DOWN_RT;
 
@@ -55,7 +56,6 @@ public class IsQMSCheckResult {
 // public String SVC_C_PSWD_AGE; // 미정
 
 /** VOD1 */
-// public String VOD1_C_VOD_SCS_IP; // 미정
 // public String VOD1_C_VOD_DOWN_IP; // 미정
 
 /** IPTV3 */

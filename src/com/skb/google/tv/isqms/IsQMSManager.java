@@ -6,6 +6,7 @@ import com.skb.google.tv.common.util.LogUtil;
 import com.skb.google.tv.isqms.IsQMSEnumData.eAGE_LIMIT_TYPE;
 import com.skb.google.tv.isqms.IsQMSEnumData.eDISPLAY_MODE;
 import com.skb.google.tv.isqms.IsQMSEnumData.eTV_RATE_MODE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eUPG_UPGRADE;
 import com.skb.google.tv.isqms.IsQMSEnumData.eVIDEO_RATE_MODE;
 import com.skb.google.tv.isqms.IsQMSListener.OnAdMetaFileDownloadListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnAdultAuthChangeListener;
@@ -13,12 +14,12 @@ import com.skb.google.tv.isqms.IsQMSListener.OnAgeLimitChangeListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnAutoNextChangeListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnChildLimitPasswordChangeListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnChildLimitTimeChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnLGSNormalAccessListener;
+import com.skb.google.tv.isqms.IsQMSListener.OnLgsNormalAccessListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnRebootListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnRecentAllUpgradeListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnResolutionChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnSCSNormalAccessListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnSTBPasswordChangeListener;
+import com.skb.google.tv.isqms.IsQMSListener.OnScsNormalAccessListener;
+import com.skb.google.tv.isqms.IsQMSListener.OnStbPasswordChangeListener;
 
 public class IsQMSManager {
 	private static final String LOGD = IsQMSManager.class.getSimpleName();
@@ -47,20 +48,22 @@ public class IsQMSManager {
 	private OnAdMetaFileDownloadListener mAdMetaFileDownloadListener;
 	private OnRebootListener mRebootListener;
 	private OnResolutionChangeListener mResolutionChangeListener;
-	private OnSTBPasswordChangeListener mSTBPasswordChangeListener;
+	private OnStbPasswordChangeListener mStbPasswordChangeListener;
 	private OnChildLimitPasswordChangeListener mChildLimitPasswordChangeListener;
 	private OnChildLimitTimeChangeListener mChildLimitTimeChangeListener;
 	private OnAdultAuthChangeListener mAdultAuthChangeListener;
-	private OnSCSNormalAccessListener mSCSNormalAccessListener;
-	private OnLGSNormalAccessListener mLGSNormalAccessListener;
+	private OnScsNormalAccessListener mScsNormalAccessListener;
+	private OnLgsNormalAccessListener mLgsNormalAccessListener;
 
 	/** DATA */
 	private IsQMSCommon mIsQMSCommon;
 	private IsQMSCurrentStatus mIsQMSCurrentStatus;
+	private IsQMSCheckResult mIsQMSCheckResult;
 
-	public IsQMSManager() {
+	private IsQMSManager() {
 		mIsQMSCommon = new IsQMSCommon();
 		mIsQMSCurrentStatus = new IsQMSCurrentStatus();
+		mIsQMSCheckResult = new IsQMSCheckResult();
 	}
 
 	public static IsQMSManager getInstance() {
@@ -100,8 +103,8 @@ public class IsQMSManager {
 	 * 현재 STB의 구성 버전 (Legacy/IPTV2.0)
 	 * </pre>
 	 */
-	public void setSTBVersion(String stbVersion) { // IsQMSData.ISQMS_STRING_TAG_STB_VER;
-		LogUtil.debug(LOGD, "setSTBVersion() called. stbVersion : " + stbVersion);
+	public void setStbVersion(String stbVersion) { // IsQMSData.ISQMS_STRING_TAG_STB_VER;
+		LogUtil.debug(LOGD, "setStbVersion() called. stbVersion : " + stbVersion);
 		mIsQMSCommon.STB_VER = stbVersion;
 	}
 
@@ -114,12 +117,12 @@ public class IsQMSManager {
 	 * 8-4-4-12자리구성의 문자열
 	 * </pre>
 	 */
-	public void setSTBId(String stbId) { // String value = STBAPIManager.getInstance().getSTBId();
+	public void setStbId(String stbId) { // String value = STBAPIManager.getInstance().getSTBId();
+		LogUtil.debug(LOGD, "setStbId() called. stbId : " + stbId);
 		if (null != stbId) {
 			stbId = stbId.replace("{", "");
 			stbId = stbId.replace("}", "");
 		}
-		LogUtil.debug(LOGD, "setSTBId() called. stbId : " + stbId);
 		mIsQMSCommon.STB_ID = stbId;
 	}
 
@@ -128,6 +131,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXXXXXXXXXXX
 	 * 
+	 * Data Define Description :
 	 * 12자리의 표준 MAC Address 문자열
 	 * </pre>
 	 */
@@ -141,11 +145,12 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XX.XX.XX-XXXX
 	 * 
+	 * Data Define Description :
 	 * STB에 적용되어 사용중인 SW버젼
 	 * </pre>
 	 */
-	public void setSWVersion(String swVersion) {
-		LogUtil.debug(LOGD, "setSWVersion() called. swVersion : " + swVersion);
+	public void setSwVersion(String swVersion) {
+		LogUtil.debug(LOGD, "setSwVersion() called. swVersion : " + swVersion);
 		mIsQMSCommon.STB_SW_VER = swVersion;
 	}
 
@@ -154,12 +159,13 @@ public class IsQMSManager {
 	 * Data Define :
 	 * YYMMDDXXXXXX
 	 * 
+	 * Data Define Description :
 	 * 12자리로 구성된 채널 생성 ID
 	 * -뒤6자리는 시간으로추정되나 의미 없음
 	 * </pre>
 	 */
-	public void setXPGVersion(String xpgVersion) {
-		LogUtil.debug(LOGD, "setXPGVersion() called. xpgVersion : " + xpgVersion);
+	public void setXpgVersion(String xpgVersion) {
+		LogUtil.debug(LOGD, "setXpgVersion() called. xpgVersion : " + xpgVersion);
 		mIsQMSCommon.STB_XPG_VER = xpgVersion;
 	}
 
@@ -168,6 +174,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXXXXXXXXX
 	 * 
+	 * Data Define Description :
 	 * STB장비의 HW모델 10자리 문자
 	 * </pre>
 	 */
@@ -181,12 +188,13 @@ public class IsQMSManager {
 	 * Data Define :
 	 * X
 	 * 
+	 * Data Define Description :
 	 * STB의 정상인증 여부/결과
 	 * {0:False|1:True}
 	 * </pre>
 	 */
-	public void setSTBAuth(boolean isSTBAuth) {
-		LogUtil.debug(LOGD, "setSTBAuth() called. isSTBAuth : " + isSTBAuth);
+	public void setStbAuth(boolean isSTBAuth) {
+		LogUtil.debug(LOGD, "setStbAuth() called. isSTBAuth : " + isSTBAuth);
 		mIsQMSCommon.STB_AUTH = Boolean.toString(isSTBAuth);
 	}
 
@@ -195,12 +203,13 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX
 	 * 
+	 * Data Define Description :
 	 * 지상파지역 구분 코드 값
 	 * 000~999
 	 * </pre>
 	 */
-	public void setIPTVArea(String iptvArea) {
-		LogUtil.debug(LOGD, "setIPTVArea() called. iptvArea : " + iptvArea);
+	public void setIptvArea(String iptvArea) {
+		LogUtil.debug(LOGD, "setIptvArea() called. iptvArea : " + iptvArea);
 		mIsQMSCommon.STB_IPTV_AREA = iptvArea;
 	}
 
@@ -209,6 +218,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX
 	 * 
+	 * Data Define Description :
 	 * STB의 서비스 제공 상태 모드 정보
 	 * 3자리의 상태 코드 값
 	 * </pre>
@@ -232,6 +242,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * X
 	 * 
+	 * Data Define Description :
 	 * DHCP 사용 설정 정보
 	 * {0:사용안함|1:사용함}
 	 * </pre>
@@ -250,6 +261,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX.XXX.XXX.XXX
 	 * 
+	 * Data Define Description :
 	 * IPv4 Address
 	 * </pre>
 	 */
@@ -263,6 +275,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX.XXX.XXX.XXX
 	 * 
+	 * Data Define Description :
 	 * IPv4 Subnet Mask
 	 * </pre>
 	 */
@@ -276,6 +289,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX.XXX.XXX.XXX
 	 * 
+	 * Data Define Description :
 	 * IPv4 Default Gateway
 	 * </pre>
 	 */
@@ -289,6 +303,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX.XXX.XXX.XXX
 	 * 
+	 * Data Define Description :
 	 * IPv4 DNS 1st
 	 * </pre>
 	 */
@@ -302,6 +317,7 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX.XXX.XXX.XXX
 	 * 
+	 * Data Define Description :
 	 * IPv4 DNS 2nd
 	 * </pre>
 	 */
@@ -315,12 +331,13 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXXXX
 	 * 
+	 * Data Define Description :
 	 * STB의 해상도 설정 정보
 	 * {1080i|720p|480p|480i}
 	 * </pre>
 	 */
-	public void setSTBScreenResolution(eDISPLAY_MODE display_MODE) {
-		LogUtil.debug(LOGD, "setSTBScreenResolution() called. display_MODE : " + display_MODE);
+	public void setStbScreenResolution(eDISPLAY_MODE display_MODE) {
+		LogUtil.debug(LOGD, "setStbScreenResolution() called. display_MODE : " + display_MODE);
 		if (null == display_MODE) {
 			return;
 		}
@@ -333,12 +350,13 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXXXX
 	 * 
+	 * Data Define Description :
 	 * STB에 연결된 TV의 화면 비율 정보
 	 * {16:9|4:3}
 	 * </pre>
 	 */
-	public void setSTBScreenTVRate(eTV_RATE_MODE tv_RATE_MODE) {
-		LogUtil.debug(LOGD, "setSTBScreenTVRate() called. display_MODE : " + tv_RATE_MODE);
+	public void setStbScreenTVRate(eTV_RATE_MODE tv_RATE_MODE) {
+		LogUtil.debug(LOGD, "setStbScreenTVRate() called. display_MODE : " + tv_RATE_MODE);
 		if (null == tv_RATE_MODE) {
 			return;
 		}
@@ -351,12 +369,13 @@ public class IsQMSManager {
 	 * Data Define :
 	 * XXX
 	 * 
+	 * Data Define Description :
 	 * STB이 처리할 비디오 비율 (원본비그대로, 화면비 따름)
 	 * {ORG|SCR}
 	 * </pre>
 	 */
-	public void setSTBScreenVideoRate(eVIDEO_RATE_MODE video_RATE_MODE) {
-		LogUtil.debug(LOGD, "setSTBScreenVideoRate() called. video_RATE_MODE : " + video_RATE_MODE);
+	public void setStbScreenVideoRate(eVIDEO_RATE_MODE video_RATE_MODE) {
+		LogUtil.debug(LOGD, "setStbScreenVideoRate() called. video_RATE_MODE : " + video_RATE_MODE);
 		if (null == video_RATE_MODE) {
 			return;
 		}
@@ -369,17 +388,199 @@ public class IsQMSManager {
 	 * Data Define :
 	 * X
 	 * 
+	 * Data Define Description :
 	 * 성인인증 사용 여부
 	 * {0:NotAllow|1:Allow}
 	 * </pre>
 	 */
-	public void setAllowSTBAdult(boolean isAllowSTBAdult) {
-		LogUtil.debug(LOGD, "setAllowSTBAdult() called. isAllowSTBAdult : " + isAllowSTBAdult);
+	public void setAllowStbAdult(boolean isAllowSTBAdult) {
+		LogUtil.debug(LOGD, "setAllowStbAdult() called. isAllowSTBAdult : " + isAllowSTBAdult);
 		if (true == isAllowSTBAdult) {
 			mIsQMSCurrentStatus.STB_ADULT = IsQMSData.RESULT_TRUE;
 		} else {
 			mIsQMSCurrentStatus.STB_ADULT = IsQMSData.RESULT_FALSE;
 		}
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XX
+	 * 
+	 * Data Define Description :
+	 * 시청 제한 나이 숫자
+	 * 00~99
+	 * 07, 12, 15, 18이상, 00는제한없음
+	 * </pre>
+	 */
+	public void setAgeLimit(eAGE_LIMIT_TYPE age_LIMIT_TYPE) {
+		LogUtil.debug(LOGD, "setAgeLimit() called. age_LIMIT_TYPE : " + age_LIMIT_TYPE);
+		if (null == age_LIMIT_TYPE) {
+			return;
+		}
+		String ageLimitType = age_LIMIT_TYPE.name().replace(IsQMSEnumData.PREFIX_AGE_LIMIT_TYPE, "");
+		mIsQMSCurrentStatus.STB_AGE_LIMIT = ageLimitType;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XX
+	 * 
+	 * Data Define Description :
+	 * 자녀시청제한 시간
+	 * 00~99
+	 * 00:제한없음, 01~99:시간단위설정
+	 * </pre>
+	 */
+	public void setChildLimitTime(String childLimitTime) {
+		LogUtil.debug(LOGD, "setChildLimitTime() called. childLimitTime : " + childLimitTime);
+		mIsQMSCurrentStatus.STB_AGE_TIME = childLimitTime;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * X
+	 * 
+	 * Data Define Description :
+	 * 연속재생여부
+	 * {0:No|1:Yes}
+	 * </pre>
+	 */
+	public void setAutoNext(boolean isAutoNext) {
+		LogUtil.debug(LOGD, "setAutoNext() called. isAutoNext : " + isAutoNext);
+		if (true == isAutoNext) {
+			mIsQMSCurrentStatus.STB_AUTONEXT = IsQMSData.RESULT_TRUE;
+		} else {
+			mIsQMSCurrentStatus.STB_AUTONEXT = IsQMSData.RESULT_FALSE;
+		}
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDhhmmss
+	 * 
+	 * Data Define Description :
+	 * XPG FULL 버전
+	 * </pre>
+	 */
+	public void setXPG2XpgFullVersion(String xpgFullVersion) {
+		LogUtil.debug(LOGD, "setXPG2XpgFullVersion() called. xpgFullVersion : " + xpgFullVersion);
+		mIsQMSCurrentStatus.XPG_FULL = xpgFullVersion;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX
+	 * 
+	 * Data Define Description :
+	 * SW Upgrade 진행상태
+	 * {000:시작|100:완료|9XX:실패}
+	 * </pre>
+	 */
+	public void setUPGSwUpgrade(eUPG_UPGRADE upg_UPGRADE) {
+		LogUtil.debug(LOGD, "setUPGSwUpgrade() called. upg_UPGRADE : " + upg_UPGRADE);
+		if (null == upg_UPGRADE) {
+			return;
+		}
+		String upgSwUpgrade = null;
+		switch (upg_UPGRADE) {
+			case MODE_START:
+				upgSwUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_START;
+				break;
+			case MODE_SUCCESS:
+				upgSwUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_SUCCESS;
+				break;
+			case MODE_FAIL:
+				upgSwUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_FAIL;
+				break;
+			default:
+				return;
+		}
+		mIsQMSCheckResult.UPG_C_SW_UPGRADE = upgSwUpgrade;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX
+	 * 
+	 * Data Define Description :
+	 * Channel Upgrade 진행상태
+	 * {000:시작|100:완료|9XX:실패}
+	 * </pre>
+	 */
+	public void setUPGChannelUpgrade(eUPG_UPGRADE upg_UPGRADE) {
+		LogUtil.debug(LOGD, "setUPGChannelUpgrade() called. upg_UPGRADE : " + upg_UPGRADE);
+		if (null == upg_UPGRADE) {
+			return;
+		}
+		String upgChannelUpgrade = null;
+		switch (upg_UPGRADE) {
+			case MODE_START:
+				upgChannelUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_START;
+				break;
+			case MODE_SUCCESS:
+				upgChannelUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_SUCCESS;
+				break;
+			case MODE_FAIL:
+				upgChannelUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_FAIL;
+				break;
+			default:
+				return;
+		}
+		mIsQMSCheckResult.UPG_C_CH_UPGRADE = upgChannelUpgrade;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXX
+	 * 
+	 * Data Define Description :
+	 * VOD Content ID
+	 * 
+	 * Sample : 
+	 * 2B6C4220-7FEA-40DC-AC56-5AE29F364C97
+	 * </pre>
+	 */
+	public void setSVCVodCid(String vodCid) {
+		LogUtil.debug(LOGD, "setSVCVodCid() called. vodCid : " + vodCid);
+		mIsQMSCheckResult.SVC_C_VOD_CID = vodCid;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXXXXX,XXXXXX,….
+	 * 
+	 * Data Define Description :
+	 * VOD재생용 광고 ID
+	 * 
+	 * Sample : 
+	 * 2B6C4220-7FEA-40DC-AC56-5AE29F364C97
+	 * </pre>
+	 */
+	public void setSVCVodAid(String vodAid) {
+		LogUtil.debug(LOGD, "setSVCVodAid() called. vodAid : " + vodAid);
+		mIsQMSCheckResult.SVC_C_VOD_AID = vodAid;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * Data Define Description :
+	 * IPv4 Address - SCS Server IP
+	 * </pre>
+	 */
+	public void setVOD1VodScsIp(String vodScsIp) {
+		LogUtil.debug(LOGD, "setVOD1VodScsIp() called. vodScsIp : " + vodScsIp);
+		mIsQMSCheckResult.VOD1_C_VOD_SCS_IP = vodScsIp;
 	}
 
 	// =========================================================================
@@ -410,8 +611,8 @@ public class IsQMSManager {
 		this.mResolutionChangeListener = resolutionChangeListener;
 	}
 
-	public void setSTBPasswordChangeListener(OnSTBPasswordChangeListener stbPasswordChangeListener) {
-		this.mSTBPasswordChangeListener = stbPasswordChangeListener;
+	public void setStbPasswordChangeListener(OnStbPasswordChangeListener stbPasswordChangeListener) {
+		this.mStbPasswordChangeListener = stbPasswordChangeListener;
 	}
 
 	public void setChildLimitPasswordChangeListener(OnChildLimitPasswordChangeListener childLimitPasswordChangeListener) {
@@ -426,12 +627,12 @@ public class IsQMSManager {
 		this.mAdultAuthChangeListener = adultAuthChangeListener;
 	}
 
-	public void setSCSNormalAccessListener(OnSCSNormalAccessListener scsNormalAccessListener) {
-		this.mSCSNormalAccessListener = scsNormalAccessListener;
+	public void setSCSNormalAccessListener(OnScsNormalAccessListener scsNormalAccessListener) {
+		this.mScsNormalAccessListener = scsNormalAccessListener;
 	}
 
-	public void setLGSNormalAccessListener(OnLGSNormalAccessListener lgsNormalAccessListener) {
-		this.mLGSNormalAccessListener = lgsNormalAccessListener;
+	public void setLGSNormalAccessListener(OnLgsNormalAccessListener lgsNormalAccessListener) {
+		this.mLgsNormalAccessListener = lgsNormalAccessListener;
 	}
 
 	private void requestListener(eLISTENER_TYPE type) {
@@ -511,10 +712,10 @@ public class IsQMSManager {
 				}
 				break;
 			case STB_PASSWORD_CHANGE:
-				if (null != mSTBPasswordChangeListener) {
+				if (null != mStbPasswordChangeListener) {
 					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
 						String stbPassword = (String) data;
-						mSTBPasswordChangeListener.onSTBPasswordChange(stbPassword);
+						mStbPasswordChangeListener.onStbPasswordChange(stbPassword);
 					} else {
 						LogUtil.debug(LOGD, "requestListener() Data is Incorrect data");
 					}
@@ -559,15 +760,15 @@ public class IsQMSManager {
 				}
 				break;
 			case SCS_NORMAL_ACCESS:
-				if (null != mSCSNormalAccessListener) {
-					mSCSNormalAccessListener.onSCSNormalAccess();
+				if (null != mScsNormalAccessListener) {
+					mScsNormalAccessListener.onScsNormalAccess();
 				} else {
 					LogUtil.debug(LOGD, "requestListener() mSCSNormalAccessListener is null");
 				}
 				break;
 			case LGS_NORMAL_ACCESS:
-				if (null != mLGSNormalAccessListener) {
-					mLGSNormalAccessListener.onLGSNormalAccess();
+				if (null != mLgsNormalAccessListener) {
+					mLgsNormalAccessListener.onLgsNormalAccess();
 				} else {
 					LogUtil.debug(LOGD, "requestListener() mLGSNormalAccessListener is null");
 				}

@@ -86,8 +86,8 @@ public class IsQMSListener {
 	 * C_PSWD_STB:1111
 	 * </pre>
 	 */
-	public interface OnSTBPasswordChangeListener {
-		public void onSTBPasswordChange(String stbPassword);
+	public interface OnStbPasswordChangeListener {
+		public void onStbPasswordChange(String stbPassword);
 	}
 
 	/**
@@ -132,8 +132,8 @@ public class IsQMSListener {
 	 * 내용 : SCS 정상 접근 확인 요청
 	 * </pre>
 	 */
-	public interface OnSCSNormalAccessListener {
-		public void onSCSNormalAccess();
+	public interface OnScsNormalAccessListener {
+		public void onScsNormalAccess();
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class IsQMSListener {
 	 * 내용 : LGS 정상 접근 확인 요청
 	 * </pre>
 	 */
-	public interface OnLGSNormalAccessListener {
-		public void onLGSNormalAccess();
+	public interface OnLgsNormalAccessListener {
+		public void onLgsNormalAccess();
 	}
 }

@@ -1,15 +1,15 @@
 package com.skb.google.tv.isqms;
 
 public class IsQMSEnumData {
-	// =========================================================================
-	// < DEFINITION Enumerate variables
-	// =========================================================================
-	// < SCS mode type
 	public static String PREFIX_SCV_MODE = "SCV_MODE_";
 	public static String PREFIX_DISPLAY_MODE = "MODE_";
 	public static String PREFIX_TV_RATE_MODE = "MODE_";
 	public static String PREFIX_VIDEO_RATE_MODE = "MODE_";
+	public static String PREFIX_AGE_LIMIT_TYPE = "AGE_";
 
+	// =========================================================================
+	// < DEFINITION Enumerate variables
+	// =========================================================================
 	public static enum eSCV_MODE {
 		SCV_MODE_NONE, //
 		SCV_MODE_SLP, //
@@ -22,8 +22,8 @@ public class IsQMSEnumData {
 	}
 
 	public enum eAGE_LIMIT_TYPE {
-		AGE_NON_USE, //
-		AGE_7, //
+		AGE_00, // 제한 없음
+		AGE_07, //
 		AGE_12, //
 		AGE_15, //
 		AGE_18, //
@@ -38,12 +38,18 @@ public class IsQMSEnumData {
 	}
 
 	public enum eTV_RATE_MODE {
-		MODE_4_3, //
-		MODE_16_9, //
+		MODE_4_3, // 4:3
+		MODE_16_9, // 16:9
 	}
 
 	public enum eVIDEO_RATE_MODE {
-		MODE_ORG, //
-		MODE_SCR, //
+		MODE_ORG, // 원본비
+		MODE_SCR, // 화면비
+	}
+
+	public enum eUPG_UPGRADE {
+		MODE_START, // 000 : 시작
+		MODE_SUCCESS, // 100 : 완료
+		MODE_FAIL, // 9XX : 실패
 	}
 }

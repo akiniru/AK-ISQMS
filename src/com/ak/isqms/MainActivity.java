@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.skb.google.tv.common.util.LogUtil;
+import com.skb.google.tv.isqms.IsQMSEnumData.eAGE_LIMIT_TYPE;
 import com.skb.google.tv.isqms.IsQMSManager;
 
 public class MainActivity extends Activity {
@@ -27,7 +28,8 @@ public class MainActivity extends Activity {
 
 		LogUtil.initLogger(Log.DEBUG, false);
 		mIsQMSManager = IsQMSManager.getInstance();
-		mIsQMSManager.setSTBScreenResolution(null);
+		mIsQMSManager.setStbScreenResolution(null);
+		mIsQMSManager.setAgeLimit(eAGE_LIMIT_TYPE.AGE_00);
 	}
 
 	@Override

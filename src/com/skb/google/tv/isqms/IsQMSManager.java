@@ -3,9 +3,10 @@ package com.skb.google.tv.isqms;
 import java.util.Date;
 
 import com.skb.google.tv.common.util.LogUtil;
-import com.skb.google.tv.isqms.IsQMSData.eAGE_LIMIT_TYPE;
-import com.skb.google.tv.isqms.IsQMSData.eDISPLAY_MODE;
-import com.skb.google.tv.isqms.IsQMSData.eRATE_MODE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eAGE_LIMIT_TYPE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eDISPLAY_MODE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eTV_RATE_MODE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eVIDEO_RATE_MODE;
 import com.skb.google.tv.isqms.IsQMSListener.OnAdMetaFileDownloadListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnAdultAuthChangeListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnAgeLimitChangeListener;
@@ -229,15 +230,156 @@ public class IsQMSManager {
 	/**
 	 * <pre>
 	 * Data Define :
-	 * XXX
+	 * X
 	 * 
-	 * STB의 서비스 제공 상태 모드 정보
-	 * 3자리의 상태 코드 값
+	 * DHCP 사용 설정 정보
+	 * {0:사용안함|1:사용함}
 	 * </pre>
 	 */
 	public void setNetDhcpMode(boolean isDhcpMode) {
 		LogUtil.debug(LOGD, "setNetDhcpMode() called. isDhcpMode : " + isDhcpMode);
-		mIsQMSCurrentStatus.S_NET_DHCP_MODE = Boolean.toString(isDhcpMode);
+		if (true == isDhcpMode) {
+			mIsQMSCurrentStatus.S_NET_DHCP_MODE = IsQMSData.RESULT_TRUE;
+		} else {
+			mIsQMSCurrentStatus.S_NET_DHCP_MODE = IsQMSData.RESULT_FALSE;
+		}
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * IPv4 Address
+	 * </pre>
+	 */
+	public void setNetIpAddr(String netIpAddr) {
+		LogUtil.debug(LOGD, "setNetIpAddr() called. netIpAddr : " + netIpAddr);
+		mIsQMSCurrentStatus.S_NET_IPADDR = netIpAddr;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * IPv4 Subnet Mask
+	 * </pre>
+	 */
+	public void setNetIpMask(String netIpMask) {
+		LogUtil.debug(LOGD, "setNetIpMask() called. netIpMask : " + netIpMask);
+		mIsQMSCurrentStatus.S_NET_IPMASK = netIpMask;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * IPv4 Default Gateway
+	 * </pre>
+	 */
+	public void setNetIpGateway(String netIpGateway) {
+		LogUtil.debug(LOGD, "setNetIpGateway() called. netIpGateway : " + netIpGateway);
+		mIsQMSCurrentStatus.S_NET_IPGW = netIpGateway;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * IPv4 DNS 1st
+	 * </pre>
+	 */
+	public void setNetDNS1(String netDNS1) {
+		LogUtil.debug(LOGD, "setNetDNS1() called. netDNS1 : " + netDNS1);
+		mIsQMSCurrentStatus.S_NET_DNS1 = netDNS1;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * IPv4 DNS 2nd
+	 * </pre>
+	 */
+	public void setNetDNS2(String netDNS2) {
+		LogUtil.debug(LOGD, "setNetDNS2() called. netDNS2 : " + netDNS2);
+		mIsQMSCurrentStatus.S_NET_DNS2 = netDNS2;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXXXX
+	 * 
+	 * STB의 해상도 설정 정보
+	 * {1080i|720p|480p|480i}
+	 * </pre>
+	 */
+	public void setSTBScreenResolution(eDISPLAY_MODE display_MODE) {
+		LogUtil.debug(LOGD, "setSTBScreenResolution() called. display_MODE : " + display_MODE);
+		if (null == display_MODE) {
+			return;
+		}
+		String displayMode = display_MODE.name().replace(IsQMSEnumData.PREFIX_DISPLAY_MODE, "");
+		mIsQMSCurrentStatus.STB_SCR_RESOLUTION = displayMode;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXXXX
+	 * 
+	 * STB에 연결된 TV의 화면 비율 정보
+	 * {16:9|4:3}
+	 * </pre>
+	 */
+	public void setSTBScreenTVRate(eTV_RATE_MODE tv_RATE_MODE) {
+		LogUtil.debug(LOGD, "setSTBScreenTVRate() called. display_MODE : " + tv_RATE_MODE);
+		if (null == tv_RATE_MODE) {
+			return;
+		}
+		String rateMode = tv_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_TV_RATE_MODE, "");
+		mIsQMSCurrentStatus.STB_SCR_TV = rateMode;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX
+	 * 
+	 * STB이 처리할 비디오 비율 (원본비그대로, 화면비 따름)
+	 * {ORG|SCR}
+	 * </pre>
+	 */
+	public void setSTBScreenVideoRate(eVIDEO_RATE_MODE video_RATE_MODE) {
+		LogUtil.debug(LOGD, "setSTBScreenVideoRate() called. video_RATE_MODE : " + video_RATE_MODE);
+		if (null == video_RATE_MODE) {
+			return;
+		}
+		String videoRateMode = video_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_VIDEO_RATE_MODE, "");
+		mIsQMSCurrentStatus.STB_SCR_VIDEO = videoRateMode;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * X
+	 * 
+	 * 성인인증 사용 여부
+	 * {0:NotAllow|1:Allow}
+	 * </pre>
+	 */
+	public void setAllowSTBAdult(boolean isAllowSTBAdult) {
+		LogUtil.debug(LOGD, "setAllowSTBAdult() called. isAllowSTBAdult : " + isAllowSTBAdult);
+		if (true == isAllowSTBAdult) {
+			mIsQMSCurrentStatus.STB_ADULT = IsQMSData.RESULT_TRUE;
+		} else {
+			mIsQMSCurrentStatus.STB_ADULT = IsQMSData.RESULT_FALSE;
+		}
 	}
 
 	// =========================================================================
@@ -352,11 +494,12 @@ public class IsQMSManager {
 				if (null != mResolutionChangeListener) {
 					if (null != data && true == (data instanceof IsQMSMessage)) {
 						IsQMSMessage message = (IsQMSMessage) data;
-						if (null != message.obj1 && null != message.obj2 && //
-								true == (message.obj1 instanceof eDISPLAY_MODE && true == (message.obj2 instanceof eRATE_MODE))) {
+						if (null != message.obj1 && null != message.obj2 && null != message.obj3 && //
+								true == (message.obj1 instanceof eDISPLAY_MODE && true == (message.obj2 instanceof eVIDEO_RATE_MODE) && true == (message.obj3 instanceof eTV_RATE_MODE))) {
 							eDISPLAY_MODE display_MODE = (eDISPLAY_MODE) message.obj1;
-							eRATE_MODE rate_MODE = (eRATE_MODE) message.obj2;
-							mResolutionChangeListener.onResolutionChange(display_MODE, rate_MODE);
+							eVIDEO_RATE_MODE video_RATE_MODE = (eVIDEO_RATE_MODE) message.obj2;
+							eTV_RATE_MODE tv_RATE_MODE = (eTV_RATE_MODE) message.obj3;
+							mResolutionChangeListener.onResolutionChange(display_MODE, video_RATE_MODE, tv_RATE_MODE);
 						} else {
 							LogUtil.debug(LOGD, "requestListener() Data is Incorrect data");
 						}
@@ -369,9 +512,9 @@ public class IsQMSManager {
 				break;
 			case STB_PASSWORD_CHANGE:
 				if (null != mSTBPasswordChangeListener) {
-					if (null != data && true == (data instanceof String)) {
-						String password = (String) data;
-						mSTBPasswordChangeListener.onSTBPasswordChange(password);
+					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
+						String stbPassword = (String) data;
+						mSTBPasswordChangeListener.onSTBPasswordChange(stbPassword);
 					} else {
 						LogUtil.debug(LOGD, "requestListener() Data is Incorrect data");
 					}
@@ -381,9 +524,9 @@ public class IsQMSManager {
 				break;
 			case CHILDLIMIT_PASSWORD_CHANGE:
 				if (null != mChildLimitPasswordChangeListener) {
-					if (null != data && true == (data instanceof String)) {
-						String password = (String) data;
-						mChildLimitPasswordChangeListener.onChildLimitPasswordChange(password);
+					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
+						String childLimitPassword = (String) data;
+						mChildLimitPasswordChangeListener.onChildLimitPasswordChange(childLimitPassword);
 					} else {
 						LogUtil.debug(LOGD, "requestListener() Data is Incorrect data");
 					}
@@ -393,14 +536,24 @@ public class IsQMSManager {
 				break;
 			case CHILDLIMIT_TIME_CHANGE:
 				if (null != mChildLimitTimeChangeListener) {
-					mChildLimitTimeChangeListener.onChildLimitTimeChange();
+					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
+						String childLimitTime = (String) data;
+						mChildLimitTimeChangeListener.onChildLimitTimeChange(childLimitTime);
+					} else {
+						LogUtil.debug(LOGD, "requestListener() Data is Incorrect data");
+					}
 				} else {
 					LogUtil.debug(LOGD, "requestListener() mChildLimitTimeChangeListener is null");
 				}
 				break;
 			case ADULT_AUTH_CHANGE:
 				if (null != mAdultAuthChangeListener) {
-					mAdultAuthChangeListener.onAdultAuthChange();
+					if (null != data && true == (data instanceof Boolean)) {
+						Boolean result = (Boolean) data;
+						mAdultAuthChangeListener.onAdultAuthChange(result);
+					} else {
+						LogUtil.debug(LOGD, "requestListener() mChildLimitTimeChangeListener is null");
+					}
 				} else {
 					LogUtil.debug(LOGD, "requestListener() mAdultAuthChangeListener is null");
 				}

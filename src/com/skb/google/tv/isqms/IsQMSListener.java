@@ -1,7 +1,9 @@
 package com.skb.google.tv.isqms;
 
-import com.skb.google.tv.isqms.IsQMSData.eDISPLAY_MODE;
-import com.skb.google.tv.isqms.IsQMSData.eRATE_MODE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eAGE_LIMIT_TYPE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eDISPLAY_MODE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eTV_RATE_MODE;
+import com.skb.google.tv.isqms.IsQMSEnumData.eVIDEO_RATE_MODE;
 
 public class IsQMSListener {
 	/**
@@ -27,7 +29,7 @@ public class IsQMSListener {
 	 * </pre>
 	 */
 	public interface OnAgeLimitChangeListener { // STBAPIManager.getInstance().setAgeLimit(STBAPIManager.INFO_VALUE_07);
-		public void onAgeLimitChange(IsQMSData.eAGE_LIMIT_TYPE age_LIMIT_TYPE);
+		public void onAgeLimitChange(eAGE_LIMIT_TYPE age_LIMIT_TYPE);
 	}
 
 	/**
@@ -73,7 +75,7 @@ public class IsQMSListener {
 	 * </pre>
 	 */
 	public interface OnResolutionChangeListener {
-		public void onResolutionChange(eDISPLAY_MODE display_MODE, eRATE_MODE rate_MODE);
+		public void onResolutionChange(eDISPLAY_MODE display_MODE, eVIDEO_RATE_MODE video_RATE_MODE, eTV_RATE_MODE rate_MODE);
 	}
 
 	/**
@@ -85,7 +87,7 @@ public class IsQMSListener {
 	 * </pre>
 	 */
 	public interface OnSTBPasswordChangeListener {
-		public void onSTBPasswordChange(String password);
+		public void onSTBPasswordChange(String stbPassword);
 	}
 
 	/**
@@ -96,7 +98,7 @@ public class IsQMSListener {
 	 * C_PSWD_AGE:1111
 	 * </pre>
 	 */
-	public interface OnChildLimitPasswordChangeListener {
+	public interface OnChildLimitPasswordChangeListener { // SCS Server
 		public void onChildLimitPasswordChange(String childLimitPassword);
 	}
 
@@ -108,18 +110,20 @@ public class IsQMSListener {
 	 * STB_AGE_LIMIT:19
 	 * </pre>
 	 */
-	public interface OnChildLimitTimeChangeListener {
-		public void onChildLimitTimeChange();
+	public interface OnChildLimitTimeChangeListener { // STBAPIManager.getInstance().setChildrenSeeLimit(STBAPIManager.RESULT_DISABLE);
+		public void onChildLimitTimeChange(String childLimitTime);
 	}
 
 	/**
 	 * <pre>
 	 * EVENT_ID : C18
 	 * 내용 : STB_ADULT 설정(성인인증 사용여부 설정)
+	 * 
+	 * STB_ADULT:0
 	 * </pre>
 	 */
 	public interface OnAdultAuthChangeListener {
-		public void onAdultAuthChange();
+		public void onAdultAuthChange(boolean result);
 	}
 
 	/**

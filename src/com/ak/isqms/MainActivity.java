@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
 
 		LogUtil.initLogger(Log.DEBUG, false);
 		mIsQMSManager = IsQMSManager.getInstance();
+		mIsQMSManager.setSTBScreenResolution(null);
 	}
 
 	@Override

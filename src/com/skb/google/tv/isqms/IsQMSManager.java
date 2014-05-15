@@ -235,7 +235,7 @@ public class IsQMSManager {
 	}
 
 	// =========================================================================
-	// < setter IsQMS CURRENT STATUS
+	// < setter CURRENT STATUS NET
 	// =========================================================================
 	/**
 	 * <pre>
@@ -326,6 +326,9 @@ public class IsQMSManager {
 		mIsQMSCurrentStatus.S_NET_DNS2 = netDNS2;
 	}
 
+	// =========================================================================
+	// < setter CURRENT STATUS CONF
+	// =========================================================================
 	/**
 	 * <pre>
 	 * Data Define :
@@ -457,6 +460,9 @@ public class IsQMSManager {
 		}
 	}
 
+	// =========================================================================
+	// < setter CHECK RESULT XPG2
+	// =========================================================================
 	/**
 	 * <pre>
 	 * Data Define :
@@ -471,6 +477,9 @@ public class IsQMSManager {
 		mIsQMSCurrentStatus.XPG_FULL = xpgFullVersion;
 	}
 
+	// =========================================================================
+	// < setter CHECK RESULT UPG
+	// =========================================================================
 	/**
 	 * <pre>
 	 * Data Define :
@@ -535,6 +544,9 @@ public class IsQMSManager {
 		mIsQMSCheckResult.UPG_C_CH_UPGRADE = upgChannelUpgrade;
 	}
 
+	// =========================================================================
+	// < setter CHECK RESULT SVC
+	// =========================================================================
 	/**
 	 * <pre>
 	 * Data Define :
@@ -569,6 +581,9 @@ public class IsQMSManager {
 		mIsQMSCheckResult.SVC_C_VOD_AID = vodAid;
 	}
 
+	// =========================================================================
+	// < setter CHECK RESULT VOD1
+	// =========================================================================
 	/**
 	 * <pre>
 	 * Data Define :
@@ -581,6 +596,123 @@ public class IsQMSManager {
 	public void setVOD1VodScsIp(String vodScsIp) {
 		LogUtil.debug(LOGD, "setVOD1VodScsIp() called. vodScsIp : " + vodScsIp);
 		mIsQMSCheckResult.VOD1_C_VOD_SCS_IP = vodScsIp;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * SSS.MMM
+	 * 
+	 * Data Define Description :
+	 * SCS요청후 회신까지 소요시간
+	 * SSS(second), XXX(msec)
+	 * </pre>
+	 */
+	public void setVOD1VodScsRt(String vodScsRt) {
+		LogUtil.debug(LOGD, "setVOD1VodScsRt() called. vodScsRt : " + vodScsRt);
+		mIsQMSCheckResult.VOD1_C_VOD_SCS_RT = vodScsRt;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * SSS.MMM
+	 * 
+	 * Data Define Description :
+	 * Download 요청후 회신까지 소요시간
+	 * SSS(second), XXX(msec)
+	 * - RTSP 인 경우 재생 요청 후 play 이벤트가 올라오는 시점으로 변경
+	 * </pre>
+	 */
+	public void setVOD1VodDownRt(String vodDownRt) {
+		LogUtil.debug(LOGD, "setVOD1VodDownRt() called. vodDownRt : " + vodDownRt);
+		mIsQMSCheckResult.VOD1_C_VOD_DOWN_RT = vodDownRt;
+	}
+
+	// =========================================================================
+	// < setter CHECK RESULT VOD3
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * 비정형 가변 문자열
+	 * 
+	 * Data Define Description :
+	 * 컨텐츠명  ( 부러진화살 )
+	 * </pre>
+	 */
+	public void setVOD3VodContentName(String vodContentName) {
+		LogUtil.debug(LOGD, "setVOD3VodContentName() called. vodContentName : " + vodContentName);
+		mIsQMSCheckResult.VOD3_C_VOD_CONTENT_NAME = vodContentName;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * 비정형 가변 문자열
+	 * 
+	 * Data Define Description :
+	 * 컨텐츠 URL ( RTSP://*** )
+	 * </pre>
+	 */
+	public void setVOD3VodContentUrl(String vodContentUrl) {
+		LogUtil.debug(LOGD, "setVOD3VodContentUrl() called. vodContentUrl : " + vodContentUrl);
+		mIsQMSCheckResult.VOD3_C_VOD_CONTENT_URL = vodContentUrl;
+	}
+
+	// =========================================================================
+	// < setter CHECK RESULT VOD4
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * X
+	 * 
+	 * Data Define Description :
+	 * 1:성공
+	 * 0:실패 C_MSG 에러 정보
+	 * </pre>
+	 */
+	public void setVOD4VodError(String vodError) {
+		LogUtil.debug(LOGD, "setVOD4VodError() called. vodError : " + vodError);
+		mIsQMSCheckResult.VOD4_C_VOD_ERR = vodError;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * 비정형 가변 문자열
+	 * 
+	 * Data Define Description :
+	 * CGF:컨텐츠 정보 수집 장애
+	 * OPT:OPT 장애
+	 * RXXXXXXX:VOD 재생 에러(UI 에러코드)
+	 * </pre>
+	 */
+	public void setVOD4Message(String vodMessage) {
+		LogUtil.debug(LOGD, "setVOD4Message() called. vodMessage : " + vodMessage);
+		mIsQMSCheckResult.VOD4_C_MSG = vodMessage;
+	}
+
+	// =========================================================================
+	// < setter CHECK RESULT IPTV1
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Element Description : 
+	 * 채널명, 채널번호
+	 * 
+	 * Data Define :
+	 * XXXX…[XX]
+	 * 
+	 * Data Define Description :
+	 * 현재 또는 마지막 채널명과 채널 번호
+	 * MBC[11]
+	 * </pre>
+	 */
+	public void setIPTV1IptvChNum(String iptvChNum) {
+		LogUtil.debug(LOGD, "setVOD4Message() called. vodMessage : " + iptvChNum);
+		mIsQMSCheckResult.IPTV1_C_IPTV_CH_NUM = iptvChNum;
 	}
 
 	// =========================================================================

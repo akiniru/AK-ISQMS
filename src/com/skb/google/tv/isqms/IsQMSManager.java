@@ -254,6 +254,7 @@ public class IsQMSManager {
 		} else {
 			mIsQMSCurrentStatus.S_NET_DHCP_MODE = IsQMSData.RESULT_FALSE;
 		}
+		mIsQMSCheckResult.S_NET_DHCP_MODE = mIsQMSCurrentStatus.S_NET_DHCP_MODE;
 	}
 
 	/**
@@ -268,6 +269,7 @@ public class IsQMSManager {
 	public void setNetIpAddr(String netIpAddr) {
 		LogUtil.debug(LOGD, "setNetIpAddr() called. netIpAddr : " + netIpAddr);
 		mIsQMSCurrentStatus.S_NET_IPADDR = netIpAddr;
+		mIsQMSCheckResult.S_NET_IPADDR = mIsQMSCurrentStatus.S_NET_IPADDR;
 	}
 
 	/**
@@ -282,6 +284,7 @@ public class IsQMSManager {
 	public void setNetIpMask(String netIpMask) {
 		LogUtil.debug(LOGD, "setNetIpMask() called. netIpMask : " + netIpMask);
 		mIsQMSCurrentStatus.S_NET_IPMASK = netIpMask;
+		mIsQMSCheckResult.S_NET_IPMASK = mIsQMSCurrentStatus.S_NET_IPMASK;
 	}
 
 	/**
@@ -296,6 +299,7 @@ public class IsQMSManager {
 	public void setNetIpGateway(String netIpGateway) {
 		LogUtil.debug(LOGD, "setNetIpGateway() called. netIpGateway : " + netIpGateway);
 		mIsQMSCurrentStatus.S_NET_IPGW = netIpGateway;
+		mIsQMSCheckResult.S_NET_IPGW = mIsQMSCurrentStatus.S_NET_IPGW;
 	}
 
 	/**
@@ -310,6 +314,7 @@ public class IsQMSManager {
 	public void setNetDNS1(String netDNS1) {
 		LogUtil.debug(LOGD, "setNetDNS1() called. netDNS1 : " + netDNS1);
 		mIsQMSCurrentStatus.S_NET_DNS1 = netDNS1;
+		mIsQMSCheckResult.S_NET_DNS1 = mIsQMSCurrentStatus.S_NET_DNS1;
 	}
 
 	/**
@@ -324,6 +329,7 @@ public class IsQMSManager {
 	public void setNetDNS2(String netDNS2) {
 		LogUtil.debug(LOGD, "setNetDNS2() called. netDNS2 : " + netDNS2);
 		mIsQMSCurrentStatus.S_NET_DNS2 = netDNS2;
+		mIsQMSCheckResult.S_NET_DNS2 = mIsQMSCurrentStatus.S_NET_DNS2;
 	}
 
 	// =========================================================================
@@ -344,6 +350,7 @@ public class IsQMSManager {
 		if (null == display_MODE) {
 			return;
 		}
+
 		String displayMode = display_MODE.name().replace(IsQMSEnumData.PREFIX_DISPLAY_MODE, "");
 		mIsQMSCurrentStatus.STB_SCR_RESOLUTION = displayMode;
 	}
@@ -363,6 +370,7 @@ public class IsQMSManager {
 		if (null == tv_RATE_MODE) {
 			return;
 		}
+
 		String rateMode = tv_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_TV_RATE_MODE, "");
 		mIsQMSCurrentStatus.STB_SCR_TV = rateMode;
 	}
@@ -382,6 +390,7 @@ public class IsQMSManager {
 		if (null == video_RATE_MODE) {
 			return;
 		}
+
 		String videoRateMode = video_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_VIDEO_RATE_MODE, "");
 		mIsQMSCurrentStatus.STB_SCR_VIDEO = videoRateMode;
 	}
@@ -421,6 +430,7 @@ public class IsQMSManager {
 		if (null == age_LIMIT_TYPE) {
 			return;
 		}
+
 		String ageLimitType = age_LIMIT_TYPE.name().replace(IsQMSEnumData.PREFIX_AGE_LIMIT_TYPE, "");
 		mIsQMSCurrentStatus.STB_AGE_LIMIT = ageLimitType;
 	}
@@ -495,6 +505,7 @@ public class IsQMSManager {
 		if (null == upg_UPGRADE) {
 			return;
 		}
+
 		String upgSwUpgrade = null;
 		switch (upg_UPGRADE) {
 			case MODE_START:
@@ -527,6 +538,7 @@ public class IsQMSManager {
 		if (null == upg_UPGRADE) {
 			return;
 		}
+
 		String upgChannelUpgrade = null;
 		switch (upg_UPGRADE) {
 			case MODE_START:
@@ -711,8 +723,91 @@ public class IsQMSManager {
 	 * </pre>
 	 */
 	public void setIPTV1IptvChNum(String iptvChNum) {
-		LogUtil.debug(LOGD, "setVOD4Message() called. vodMessage : " + iptvChNum);
+		LogUtil.debug(LOGD, "setIPTV1IptvChNum() called. iptvChNum : " + iptvChNum);
 		mIsQMSCheckResult.IPTV1_C_IPTV_CH_NUM = iptvChNum;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XX
+	 * 
+	 * Data Define Description :
+	 * 채널진입방법
+	 * {01:직접입력|02:채널버튼|03:miniEPG|04:전체EPG:|05EPG}
+	 * </pre>
+	 */
+	public void setIPTV1iptvChMode(String iptvChMode) {
+		LogUtil.debug(LOGD, "setIPTV1iptvChMode() called. iptvChMode : " + iptvChMode);
+		mIsQMSCheckResult.IPTV1_C_IPTV_CH_MODE = iptvChMode;
+	}
+
+	// =========================================================================
+	// < setter CHECK RESULT IPTV2
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX
+	 * 
+	 * Data Define Description :
+	 * 추정되는 IPTV Error상태 코드
+	 * {000:정상|001:신호약함|999:기타}
+	 * </pre>
+	 */
+	public void setIPTV2iptvErrorCode(String iptvErrorCode) {
+		LogUtil.debug(LOGD, "setIPTV2iptvErrorCode() called. iptvErrorCode : " + iptvErrorCode);
+		mIsQMSCheckResult.IPTV2_C_IPTV_ECODE = iptvErrorCode;
+	}
+
+	// =========================================================================
+	// < setter CHECK RESULT SCS
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * Data Define Description :
+	 * IPv4 Address - Test Requested SCS IP
+	 * </pre>
+	 */
+	public void setSCSscsIp(String scsIp) {
+		LogUtil.debug(LOGD, "setSCSscsIp() called. scsIp : " + scsIp);
+		mIsQMSCheckResult.SCS_C_SCS_IP = scsIp;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XX
+	 * 
+	 * Data Define Description :
+	 * SCS오류코드
+	 * {01:연결불가|02:응답없음|03:응답오류}
+	 * </pre>
+	 */
+	public void setSCSscsErrorCode(String scsErrorCode) {
+		LogUtil.debug(LOGD, "setSCSscsErrorCode() called. scsErrorCode : " + scsErrorCode);
+		mIsQMSCheckResult.SCS_C_SCS_ECODE = scsErrorCode;
+	}
+
+	// =========================================================================
+	// < setter CHECK RESULT LGS
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XX
+	 * 
+	 * Data Define Description :
+	 * LGS오류코드
+	 * {01:연결불가|02:응답없음|03:응답오류}
+	 * </pre>
+	 */
+	public void setLGSlgsErrorCode(String lgsErrorCode) {
+		LogUtil.debug(LOGD, "setLGSlgsErrorCode() called. lgsErrorCode : " + lgsErrorCode);
+		mIsQMSCheckResult.LGS_C_LGS_ECODE = lgsErrorCode;
 	}
 
 	// =========================================================================
@@ -720,54 +815,148 @@ public class IsQMSManager {
 	// =========================================================================
 
 	public void setRecentAllUpgradeListener(OnRecentAllUpgradeListener recentAllUpgradeListener) {
+		LogUtil.debug(LOGD, "setRecentAllUpgradeListener() called");
 		this.mRecentAllUpgradeListener = recentAllUpgradeListener;
 	}
 
 	public void setAgeLimitChangeListener(OnAgeLimitChangeListener ageLimitChangeListener) {
+		LogUtil.debug(LOGD, "setAgeLimitChangeListener() called");
 		this.mAgeLimitChangeListener = ageLimitChangeListener;
 	}
 
 	public void setAutoNextChangeListener(OnAutoNextChangeListener autoNextChangeListener) {
+		LogUtil.debug(LOGD, "setAutoNextChangeListener() called");
 		this.mAutoNextChangeListener = autoNextChangeListener;
 	}
 
 	public void setAdMetaFileDownloadListener(OnAdMetaFileDownloadListener adMetaFileDownloadListener) {
+		LogUtil.debug(LOGD, "setAdMetaFileDownloadListener() called");
 		this.mAdMetaFileDownloadListener = adMetaFileDownloadListener;
 	}
 
 	public void setRebootListener(OnRebootListener rebootListener) {
+		LogUtil.debug(LOGD, "setRebootListener() called");
 		this.mRebootListener = rebootListener;
 	}
 
 	public void setResolutionChangeListener(OnResolutionChangeListener resolutionChangeListener) {
+		LogUtil.debug(LOGD, "setResolutionChangeListener() called");
 		this.mResolutionChangeListener = resolutionChangeListener;
 	}
 
 	public void setStbPasswordChangeListener(OnStbPasswordChangeListener stbPasswordChangeListener) {
+		LogUtil.debug(LOGD, "setStbPasswordChangeListener() called");
 		this.mStbPasswordChangeListener = stbPasswordChangeListener;
 	}
 
 	public void setChildLimitPasswordChangeListener(OnChildLimitPasswordChangeListener childLimitPasswordChangeListener) {
+		LogUtil.debug(LOGD, "setChildLimitPasswordChangeListener() called");
 		this.mChildLimitPasswordChangeListener = childLimitPasswordChangeListener;
 	}
 
 	public void setChildLimitTimeChangeListener(OnChildLimitTimeChangeListener childLimitTimeChangeListener) {
+		LogUtil.debug(LOGD, "setChildLimitTimeChangeListener() called");
 		this.mChildLimitTimeChangeListener = childLimitTimeChangeListener;
 	}
 
 	public void setAdultAuthChangeListener(OnAdultAuthChangeListener adultAuthChangeListener) {
+		LogUtil.debug(LOGD, "setAdultAuthChangeListener() called");
 		this.mAdultAuthChangeListener = adultAuthChangeListener;
 	}
 
 	public void setSCSNormalAccessListener(OnScsNormalAccessListener scsNormalAccessListener) {
+		LogUtil.debug(LOGD, "setSCSNormalAccessListener() called");
 		this.mScsNormalAccessListener = scsNormalAccessListener;
 	}
 
 	public void setLGSNormalAccessListener(OnLgsNormalAccessListener lgsNormalAccessListener) {
+		LogUtil.debug(LOGD, "setLGSNormalAccessListener() called");
 		this.mLgsNormalAccessListener = lgsNormalAccessListener;
 	}
 
+	// =========================================================================
+	// < check IsQMS LISTENER
+	// =========================================================================
+	private boolean checkCommon() {
+		LogUtil.debug(LOGD, "checkCommon() called");
+		boolean result = false;
+		if (null == mIsQMSCommon) {
+			LogUtil.debug(LOGD, "checkCommon() mIsQMSCommon is null.");
+			return result;
+		}
+
+		synchronized (mIsQMSCommon) {
+			mIsQMSCommon.EVENT_ID = null;
+			mIsQMSCommon.EVENT_TS = null;
+			LogUtil.debug(LOGD, "checkCommon() EVENT_ID : " + mIsQMSCommon.EVENT_ID);
+			LogUtil.debug(LOGD, "checkCommon() EVENT_TS : " + mIsQMSCommon.EVENT_TS);
+			LogUtil.debug(LOGD, "checkCommon() STB_VER : " + mIsQMSCommon.STB_VER);
+			LogUtil.debug(LOGD, "checkCommon() STB_ID : " + mIsQMSCommon.STB_ID);
+			LogUtil.debug(LOGD, "checkCommon() STB_MAC : " + mIsQMSCommon.STB_MAC);
+			LogUtil.debug(LOGD, "checkCommon() STB_SW_VER : " + mIsQMSCommon.STB_SW_VER);
+			LogUtil.debug(LOGD, "checkCommon() STB_XPG_VER : " + mIsQMSCommon.STB_XPG_VER);
+			LogUtil.debug(LOGD, "checkCommon() STB_MODEL : " + mIsQMSCommon.STB_MODEL);
+			LogUtil.debug(LOGD, "checkCommon() STB_AUTH : " + mIsQMSCommon.STB_AUTH);
+			LogUtil.debug(LOGD, "checkCommon() STB_IPTV_AREA : " + mIsQMSCommon.STB_IPTV_AREA);
+			LogUtil.debug(LOGD, "checkCommon() STB_SVC_MODE : " + mIsQMSCommon.STB_SVC_MODE);
+			if (null != mIsQMSCommon.EVENT_TS && null != mIsQMSCommon.STB_VER && null != mIsQMSCommon.STB_ID //
+					&& null != mIsQMSCommon.STB_MAC && null != mIsQMSCommon.STB_SW_VER && null != mIsQMSCommon.STB_XPG_VER //
+					&& null != mIsQMSCommon.STB_MODEL && null != mIsQMSCommon.STB_AUTH && null != mIsQMSCommon.STB_IPTV_AREA //
+					&& null != mIsQMSCommon.STB_SVC_MODE) {
+				return true;
+			}
+			LogUtil.debug(LOGD, "checkCommon() result : " + result);
+			return result;
+		}
+	}
+
+	private boolean checkStatusAll() {
+		LogUtil.debug(LOGD, "checkStatusAll() called");
+		boolean result = false;
+		if (null == mIsQMSCurrentStatus) {
+			LogUtil.debug(LOGD, "checkStatusAll() mIsQMSCurrentStatus is null.");
+			return result;
+		}
+
+		synchronized (mIsQMSCurrentStatus) {
+			result = checkStatusNet();
+			if (false == result) {
+				return result;
+			}
+
+			return result;
+		}
+	}
+
+	private boolean checkStatusNet() {
+		LogUtil.debug(LOGD, "checkStatusNet() called");
+		boolean result = false;
+		if (null == mIsQMSCurrentStatus) {
+			LogUtil.debug(LOGD, "checkStatusNet() mIsQMSCurrentStatus is null.");
+			return result;
+		}
+
+		synchronized (mIsQMSCurrentStatus) {
+			LogUtil.debug(LOGD, "checkStatusNet() S_NET_DHCP_MODE : " + mIsQMSCurrentStatus.S_NET_DHCP_MODE);
+			LogUtil.debug(LOGD, "checkStatusNet() S_NET_IPADDR : " + mIsQMSCurrentStatus.S_NET_IPADDR);
+			LogUtil.debug(LOGD, "checkStatusNet() S_NET_IPMASK : " + mIsQMSCurrentStatus.S_NET_IPMASK);
+			LogUtil.debug(LOGD, "checkStatusNet() S_NET_IPGW : " + mIsQMSCurrentStatus.S_NET_IPGW);
+			LogUtil.debug(LOGD, "checkStatusNet() S_NET_DNS1 : " + mIsQMSCurrentStatus.S_NET_DNS1);
+			LogUtil.debug(LOGD, "checkStatusNet() S_NET_DNS2 : " + mIsQMSCurrentStatus.S_NET_DNS2);
+			if (null != mIsQMSCurrentStatus.S_NET_DHCP_MODE && null != mIsQMSCurrentStatus.S_NET_IPADDR && null != mIsQMSCurrentStatus.S_NET_IPMASK //
+					&& null != mIsQMSCurrentStatus.S_NET_IPGW && null != mIsQMSCurrentStatus.S_NET_DNS1 && null != mIsQMSCurrentStatus.S_NET_DNS2) {
+				return true;
+			}
+			LogUtil.debug(LOGD, "checkStatusNet() result : " + result);
+			return result;
+		}
+	}
+
+	// =========================================================================
+	// < reques IsQMS LISTENER
+	// =========================================================================
 	private void requestListener(eLISTENER_TYPE type) {
+		LogUtil.debug(LOGD, "requestListener() called");
 		requestListener(type, null);
 	}
 

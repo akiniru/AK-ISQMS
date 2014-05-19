@@ -30,6 +30,7 @@ public class IsQMSCheckResult {
 	public String IPTV2_C_IPTV_ECODE;
 
 	/** SCS */
+	public String SCS_C_SCS_IP;
 	public String SCS_C_SCS_ECODE;
 
 	/** LGS */
@@ -62,7 +63,6 @@ public class IsQMSCheckResult {
 // public String IPTV3_C_REPORT_MODE; // 미정
 
 /** SCS */
-// public String SCS_C_SCS_IP; // 미정
 // public String SCS_C_MSG; // 미정
 
 /** LGS */

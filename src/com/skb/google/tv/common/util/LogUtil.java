@@ -21,7 +21,7 @@ public class LogUtil {
 	private static Date currentDate = new Date();
 
 	public static void initLogger(int level, boolean isFileWrite) {
-		initLogger(level, isFileWrite, true);
+		initLogger(level, isFileWrite, false);
 	}
 
 	public static void initLogger(int level, boolean isFileWrite, boolean isPrintTime) {

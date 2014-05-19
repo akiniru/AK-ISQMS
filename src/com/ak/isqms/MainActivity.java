@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.skb.google.tv.common.util.LogUtil;
-import com.skb.google.tv.isqms.IsQMSEnumData.eAGE_LIMIT_TYPE;
 import com.skb.google.tv.isqms.IsQMSManager;
 
 public class MainActivity extends Activity {
@@ -27,14 +26,19 @@ public class MainActivity extends Activity {
 		}
 
 		LogUtil.initLogger(Log.DEBUG, false);
+
 		mIsQMSManager = IsQMSManager.getInstance();
-		mIsQMSManager.setStbScreenResolution(null);
-		mIsQMSManager.setAgeLimit(eAGE_LIMIT_TYPE.AGE_00);
+		mIsQMSManager.bindingISQMSAgent(getApplicationContext());
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mIsQMSManager.unbindingISQMSAgent();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
@@ -56,7 +60,6 @@ public class MainActivity extends Activity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-
 		public PlaceholderFragment() {
 		}
 

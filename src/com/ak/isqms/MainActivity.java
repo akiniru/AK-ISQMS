@@ -1,19 +1,18 @@
 package com.ak.isqms;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.skb.google.tv.common.util.LogUtil;
+import com.skb.google.tv.isqms.ISQMSData;
+import com.skb.google.tv.isqms.ISQMSListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnAutoNextChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnRebootListener;
 import com.skb.google.tv.isqms.ISQMSManager;
 
 public class MainActivity extends Activity {
+	private static final String LOGD = "UIApp";
 	private ISQMSManager mIsQMSManager;
 
 	@Override
@@ -21,14 +20,23 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
-		}
-
 		LogUtil.initLogger(Log.DEBUG, false);
 
 		mIsQMSManager = ISQMSManager.getInstance();
+
+		// set Common
+		mIsQMSManager.setAutoNextChangeListener(mAutoNextChangeListener);
+		mIsQMSManager.setRebootListener(mRebootListener);
+		// mIsQMSManager.setStbPasswordChangeListener(mStbPasswordChangeListener);
+		mIsQMSManager.setStbVersion("1");
+		mIsQMSManager.setAutoNext(true);
+
+		// binding
 		mIsQMSManager.bindingISQMSAgent(getApplicationContext());
+
+		// send_event
+		mIsQMSManager.recv_event(ISQMSData.EVENT_C05, null);
+		mIsQMSManager.recv_event(ISQMSData.EVENT_C07, null);
 	}
 
 	@Override
@@ -37,37 +45,30 @@ public class MainActivity extends Activity {
 		mIsQMSManager.unbindingISQMSAgent();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-		public PlaceholderFragment() {
-		}
-
+	ISQMSListener.OnRebootListener mRebootListener = new OnRebootListener() {
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-			return rootView;
+		public void onReboot() {
+			LogUtil.info(LOGD, "OnRebootListener.onReboot() called.");
 		}
-	}
+	};
 
+	ISQMSListener.OnAutoNextChangeListener mAutoNextChangeListener = new OnAutoNextChangeListener() {
+		@Override
+		public void onAutoNextChange(boolean result) {
+			LogUtil.info(LOGD, "OnAutoNextChangeListener.onAutoNextChange() called.");
+			mIsQMSManager.setAutoNext(result);
+			try {
+				Thread.sleep(5 * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	};
+
+	// ISQMSListener.OnStbPasswordChangeListener mStbPasswordChangeListener = new OnStbPasswordChangeListener() {
+	// @Override
+	// public void onStbPasswordChange(String stbPassword) {
+	// mIsQMSManager.setStbVersion("2");
+	// }
+	// };
 }

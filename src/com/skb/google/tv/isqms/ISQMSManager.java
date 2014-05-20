@@ -52,7 +52,7 @@ import com.skb.isqms.IUIAppToAgentService;
 public class ISQMSManager {
 	private static final String LOGD = ISQMSManager.class.getSimpleName();
 
-	private static final int MESSAGE_STARTID = 11000;
+	private static final int MESSAGE_STARTID = 10000;
 	public static final int MESSAGE_C03_RECENT_ALL_UPGRADE = MESSAGE_STARTID + 3;
 	public static final int MESSAGE_C04_AGE_LIMIT_CHANGE = MESSAGE_STARTID + 4;
 	public static final int MESSAGE_C05_AUTO_NEXT_CHANGE = MESSAGE_STARTID + 5;
@@ -114,6 +114,7 @@ public class ISQMSManager {
 		mLock = new Object();
 		mReceiveEventList = new ArrayList<ISQMSReceiveEvent>();
 		mReceiveEventThread = new ReceiveEventThread();
+		mReceiveEventThread.start();
 
 		// Common data init
 		mISQMSCommon = new ISQMSCommon();
@@ -170,7 +171,7 @@ public class ISQMSManager {
 		 */
 		@Override
 		public void onRecvEvent(String event_id, String data) throws RemoteException {
-			logDebug(IAgentServiceToUIApp.class.getSimpleName(), "onRecvEvent() event_id = " + event_id + " data = " + data);
+			logDebug(IAgentServiceToUIApp.class.getSimpleName(), "onRecvEvent() event_id = " + event_id + ", data = " + data);
 			recv_event(event_id, data);
 		}
 	};
@@ -306,11 +307,13 @@ public class ISQMSManager {
 		return 0;
 	}
 
-	private Handler mLockWakeHandler = new Handler(new Callback() {
+	public Handler mLockWakeHandler = new Handler(new Callback() {
 		@Override
 		public boolean handleMessage(Message msg) {
 			logInfo(LOGD, "mLockWakeHandler.handleMessage() called.");
-			mLock.notifyAll();
+			synchronized (mLock) {
+				mLock.notifyAll();
+			}
 			return false;
 		}
 	});
@@ -372,7 +375,7 @@ public class ISQMSManager {
 	}
 
 	public void recv_event(String event_id, String data) {
-		logInfo(LOGD, "onRecvEvent() called. event_id = " + event_id + "data = " + data);
+		logInfo(LOGD, "recv_event() called. event_id = " + event_id + ", data = " + data);
 		if (null == event_id || event_id.length() <= 0) {
 			return;
 		}

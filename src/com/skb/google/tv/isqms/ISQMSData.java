@@ -1,6 +1,6 @@
 package com.skb.google.tv.isqms;
 
-public class IsQMSData {
+public class ISQMSData {
 	public static final boolean DEBUG = true;
 
 	public static final String ISQMS_STRING_STB_VER = "3.0";

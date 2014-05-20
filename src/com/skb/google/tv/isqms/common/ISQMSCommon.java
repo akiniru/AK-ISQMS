@@ -1,6 +1,6 @@
 package com.skb.google.tv.isqms.common;
 
-public class IsQMSCommon {
+public class ISQMSCommon {
 	public String EVENT_ID;
 	public String EVENT_TS;
 	public String STB_VER;

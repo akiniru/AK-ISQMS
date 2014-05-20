@@ -1,6 +1,6 @@
 package com.skb.google.tv.isqms;
 
-public class IsQMSEnumData {
+public class ISQMSEnumData {
 	public static String PREFIX_SCV_MODE = "SCV_MODE_";
 	public static String PREFIX_DISPLAY_MODE = "MODE_";
 	public static String PREFIX_TV_RATE_MODE = "MODE_";

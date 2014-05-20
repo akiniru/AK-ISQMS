@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.skb.google.tv.common.util.LogUtil;
-import com.skb.google.tv.isqms.IsQMSManager;
+import com.skb.google.tv.isqms.ISQMSManager;
 
 public class MainActivity extends Activity {
-	private IsQMSManager mIsQMSManager;
+	private ISQMSManager mIsQMSManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 
 		LogUtil.initLogger(Log.DEBUG, false);
 
-		mIsQMSManager = IsQMSManager.getInstance();
+		mIsQMSManager = ISQMSManager.getInstance();
 		mIsQMSManager.bindingISQMSAgent(getApplicationContext());
 	}
 

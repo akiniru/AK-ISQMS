@@ -1,11 +1,11 @@
 package com.skb.google.tv.isqms;
 
-import com.skb.google.tv.isqms.IsQMSEnumData.eAGE_LIMIT_TYPE;
-import com.skb.google.tv.isqms.IsQMSEnumData.eDISPLAY_MODE;
-import com.skb.google.tv.isqms.IsQMSEnumData.eTV_RATE_MODE;
-import com.skb.google.tv.isqms.IsQMSEnumData.eVIDEO_RATE_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eAGE_LIMIT_TYPE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eDISPLAY_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eTV_RATE_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eVIDEO_RATE_MODE;
 
-public interface IsQMSListener {
+public interface ISQMSListener {
 	/**
 	 * <pre>
 	 * EVENT_ID : C03

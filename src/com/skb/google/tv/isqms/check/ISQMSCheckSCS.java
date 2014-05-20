@@ -1,6 +1,6 @@
 package com.skb.google.tv.isqms.check;
 
-public class IsQMSCheckSCS {
+public class ISQMSCheckSCS {
 	/** SCS */
 	public String SCS_C_SCS_IP;
 	public String SCS_C_SCS_ECODE;

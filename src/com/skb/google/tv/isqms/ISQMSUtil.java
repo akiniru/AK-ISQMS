@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class IsQMSUtil {
+public class ISQMSUtil {
 	/** 날짜 변환 **/
 	public static String toDateFormat(String format, Date date) {
 		if (date == null) {

@@ -11,64 +11,43 @@ import android.os.Message;
 import android.os.RemoteException;
 
 import com.skb.google.tv.common.util.LogUtil;
-import com.skb.google.tv.isqms.IsQMSEnumData.eAGE_LIMIT_TYPE;
-import com.skb.google.tv.isqms.IsQMSEnumData.eDISPLAY_MODE;
-import com.skb.google.tv.isqms.IsQMSEnumData.eTV_RATE_MODE;
-import com.skb.google.tv.isqms.IsQMSEnumData.eUPG_UPGRADE;
-import com.skb.google.tv.isqms.IsQMSEnumData.eVIDEO_RATE_MODE;
-import com.skb.google.tv.isqms.IsQMSListener.OnAdMetaFileDownloadListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnAdultAuthChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnAgeLimitChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnAutoNextChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnChildLimitPasswordChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnChildLimitTimeChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnLgsNormalAccessListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnRebootListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnRecentAllUpgradeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnResolutionChangeListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnScsNormalAccessListener;
-import com.skb.google.tv.isqms.IsQMSListener.OnStbPasswordChangeListener;
-import com.skb.google.tv.isqms.check.IsQMSCheckIPTV1;
-import com.skb.google.tv.isqms.check.IsQMSCheckIPTV2;
-import com.skb.google.tv.isqms.check.IsQMSCheckLGS;
-import com.skb.google.tv.isqms.check.IsQMSCheckNet;
-import com.skb.google.tv.isqms.check.IsQMSCheckSCS;
-import com.skb.google.tv.isqms.check.IsQMSCheckSVC;
-import com.skb.google.tv.isqms.check.IsQMSCheckUPG;
-import com.skb.google.tv.isqms.check.IsQMSCheckVOD1;
-import com.skb.google.tv.isqms.check.IsQMSCheckVOD3;
-import com.skb.google.tv.isqms.check.IsQMSCheckVOD4;
-import com.skb.google.tv.isqms.check.IsQMSCheckWSCS;
-import com.skb.google.tv.isqms.common.IsQMSCommon;
-import com.skb.google.tv.isqms.status.IsQMSStatusConf;
-import com.skb.google.tv.isqms.status.IsQMSStatusNet;
-import com.skb.google.tv.isqms.status.IsQMSStatusXPG2;
+import com.skb.google.tv.isqms.ISQMSEnumData.eAGE_LIMIT_TYPE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eDISPLAY_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eTV_RATE_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eUPG_UPGRADE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eVIDEO_RATE_MODE;
+import com.skb.google.tv.isqms.ISQMSListener.OnAdMetaFileDownloadListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnAdultAuthChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnAgeLimitChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnAutoNextChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnChildLimitPasswordChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnChildLimitTimeChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnLgsNormalAccessListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnRebootListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnRecentAllUpgradeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnResolutionChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnScsNormalAccessListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnStbPasswordChangeListener;
+import com.skb.google.tv.isqms.check.ISQMSCheckIPTV1;
+import com.skb.google.tv.isqms.check.ISQMSCheckIPTV2;
+import com.skb.google.tv.isqms.check.ISQMSCheckLGS;
+import com.skb.google.tv.isqms.check.ISQMSCheckNet;
+import com.skb.google.tv.isqms.check.ISQMSCheckSCS;
+import com.skb.google.tv.isqms.check.ISQMSCheckSVC;
+import com.skb.google.tv.isqms.check.ISQMSCheckUPG;
+import com.skb.google.tv.isqms.check.ISQMSCheckVOD1;
+import com.skb.google.tv.isqms.check.ISQMSCheckVOD3;
+import com.skb.google.tv.isqms.check.ISQMSCheckVOD4;
+import com.skb.google.tv.isqms.check.ISQMSCheckWSCS;
+import com.skb.google.tv.isqms.common.ISQMSCommon;
+import com.skb.google.tv.isqms.status.ISQMSStatusConf;
+import com.skb.google.tv.isqms.status.ISQMSStatusNet;
+import com.skb.google.tv.isqms.status.ISQMSStatusXPG2;
 import com.skb.isqms.IAgentServiceToUIApp;
 import com.skb.isqms.IUIAppToAgentService;
 
-public class IsQMSManager {
-	private static final String LOGD = IsQMSManager.class.getSimpleName();
-
-	private static IsQMSManager mIsQMSManager;
-
-	private Context mContext;
-	private IUIAppToAgentService mBinder;
-
-	/** Listener */
-	// public static enum eLISTENER_TYPE {
-	// C03_RECENT_ALL_UPGRADE, //
-	// C04_AGE_LIMIT_CHANGE, //
-	// C05_AUTO_NEXT_CHANGE, //
-	// C06_ADMETA_FILE_DOWNLOAD, //
-	// C07_REBOOT, //
-	// C09_RESOLUTION_CHANGE, //
-	// C14_STB_PASSWORD_CHANGE, //
-	// C15_CHILDLIMIT_PASSWORD_CHANGE, //
-	// C17_CHILDLIMIT_TIME_CHANGE, //
-	// C18_ADULT_AUTH_CHANGE, //
-	// C94_LGS_NORMAL_ACCESS //
-	// C95_SCS_NORMAL_ACCESS, //
-	// }
+public class ISQMSManager {
+	private static final String LOGD = ISQMSManager.class.getSimpleName();
 
 	private static final int MESSAGE_STARTID = 11000;
 	public static final int MESSAGE_C03_RECENT_ALL_UPGRADE = MESSAGE_STARTID + 3;
@@ -84,6 +63,14 @@ public class IsQMSManager {
 	public static final int MESSAGE_C94_LGS_NORMAL_ACCESS = MESSAGE_STARTID + 94;
 	public static final int MESSAGE_C95_SCS_NORMAL_ACCESS = MESSAGE_STARTID + 95;
 
+	private static ISQMSManager mIsQMSManager;
+
+	private Object mLock;
+	// private ArrayList<KeyEventBundle> mKeyEventList;
+
+	private Context mContext;
+	private IUIAppToAgentService mBinder;
+
 	private OnRecentAllUpgradeListener mRecentAllUpgradeListener;
 	private OnAgeLimitChangeListener mAgeLimitChangeListener;
 	private OnAutoNextChangeListener mAutoNextChangeListener;
@@ -98,69 +85,71 @@ public class IsQMSManager {
 	private OnLgsNormalAccessListener mLgsNormalAccessListener;
 
 	/** COMMON DATA */
-	private IsQMSCommon mIsQMSCommon;
+	private ISQMSCommon mIsQMSCommon;
 
 	/** CURRENT STATUS DATA */
-	private IsQMSStatusNet mIsQMSStatusNet;
-	private IsQMSStatusConf mIsQMSStatusConf;
-	private IsQMSStatusXPG2 mIsQMSStatusXPG2;
+	private ISQMSStatusNet mIsQMSStatusNet;
+	private ISQMSStatusConf mIsQMSStatusConf;
+	private ISQMSStatusXPG2 mIsQMSStatusXPG2;
 	// private IsQMSStatusBbrate mIsQMSStatusBbrate; // 미사용
 
 	/** CHECK RESULT DATA */
-	private IsQMSCheckUPG mIsQMSCheckUPG;
-	private IsQMSCheckSVC mIsQMSCheckSVC;
-	private IsQMSCheckVOD1 mIsQMSCheckVOD1;
-	private IsQMSCheckVOD3 mIsQMSCheckVOD3;
-	private IsQMSCheckVOD4 mIsQMSCheckVOD4;
-	private IsQMSCheckIPTV1 mIsQMSCheckIPTV1;
-	private IsQMSCheckIPTV2 mIsQMSCheckIPTV2;
-	private IsQMSCheckSCS mIsQMSCheckSCS;
-	private IsQMSCheckLGS mIsQMSCheckLGS;
-	private IsQMSCheckNet mIsQMSCheckNet;
-	private IsQMSCheckWSCS mIsQMSCheckWSCS;
+	private ISQMSCheckUPG mIsQMSCheckUPG;
+	private ISQMSCheckSVC mIsQMSCheckSVC;
+	private ISQMSCheckVOD1 mIsQMSCheckVOD1;
+	private ISQMSCheckVOD3 mIsQMSCheckVOD3;
+	private ISQMSCheckVOD4 mIsQMSCheckVOD4;
+	private ISQMSCheckIPTV1 mIsQMSCheckIPTV1;
+	private ISQMSCheckIPTV2 mIsQMSCheckIPTV2;
+	private ISQMSCheckSCS mIsQMSCheckSCS;
+	private ISQMSCheckLGS mIsQMSCheckLGS;
+	private ISQMSCheckNet mIsQMSCheckNet;
+	private ISQMSCheckWSCS mIsQMSCheckWSCS;
 
-	private IsQMSManager() {
+	private ISQMSManager() {
+		mLock = new Object();
+
 		// Common data init
-		mIsQMSCommon = new IsQMSCommon();
+		mIsQMSCommon = new ISQMSCommon();
 
 		// Current Status data init
-		mIsQMSStatusNet = new IsQMSStatusNet();
-		mIsQMSStatusConf = new IsQMSStatusConf();
-		mIsQMSStatusXPG2 = new IsQMSStatusXPG2();
+		mIsQMSStatusNet = new ISQMSStatusNet();
+		mIsQMSStatusConf = new ISQMSStatusConf();
+		mIsQMSStatusXPG2 = new ISQMSStatusXPG2();
 		// mIsQMSStatusBbrate = new IsQMSStatusBbrate();
 
 		// Check Result data init
-		mIsQMSCheckUPG = new IsQMSCheckUPG();
-		mIsQMSCheckSVC = new IsQMSCheckSVC();
-		mIsQMSCheckVOD1 = new IsQMSCheckVOD1();
-		mIsQMSCheckVOD3 = new IsQMSCheckVOD3();
-		mIsQMSCheckVOD4 = new IsQMSCheckVOD4();
-		mIsQMSCheckIPTV1 = new IsQMSCheckIPTV1();
-		mIsQMSCheckIPTV2 = new IsQMSCheckIPTV2();
-		mIsQMSCheckSCS = new IsQMSCheckSCS();
-		mIsQMSCheckLGS = new IsQMSCheckLGS();
-		mIsQMSCheckNet = new IsQMSCheckNet();
-		mIsQMSCheckWSCS = new IsQMSCheckWSCS();
+		mIsQMSCheckUPG = new ISQMSCheckUPG();
+		mIsQMSCheckSVC = new ISQMSCheckSVC();
+		mIsQMSCheckVOD1 = new ISQMSCheckVOD1();
+		mIsQMSCheckVOD3 = new ISQMSCheckVOD3();
+		mIsQMSCheckVOD4 = new ISQMSCheckVOD4();
+		mIsQMSCheckIPTV1 = new ISQMSCheckIPTV1();
+		mIsQMSCheckIPTV2 = new ISQMSCheckIPTV2();
+		mIsQMSCheckSCS = new ISQMSCheckSCS();
+		mIsQMSCheckLGS = new ISQMSCheckLGS();
+		mIsQMSCheckNet = new ISQMSCheckNet();
+		mIsQMSCheckWSCS = new ISQMSCheckWSCS();
 
 		mBinder = null;
 	}
 
-	public static IsQMSManager getInstance() {
+	public static ISQMSManager getInstance() {
 		if (null == mIsQMSManager) {
-			mIsQMSManager = new IsQMSManager();
+			mIsQMSManager = new ISQMSManager();
 		}
 
 		return mIsQMSManager;
 	}
 
 	private void logDebug(String tag, String msg) {
-		if (IsQMSData.DEBUG) {
+		if (ISQMSData.DEBUG) {
 			LogUtil.debug(tag, msg);
 		}
 	}
 
 	private void logInfo(String tag, String msg) {
-		if (IsQMSData.DEBUG) {
+		if (ISQMSData.DEBUG) {
 			LogUtil.info(tag, msg);
 		}
 	}
@@ -233,23 +222,23 @@ public class IsQMSManager {
 		int nRet = start_agent();
 		logDebug(LOGD, "onBindedISQMSAgent() start_agent ret = " + Integer.toString(nRet));
 
-		if (nRet == IsQMSData.ISQMS_SUCCESS) {
+		if (nRet == ISQMSData.ISQMS_SUCCESS) {
 			logDebug(LOGD, "onBindedISQMSAgent() send_data start.");
 
 			// String pTemp = ";1.0;{EEDD354B-2B4C-11E3-AA84-C500C85E324C};78abbb7f806b;3.2.56-0024;100527102151;100527102152;100527102153;SMT_E5030;1;001;ITV";
-			send_data(IsQMSData.COMMON, 0, getDataCommon());
+			send_data(ISQMSData.COMMON, 0, getDataCommon());
 
 			// pTemp = ";0;1;192.168.0.1;255.255.255.0;192.168.0.1;168.126.0.1;168.126.0.2";
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_NET, getDataStatusNet());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, getDataStatusNet());
 
 			// pTemp = ";1080i;16:9;ORG;1;18;00;1";
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, getDataStatusConf());
 
 			// pTemp = ";100610140920;100504235913;100614202529;100617104141;100616052242;100609112111;100325102000";
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_XPG_2, getDataStatusXPG2());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, getDataStatusXPG2());
 
 			// pTemp = ";3";
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_BBRATE, getDataStatusBbrate());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, getDataStatusBbrate());
 		}
 	}
 
@@ -329,24 +318,24 @@ public class IsQMSManager {
 		 */
 
 		String CtrlSeq = null;
-		if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C02)) {
+		if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C02)) {
 			// STB 인증 여부 처리
-			send_data(IsQMSData.COMMON, 0, getDataCommon());
+			send_data(ISQMSData.COMMON, 0, getDataCommon());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C03)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C03)) {
 			// STB 전체 최신 Upgrade
 			// 업그래이드 완료후 -> COMMON, STATUS_ALLF 업데이트 수행-> C02
 			// 전부다 전달해줄 필요 없이 아래 함수들중에서 바뀐 부분들이 있는것들만 내려주면됨
 			// 최신 Upgrade후 재부팅이면 전달할 필요없음.
 
 			// ";S;0;201405161457580030"
-			send_data(IsQMSData.COMMON, 0, getDataCommon());
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_NET, getDataStatusNet());
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_XPG_2, getDataStatusXPG2());
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_BBRATE, getDataStatusBbrate());
+			send_data(ISQMSData.COMMON, 0, getDataCommon());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, getDataStatusNet());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, getDataStatusConf());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, getDataStatusXPG2());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, getDataStatusBbrate());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C04)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C04)) {
 			// 604 STB 연령등급(시청제한나이) 조정
 			// 등급 조정 완료 -> STATUS_CONF 업데이트 -> C04 전달
 			// ";7;201405161536220046"
@@ -354,22 +343,22 @@ public class IsQMSManager {
 			// ";15;201405161536220046"
 			// ";19;201405161536220046"
 			// ";00;201405161537090047"
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, getDataStatusConf());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C05)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C05)) {
 			// STB 연속재생 여부 조정
 			// 등급 조정 완료 -> STATUS_CONF 업데이트 -> C05 전달
 			// ";0;201405161538390052" => 연속 설정 안함
 			// ";1;201405161538390052" => 연속 설정
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, getDataStatusConf());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C06)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C06)) {
 			// STB 광고 메타파일 재 Download
 			// 다운로드 완료 -> COMMON, STATUS_ALL중에서 변경된정보 업데이트 -> C06 전달
 			// ";201405161538390052"
 
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C07)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C07)) {
 			// STB Reboot
 			// ";201405161538390052"
 			requestListener(MESSAGE_C07_REBOOT);
@@ -377,41 +366,41 @@ public class IsQMSManager {
 			// STB HDD최적화 실행
 			// 리부팅 이면 데이터/이벤트 전달 하지 않아도됨
 			// ";201405161538390052"
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C09)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C09)) {
 			// STB 해상도 변경
 			// 리부팅 이면 데이터/이벤트 전달 하지 않아도됨
 			// 해상도 변경후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";480i;ORG;4/3;201405161541540061"
 
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C14)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C14)) {
 			// STB비밀번호재설정
 			// 번호 재설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";3333;201405161542280062"
 
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C15)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C15)) {
 			// 성인 비밀번호재설정
 			// 번호설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";3333;201405161542280062"
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C17)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C17)) {
 			// 자녀시청 제한 시간 설정
 			// 시간설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";00;201405161544020066" => 설정 안함
 			// ";05;201405161543390065"
 
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C18)) {
+		} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C18)) {
 			// 성인 메뉴 표시 여부
 			// 사용여부 설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";0;201405161546330068"
 			// ";1;201405161546330068"
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
+			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
 		}
 		// else if (event_id == IsQMSData.EVENT_C77) {
@@ -697,7 +686,7 @@ public class IsQMSManager {
 	 * @return EVENT_TS
 	 */
 	private String getEventTS() {
-		String eventTS = IsQMSUtil.toDateFormat("YYMMDDhhmmss", new Date());
+		String eventTS = ISQMSUtil.toDateFormat("YYMMDDhhmmss", new Date());
 		return eventTS;
 	}
 
@@ -838,14 +827,14 @@ public class IsQMSManager {
 	 * 3자리의 상태 코드 값
 	 * </pre>
 	 */
-	public void setSVCMode(IsQMSEnumData.eSCV_MODE scv_MODE) {
+	public void setSVCMode(ISQMSEnumData.eSCV_MODE scv_MODE) {
 		logDebug(LOGD, "setSVCMode() called. scv_MODE : " + scv_MODE);
 		if (null == scv_MODE) {
 			return;
 		}
 
 		String scvModeName = scv_MODE.name();
-		scvModeName = scvModeName.replace(IsQMSEnumData.PREFIX_SCV_MODE, "");
+		scvModeName = scvModeName.replace(ISQMSEnumData.PREFIX_SCV_MODE, "");
 		mIsQMSCommon.STB_SVC_MODE = scvModeName;
 	}
 
@@ -865,9 +854,9 @@ public class IsQMSManager {
 	public void setNetDhcpMode(boolean isDhcpMode) {
 		logDebug(LOGD, "setNetDhcpMode() called. isDhcpMode : " + isDhcpMode);
 		if (true == isDhcpMode) {
-			mIsQMSStatusNet.S_NET_DHCP_MODE = IsQMSData.RESULT_TRUE;
+			mIsQMSStatusNet.S_NET_DHCP_MODE = ISQMSData.RESULT_TRUE;
 		} else {
-			mIsQMSStatusNet.S_NET_DHCP_MODE = IsQMSData.RESULT_FALSE;
+			mIsQMSStatusNet.S_NET_DHCP_MODE = ISQMSData.RESULT_FALSE;
 		}
 		mIsQMSCheckNet.S_NET_DHCP_MODE = mIsQMSStatusNet.S_NET_DHCP_MODE;
 	}
@@ -966,7 +955,7 @@ public class IsQMSManager {
 			return;
 		}
 
-		String displayMode = display_MODE.name().replace(IsQMSEnumData.PREFIX_DISPLAY_MODE, "");
+		String displayMode = display_MODE.name().replace(ISQMSEnumData.PREFIX_DISPLAY_MODE, "");
 		mIsQMSStatusConf.STB_SCR_RESOLUTION = displayMode;
 	}
 
@@ -986,7 +975,7 @@ public class IsQMSManager {
 			return;
 		}
 
-		String rateMode = tv_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_TV_RATE_MODE, "");
+		String rateMode = tv_RATE_MODE.name().replace(ISQMSEnumData.PREFIX_TV_RATE_MODE, "");
 		mIsQMSStatusConf.STB_SCR_TV = rateMode;
 	}
 
@@ -1006,7 +995,7 @@ public class IsQMSManager {
 			return;
 		}
 
-		String videoRateMode = video_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_VIDEO_RATE_MODE, "");
+		String videoRateMode = video_RATE_MODE.name().replace(ISQMSEnumData.PREFIX_VIDEO_RATE_MODE, "");
 		mIsQMSStatusConf.STB_SCR_VIDEO = videoRateMode;
 	}
 
@@ -1023,9 +1012,9 @@ public class IsQMSManager {
 	public void setAllowStbAdult(boolean isAllowSTBAdult) {
 		logDebug(LOGD, "setAllowStbAdult() called. isAllowSTBAdult : " + isAllowSTBAdult);
 		if (true == isAllowSTBAdult) {
-			mIsQMSStatusConf.STB_ADULT = IsQMSData.RESULT_TRUE;
+			mIsQMSStatusConf.STB_ADULT = ISQMSData.RESULT_TRUE;
 		} else {
-			mIsQMSStatusConf.STB_ADULT = IsQMSData.RESULT_FALSE;
+			mIsQMSStatusConf.STB_ADULT = ISQMSData.RESULT_FALSE;
 		}
 	}
 
@@ -1046,7 +1035,7 @@ public class IsQMSManager {
 			return;
 		}
 
-		String ageLimitType = age_LIMIT_TYPE.name().replace(IsQMSEnumData.PREFIX_AGE_LIMIT_TYPE, "");
+		String ageLimitType = age_LIMIT_TYPE.name().replace(ISQMSEnumData.PREFIX_AGE_LIMIT_TYPE, "");
 		mIsQMSStatusConf.STB_AGE_LIMIT = ageLimitType;
 	}
 
@@ -1079,9 +1068,9 @@ public class IsQMSManager {
 	public void setAutoNext(boolean isAutoNext) {
 		logDebug(LOGD, "setAutoNext() called. isAutoNext : " + isAutoNext);
 		if (true == isAutoNext) {
-			mIsQMSStatusConf.STB_AUTONEXT = IsQMSData.RESULT_TRUE;
+			mIsQMSStatusConf.STB_AUTONEXT = ISQMSData.RESULT_TRUE;
 		} else {
-			mIsQMSStatusConf.STB_AUTONEXT = IsQMSData.RESULT_FALSE;
+			mIsQMSStatusConf.STB_AUTONEXT = ISQMSData.RESULT_FALSE;
 		}
 	}
 
@@ -1124,13 +1113,13 @@ public class IsQMSManager {
 		String upgSwUpgrade = null;
 		switch (upg_UPGRADE) {
 			case MODE_START:
-				upgSwUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_START;
+				upgSwUpgrade = ISQMSData.ISQMS_STRING_UPG_UPGRADE_START;
 				break;
 			case MODE_SUCCESS:
-				upgSwUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_SUCCESS;
+				upgSwUpgrade = ISQMSData.ISQMS_STRING_UPG_UPGRADE_SUCCESS;
 				break;
 			case MODE_FAIL:
-				upgSwUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_FAIL;
+				upgSwUpgrade = ISQMSData.ISQMS_STRING_UPG_UPGRADE_FAIL;
 				break;
 			default:
 				return;
@@ -1157,13 +1146,13 @@ public class IsQMSManager {
 		String upgChannelUpgrade = null;
 		switch (upg_UPGRADE) {
 			case MODE_START:
-				upgChannelUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_START;
+				upgChannelUpgrade = ISQMSData.ISQMS_STRING_UPG_UPGRADE_START;
 				break;
 			case MODE_SUCCESS:
-				upgChannelUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_SUCCESS;
+				upgChannelUpgrade = ISQMSData.ISQMS_STRING_UPG_UPGRADE_SUCCESS;
 				break;
 			case MODE_FAIL:
-				upgChannelUpgrade = IsQMSData.ISQMS_STRING_UPG_UPGRADE_FAIL;
+				upgChannelUpgrade = ISQMSData.ISQMS_STRING_UPG_UPGRADE_FAIL;
 				break;
 			default:
 				return;
@@ -1551,8 +1540,8 @@ public class IsQMSManager {
 				break;
 			case MESSAGE_C09_RESOLUTION_CHANGE:
 				if (null != mResolutionChangeListener) {
-					if (null != data && true == (data instanceof IsQMSMessage)) {
-						IsQMSMessage message = (IsQMSMessage) data;
+					if (null != data && true == (data instanceof ISQMSMessage)) {
+						ISQMSMessage message = (ISQMSMessage) data;
 						if (null != message.obj1 && null != message.obj2 && null != message.obj3 && //
 								true == (message.obj1 instanceof eDISPLAY_MODE && true == (message.obj2 instanceof eVIDEO_RATE_MODE) && true == (message.obj3 instanceof eTV_RATE_MODE))) {
 							eDISPLAY_MODE display_MODE = (eDISPLAY_MODE) message.obj1;
@@ -1643,22 +1632,22 @@ public class IsQMSManager {
 		String CtrlSeq = (String) msg.obj;
 		switch (msg.what) {
 			case MESSAGE_C03_RECENT_ALL_UPGRADE:
-				send_data(IsQMSData.COMMON, 0, getDataCommon());
-				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_NET, getDataStatusNet());
-				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
-				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_XPG_2, getDataStatusXPG2());
-				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_BBRATE, getDataStatusBbrate());
-				send_event(IsQMSData.EVENT_C03, CtrlSeq);
+				send_data(ISQMSData.COMMON, 0, getDataCommon());
+				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, getDataStatusNet());
+				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, getDataStatusConf());
+				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, getDataStatusXPG2());
+				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, getDataStatusBbrate());
+				send_event(ISQMSData.EVENT_C03, CtrlSeq);
 				break;
 
 			case MESSAGE_C04_AGE_LIMIT_CHANGE:
-				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
-				send_event(IsQMSData.EVENT_C04, CtrlSeq);
+				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, getDataStatusConf());
+				send_event(ISQMSData.EVENT_C04, CtrlSeq);
 				break;
 
 			case MESSAGE_C05_AUTO_NEXT_CHANGE:
-				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
-				send_event(IsQMSData.EVENT_C05, CtrlSeq);
+				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, getDataStatusConf());
+				send_event(ISQMSData.EVENT_C05, CtrlSeq);
 				break;
 
 			case MESSAGE_C06_ADMETA_FILE_DOWNLOAD:

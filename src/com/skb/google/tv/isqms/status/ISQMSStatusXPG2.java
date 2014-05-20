@@ -1,6 +1,6 @@
 package com.skb.google.tv.isqms.status;
 
-public class IsQMSStatusXPG2 {
+public class ISQMSStatusXPG2 {
 	/** XPG_2 */
 	public String XPG_FULL;
 	// public String XPG_CONTENT; // 미사용

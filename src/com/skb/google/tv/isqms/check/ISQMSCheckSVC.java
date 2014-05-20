@@ -1,6 +1,6 @@
 package com.skb.google.tv.isqms.check;
 
-public class IsQMSCheckSVC {
+public class ISQMSCheckSVC {
 	/** SVC */
 	public String SVC_C_VOD_CID;
 	public String SVC_C_VOD_AID;

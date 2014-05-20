@@ -114,7 +114,7 @@ public class ISQMSData {
 			// EVENT_C10 = "C10", // IPTV 채널 Retune
 			// EVENT_C11 = "C11", // CPU사용율 임계 치 설정
 			// EVENT_C12 = "C12", // DISK사용율 임계 치 설정
-			EVENT_C13 = "C13", // Process감시 List설정 처리
+			// EVENT_C13 = "C13", // Process감시 List설정 처리
 			EVENT_C14 = "C14", // STB비밀번호재설정
 			EVENT_C15 = "C15", // 성인 비밀번호재설정
 			// EVENT_C16 = "C16", // MEM사용율 임계 치 설정 처리

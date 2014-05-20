@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.IBinder;
@@ -71,6 +72,7 @@ public class ISQMSManager {
 	private Object mLock;
 	private ArrayList<ISQMSReceiveEvent> mReceiveEventList;
 	private ReceiveEventThread mReceiveEventThread;
+	private CountDownTimer mH01CountDownTimer;
 
 	private Context mContext;
 	private IUIAppToAgentService mBinder;
@@ -137,6 +139,25 @@ public class ISQMSManager {
 		mISQMSCheckLGS = new ISQMSCheckLGS();
 		mISQMSCheckNet = new ISQMSCheckNet();
 		mISQMSCheckWSCS = new ISQMSCheckWSCS();
+
+		mH01CountDownTimer = new CountDownTimer(10 * 60 * 1000, 1000) {
+			@Override
+			public void onTick(long millisUntilFinished) {
+			}
+
+			@Override
+			public void onFinish() {
+				// 메시지 내용 : COMMON, STATUS_ALL
+				agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_OPEN);
+				agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
+				agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_CLOSE);
+			}
+		};
+		mH01CountDownTimer.start();
 
 		mBinder = null;
 	}
@@ -217,6 +238,8 @@ public class ISQMSManager {
 
 	public void unbindingISQMSAgent() {
 		logInfo(LOGD, "unbindingISQMSAgent() called");
+		mH01CountDownTimer.cancel();
+
 		if (mBinder != null) {
 			mContext.unbindService(mConnection);
 			mBinder = null;
@@ -226,38 +249,38 @@ public class ISQMSManager {
 
 	private void onBindedISQMSAgent() {
 		logInfo(LOGD, "onBindedISQMSAgent() called.");
-		int nRet = start_agent();
-		logDebug(LOGD, "onBindedISQMSAgent() start_agent ret = " + Integer.toString(nRet));
+		int nRet = agent_start();
+		logDebug(LOGD, "onBindedISQMSAgent() agent_start ret = " + Integer.toString(nRet));
 
 		if (nRet == ISQMSData.ISQMS_SUCCESS) {
 			logDebug(LOGD, "onBindedISQMSAgent() send_data start.");
 
 			// String pTemp = ";1.0;{EEDD354B-2B4C-11E3-AA84-C500C85E324C};78abbb7f806b;3.2.56-0024;100527102151;100527102152;100527102153;SMT_E5030;1;001;ITV";
-			send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+			agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
 
 			// pTemp = ";0;1;192.168.0.1;255.255.255.0;192.168.0.1;168.126.0.1;168.126.0.2";
-			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
+			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
 
 			// pTemp = ";1080i;16:9;ORG;1;18;00;1";
-			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
 
 			// pTemp = ";100610140920;100504235913;100614202529;100617104141;100616052242;100609112111;100325102000";
-			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
 
 			// pTemp = ";3";
-			send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
+			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
 		}
 	}
 
-	private int start_agent() {
-		logInfo(LOGD, "start_agent() called");
+	private int agent_start() {
+		logInfo(LOGD, "agent_start() called");
 		if (mBinder != null) {
 			try {
 				int nRet = -1;
 				if ((nRet = mBinder.start_agent()) >= 0) {
 					// no handle
 				}
-				logDebug(LOGD, "start_agent() start_agent result : " + nRet);
+				logDebug(LOGD, "agent_start() start_agent result : " + nRet);
 				return nRet;
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -269,9 +292,9 @@ public class ISQMSManager {
 		return 0;
 	}
 
-	public int send_data(int category_id, int sub_category_id, String data) {
-		logInfo(LOGD, "send_data() called.");
-		logDebug(LOGD, "send_data() category_id : " + category_id + ", sub_category_id : " + sub_category_id + ", data : " + data);
+	private int agent_send_data(int category_id, int sub_category_id, String data) {
+		logInfo(LOGD, "agent_send_data() called.");
+		logDebug(LOGD, "agent_send_data() category_id : " + category_id + ", sub_category_id : " + sub_category_id + ", data : " + data);
 		if (mBinder != null) {
 			try {
 				int nRet;
@@ -288,9 +311,9 @@ public class ISQMSManager {
 		return 0;
 	}
 
-	public int send_event(String event_id, String status) {
-		logInfo(LOGD, "send_event() called.");
-		logDebug(LOGD, "send_event() event_id : " + event_id + ", status : " + status);
+	private int agent_send_event(String event_id, String status) {
+		logInfo(LOGD, "agent_send_event() called.");
+		logDebug(LOGD, "agent_send_event() event_id : " + event_id + ", status : " + status);
 		if (mBinder != null) {
 			try {
 				int nRet;
@@ -374,7 +397,7 @@ public class ISQMSManager {
 		}
 	}
 
-	public void recv_event(String event_id, String data) {
+	private void recv_event(String event_id, String data) {
 		logInfo(LOGD, "recv_event() called. event_id = " + event_id + ", data = " + data);
 		if (null == event_id || event_id.length() <= 0) {
 			return;
@@ -1350,22 +1373,22 @@ public class ISQMSManager {
 		String CtrlSeq = (String) msg.obj;
 		switch (msg.what) {
 			case MESSAGE_C03_RECENT_ALL_UPGRADE:
-				send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
-				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
-				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
-				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
-				send_event(ISQMSData.EVENT_C03, CtrlSeq);
+				agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
+				agent_send_event(ISQMSData.EVENT_C03, CtrlSeq);
 				break;
 
 			case MESSAGE_C04_AGE_LIMIT_CHANGE:
-				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
-				send_event(ISQMSData.EVENT_C04, CtrlSeq);
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+				agent_send_event(ISQMSData.EVENT_C04, CtrlSeq);
 				break;
 
 			case MESSAGE_C05_AUTO_NEXT_CHANGE:
-				send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
-				send_event(ISQMSData.EVENT_C05, CtrlSeq);
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+				agent_send_event(ISQMSData.EVENT_C05, CtrlSeq);
 				break;
 
 			case MESSAGE_C06_ADMETA_FILE_DOWNLOAD:

@@ -11,6 +11,9 @@ public class ISQMSData {
 	public static final String RESULT_TRUE = "1"; // RESULT_TRUE
 	public static final String RESULT_FALSE = "0"; // RESULT_FALSE
 
+	public static final String ISQMS_STRING_OPEN = "open";
+	public static final String ISQMS_STRING_CLOSE = "close";
+
 	public static final String ISQMS_STRING_UPG_UPGRADE_START = "000";
 	public static final String ISQMS_STRING_UPG_UPGRADE_SUCCESS = "100";
 	public static final String ISQMS_STRING_UPG_UPGRADE_FAIL = "9XX";

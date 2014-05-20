@@ -35,8 +35,8 @@ public class MainActivity extends Activity {
 		mIsQMSManager.bindingISQMSAgent(getApplicationContext());
 
 		// send_event
-		mIsQMSManager.recv_event(ISQMSData.EVENT_C05, null);
-		mIsQMSManager.recv_event(ISQMSData.EVENT_C07, null);
+		// mIsQMSManager.recv_event(ISQMSData.EVENT_C05, null);
+		// mIsQMSManager.recv_event(ISQMSData.EVENT_C07, null);
 	}
 
 	@Override

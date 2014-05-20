@@ -6,6 +6,7 @@ public class IsQMSEnumData {
 	public static String PREFIX_TV_RATE_MODE = "MODE_";
 	public static String PREFIX_VIDEO_RATE_MODE = "MODE_";
 	public static String PREFIX_AGE_LIMIT_TYPE = "AGE_";
+	public static String PREFIX_EVENT = "EVENT_";
 
 	// =========================================================================
 	// < DEFINITION Enumerate variables

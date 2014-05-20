@@ -1,4 +1,4 @@
-package com.skb.google.tv.isqms;
+package com.skb.google.tv.isqms.common;
 
 public class IsQMSCommon {
 	public String EVENT_ID;

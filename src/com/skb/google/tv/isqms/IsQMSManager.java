@@ -27,6 +27,21 @@ import com.skb.google.tv.isqms.IsQMSListener.OnRecentAllUpgradeListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnResolutionChangeListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnScsNormalAccessListener;
 import com.skb.google.tv.isqms.IsQMSListener.OnStbPasswordChangeListener;
+import com.skb.google.tv.isqms.check.IsQMSCheckIPTV1;
+import com.skb.google.tv.isqms.check.IsQMSCheckIPTV2;
+import com.skb.google.tv.isqms.check.IsQMSCheckLGS;
+import com.skb.google.tv.isqms.check.IsQMSCheckNet;
+import com.skb.google.tv.isqms.check.IsQMSCheckSCS;
+import com.skb.google.tv.isqms.check.IsQMSCheckSVC;
+import com.skb.google.tv.isqms.check.IsQMSCheckUPG;
+import com.skb.google.tv.isqms.check.IsQMSCheckVOD1;
+import com.skb.google.tv.isqms.check.IsQMSCheckVOD3;
+import com.skb.google.tv.isqms.check.IsQMSCheckVOD4;
+import com.skb.google.tv.isqms.check.IsQMSCheckWSCS;
+import com.skb.google.tv.isqms.common.IsQMSCommon;
+import com.skb.google.tv.isqms.status.IsQMSStatusConf;
+import com.skb.google.tv.isqms.status.IsQMSStatusNet;
+import com.skb.google.tv.isqms.status.IsQMSStatusXPG2;
 import com.skb.isqms.IAgentServiceToUIApp;
 import com.skb.isqms.IUIAppToAgentService;
 
@@ -67,15 +82,50 @@ public class IsQMSManager {
 	private OnScsNormalAccessListener mScsNormalAccessListener;
 	private OnLgsNormalAccessListener mLgsNormalAccessListener;
 
-	/** DATA */
+	/** COMMON DATA */
 	private IsQMSCommon mIsQMSCommon;
-	private IsQMSCurrentStatus mIsQMSCurrentStatus;
-	private IsQMSCheckResult mIsQMSCheckResult;
+
+	/** CURRENT STATUS DATA */
+	private IsQMSStatusNet mIsQMSStatusNet;
+	private IsQMSStatusConf mIsQMSStatusConf;
+	private IsQMSStatusXPG2 mIsQMSStatusXPG2;
+	// private IsQMSStatusBbrate mIsQMSStatusBbrate; // 미사용
+
+	/** CHECK RESULT DATA */
+	private IsQMSCheckUPG mIsQMSCheckUPG;
+	private IsQMSCheckSVC mIsQMSCheckSVC;
+	private IsQMSCheckVOD1 mIsQMSCheckVOD1;
+	private IsQMSCheckVOD3 mIsQMSCheckVOD3;
+	private IsQMSCheckVOD4 mIsQMSCheckVOD4;
+	private IsQMSCheckIPTV1 mIsQMSCheckIPTV1;
+	private IsQMSCheckIPTV2 mIsQMSCheckIPTV2;
+	private IsQMSCheckSCS mIsQMSCheckSCS;
+	private IsQMSCheckLGS mIsQMSCheckLGS;
+	private IsQMSCheckNet mIsQMSCheckNet;
+	private IsQMSCheckWSCS mIsQMSCheckWSCS;
 
 	private IsQMSManager() {
+		// Common data init
 		mIsQMSCommon = new IsQMSCommon();
-		mIsQMSCurrentStatus = new IsQMSCurrentStatus();
-		mIsQMSCheckResult = new IsQMSCheckResult();
+
+		// Current Status data init
+		mIsQMSStatusNet = new IsQMSStatusNet();
+		mIsQMSStatusConf = new IsQMSStatusConf();
+		mIsQMSStatusXPG2 = new IsQMSStatusXPG2();
+		// mIsQMSStatusBbrate = new IsQMSStatusBbrate();
+
+		// Check Result data init
+		mIsQMSCheckUPG = new IsQMSCheckUPG();
+		mIsQMSCheckSVC = new IsQMSCheckSVC();
+		mIsQMSCheckVOD1 = new IsQMSCheckVOD1();
+		mIsQMSCheckVOD3 = new IsQMSCheckVOD3();
+		mIsQMSCheckVOD4 = new IsQMSCheckVOD4();
+		mIsQMSCheckIPTV1 = new IsQMSCheckIPTV1();
+		mIsQMSCheckIPTV2 = new IsQMSCheckIPTV2();
+		mIsQMSCheckSCS = new IsQMSCheckSCS();
+		mIsQMSCheckLGS = new IsQMSCheckLGS();
+		mIsQMSCheckNet = new IsQMSCheckNet();
+		mIsQMSCheckWSCS = new IsQMSCheckWSCS();
 
 		mBinder = null;
 	}
@@ -248,6 +298,9 @@ public class IsQMSManager {
 
 	public void recv_event(String event_id, String data) {
 		logInfo(LOGD, "onRecvEvent() called. event_id = " + event_id + "data = " + data);
+		if (null == event_id || event_id.length() <= 0) {
+			return;
+		}
 
 		/**
 		 * <pre>
@@ -261,12 +314,11 @@ public class IsQMSManager {
 		 */
 
 		String CtrlSeq = null;
-
-		if (event_id == "C02") {
+		if (event_id == IsQMSData.EVENT_C02) {
 			// STB 인증 여부 처리
-			send_data(IsQMSData.COMMON, 0, "");
+			send_data(IsQMSData.COMMON, 0, getDataCommon());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C03") {
+		} else if (event_id == IsQMSData.EVENT_C03) {
 			// STB 전체 최신 Upgrade
 			// 업그래이드 완료후 -> COMMON, STATUS_ALLF 업데이트 수행-> C02
 			// 전부다 전달해줄 필요 없이 아래 함수들중에서 바뀐 부분들이 있는것들만 내려주면됨
@@ -274,14 +326,13 @@ public class IsQMSManager {
 
 			// ";S;0;201405161457580030"
 
-			send_data(IsQMSData.COMMON, 0, "");
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_NET, "");
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_XPG_2, "");
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_BBRATE, "");
+			send_data(IsQMSData.COMMON, 0, getDataCommon());
+			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_NET, getDataStatusNet());
+			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
+			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_XPG_2, getDataStatusXPG2());
+			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_BBRATE, getDataStatusBbrate());
 			send_event(event_id, CtrlSeq);
-
-		} else if (event_id == "C04") {
+		} else if (event_id == IsQMSData.EVENT_C04) {
 			// 604 STB 연령등급(시청제한나이) 조정
 			// 등급 조정 완료 -> STATUS_CONF 업데이트 -> C04 전달
 			// ";7;201405161536220046"
@@ -289,29 +340,29 @@ public class IsQMSManager {
 			// ";15;201405161536220046"
 			// ";19;201405161536220046"
 			// ";00;201405161537090047"
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
+			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C05") {
+		} else if (event_id == IsQMSData.EVENT_C05) {
 			// STB 연속재생 여부 조정
 			// 등급 조정 완료 -> STATUS_CONF 업데이트 -> C05 전달
 			// ";0;201405161538390052" => 연속 설정 안함
 			// ";1;201405161538390052" => 연속 설정
-			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
+			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C06") {
+		} else if (event_id == IsQMSData.EVENT_C06) {
 			// STB 광고 메타파일 재 Download
 			// 다운로드 완료 -> COMMON, STATUS_ALL중에서 변경된정보 업데이트 -> C06 전달
 			// ";201405161538390052"
 
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C07") {
+		} else if (event_id == IsQMSData.EVENT_C07) {
 			// STB Reboot
 			// ";201405161538390052"
-		} else if (event_id == "C08") {
+		} else if (event_id == IsQMSData.EVENT_C08) {
 			// STB HDD최적화 실행
 			// 리부팅 이면 데이터/이벤트 전달 하지 않아도됨
 			// ";201405161538390052"
-		} else if (event_id == "C09") {
+		} else if (event_id == IsQMSData.EVENT_C09) {
 			// STB 해상도 변경
 			// 리부팅 이면 데이터/이벤트 전달 하지 않아도됨
 			// 해상도 변경후 -> STATUS_CONF 업데이트 -> C09 전달
@@ -319,20 +370,20 @@ public class IsQMSManager {
 
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C14") {
+		} else if (event_id == IsQMSData.EVENT_C14) {
 			// STB비밀번호재설정
 			// 번호 재설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";3333;201405161542280062"
 
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C15") {
+		} else if (event_id == IsQMSData.EVENT_C15) {
 			// 성인 비밀번호재설정
 			// 번호설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";3333;201405161542280062"
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C17") {
+		} else if (event_id == IsQMSData.EVENT_C17) {
 			// 자녀시청 제한 시간 설정
 			// 시간설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";00;201405161544020066" => 설정 안함
@@ -340,16 +391,17 @@ public class IsQMSManager {
 
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C18") {
+		} else if (event_id == IsQMSData.EVENT_C18) {
 			// 성인 메뉴 표시 여부
 			// 사용여부 설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";0;201405161546330068"
 			// ";1;201405161546330068"
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == "C77") {
-			// 모든 제어 명령의 진행 강제 취소 요청
 		}
+		// else if (event_id == IsQMSData.EVENT_C77) {
+		// // 모든 제어 명령의 진행 강제 취소 요청
+		// }
 	}
 
 	// =========================================================================
@@ -426,38 +478,38 @@ public class IsQMSManager {
 
 		builder.append(";");
 		// /** S_NETWORK_MODE */
-		// if (null != mIsQMSCurrentStatus.S_NETWORK_MODE) {
-		// builder.append(mIsQMSCurrentStatus.S_NETWORK_MODE);
+		// if (null != mIsQMSCurrentStatusNet.S_NETWORK_MODE) {
+		// builder.append(mIsQMSCurrentStatusNet.S_NETWORK_MODE);
 		// }
 		builder.append(";");
 		/** S_NET_DHCP_MODE */
-		if (null != mIsQMSCurrentStatus.S_NET_DHCP_MODE) {
-			builder.append(mIsQMSCurrentStatus.S_NET_DHCP_MODE);
+		if (null != mIsQMSStatusNet.S_NET_DHCP_MODE) {
+			builder.append(mIsQMSStatusNet.S_NET_DHCP_MODE);
 		}
 		builder.append(";");
 		/** S_NET_IPADDR */
-		if (null != mIsQMSCurrentStatus.S_NET_IPADDR) {
-			builder.append(mIsQMSCurrentStatus.S_NET_IPADDR);
+		if (null != mIsQMSStatusNet.S_NET_IPADDR) {
+			builder.append(mIsQMSStatusNet.S_NET_IPADDR);
 		}
 		builder.append(";");
 		/** S_NET_IPMASK */
-		if (null != mIsQMSCurrentStatus.S_NET_IPMASK) {
-			builder.append(mIsQMSCurrentStatus.S_NET_IPMASK);
+		if (null != mIsQMSStatusNet.S_NET_IPMASK) {
+			builder.append(mIsQMSStatusNet.S_NET_IPMASK);
 		}
 		builder.append(";");
 		/** S_NET_IPGW */
-		if (null != mIsQMSCurrentStatus.S_NET_IPGW) {
-			builder.append(mIsQMSCurrentStatus.S_NET_IPGW);
+		if (null != mIsQMSStatusNet.S_NET_IPGW) {
+			builder.append(mIsQMSStatusNet.S_NET_IPGW);
 		}
 		builder.append(";");
 		/** S_NET_DNS1 */
-		if (null != mIsQMSCurrentStatus.S_NET_DNS1) {
-			builder.append(mIsQMSCurrentStatus.S_NET_DNS1);
+		if (null != mIsQMSStatusNet.S_NET_DNS1) {
+			builder.append(mIsQMSStatusNet.S_NET_DNS1);
 		}
 		builder.append(";");
 		/** S_NET_DNS2 */
-		if (null != mIsQMSCurrentStatus.S_NET_DNS2) {
-			builder.append(mIsQMSCurrentStatus.S_NET_DNS2);
+		if (null != mIsQMSStatusNet.S_NET_DNS2) {
+			builder.append(mIsQMSStatusNet.S_NET_DNS2);
 		}
 
 		return builder.toString();
@@ -470,38 +522,38 @@ public class IsQMSManager {
 
 		builder.append(";");
 		/** STB_SCR_RESOLUTION */
-		if (null != mIsQMSCurrentStatus.STB_SCR_RESOLUTION) {
-			builder.append(mIsQMSCurrentStatus.STB_SCR_RESOLUTION);
+		if (null != mIsQMSStatusConf.STB_SCR_RESOLUTION) {
+			builder.append(mIsQMSStatusConf.STB_SCR_RESOLUTION);
 		}
 		builder.append(";");
 		/** STB_SCR_TV */
-		if (null != mIsQMSCurrentStatus.STB_SCR_TV) {
-			builder.append(mIsQMSCurrentStatus.STB_SCR_TV);
+		if (null != mIsQMSStatusConf.STB_SCR_TV) {
+			builder.append(mIsQMSStatusConf.STB_SCR_TV);
 		}
 		builder.append(";");
 		/** STB_SCR_VIDEO */
-		if (null != mIsQMSCurrentStatus.STB_SCR_VIDEO) {
-			builder.append(mIsQMSCurrentStatus.STB_SCR_VIDEO);
+		if (null != mIsQMSStatusConf.STB_SCR_VIDEO) {
+			builder.append(mIsQMSStatusConf.STB_SCR_VIDEO);
 		}
 		builder.append(";");
 		/** STB_ADULT */
-		if (null != mIsQMSCurrentStatus.STB_ADULT) {
-			builder.append(mIsQMSCurrentStatus.STB_ADULT);
+		if (null != mIsQMSStatusConf.STB_ADULT) {
+			builder.append(mIsQMSStatusConf.STB_ADULT);
 		}
 		builder.append(";");
 		/** STB_AGE_LIMIT */
-		if (null != mIsQMSCurrentStatus.STB_AGE_LIMIT) {
-			builder.append(mIsQMSCurrentStatus.STB_AGE_LIMIT);
+		if (null != mIsQMSStatusConf.STB_AGE_LIMIT) {
+			builder.append(mIsQMSStatusConf.STB_AGE_LIMIT);
 		}
 		builder.append(";");
 		/** STB_AGE_TIME */
-		if (null != mIsQMSCurrentStatus.STB_AGE_TIME) {
-			builder.append(mIsQMSCurrentStatus.STB_AGE_TIME);
+		if (null != mIsQMSStatusConf.STB_AGE_TIME) {
+			builder.append(mIsQMSStatusConf.STB_AGE_TIME);
 		}
 		builder.append(";");
 		/** STB_AUTONEXT */
-		if (null != mIsQMSCurrentStatus.STB_AUTONEXT) {
-			builder.append(mIsQMSCurrentStatus.STB_AUTONEXT);
+		if (null != mIsQMSStatusConf.STB_AUTONEXT) {
+			builder.append(mIsQMSStatusConf.STB_AUTONEXT);
 		}
 
 		return builder.toString();
@@ -514,38 +566,38 @@ public class IsQMSManager {
 
 		builder.append(";");
 		/** XPG_FULL */
-		if (null != mIsQMSCurrentStatus.XPG_FULL) {
-			builder.append(mIsQMSCurrentStatus.XPG_FULL);
+		if (null != mIsQMSStatusXPG2.XPG_FULL) {
+			builder.append(mIsQMSStatusXPG2.XPG_FULL);
 		}
 		builder.append(";");
 		// /** XPG_CONTENT */
-		// if (null != mIsQMSCurrentStatus.XPG_CONTENT) {
-		// builder.append(mIsQMSCurrentStatus.XPG_CONTENT);
+		// if (null != mIsQMSCurrentStatusXPG2.XPG_CONTENT) {
+		// builder.append(mIsQMSCurrentStatusXPG2.XPG_CONTENT);
 		// }
 		builder.append(";");
 		// /** XPG_MENU */
-		// if (null != mIsQMSCurrentStatus.XPG_MENU) {
-		// builder.append(mIsQMSCurrentStatus.XPG_MENU);
+		// if (null != mIsQMSCurrentStatusXPG2.XPG_MENU) {
+		// builder.append(mIsQMSCurrentStatusXPG2.XPG_MENU);
 		// }
 		builder.append(";");
 		// /** XPG_IPTV_MENU */
-		// if (null != mIsQMSCurrentStatus.XPG_IPTV_MENU) {
-		// builder.append(mIsQMSCurrentStatus.XPG_IPTV_MENU);
+		// if (null != mIsQMSCurrentStatusXPG2.XPG_IPTV_MENU) {
+		// builder.append(mIsQMSCurrentStatusXPG2.XPG_IPTV_MENU);
 		// }
 		builder.append(";");
 		// /** XPG_IMAGE */
-		// if (null != mIsQMSCurrentStatus.XPG_IMAGE) {
-		// builder.append(mIsQMSCurrentStatus.XPG_IMAGE);
+		// if (null != mIsQMSCurrentStatusXPG2.XPG_IMAGE) {
+		// builder.append(mIsQMSCurrentStatusXPG2.XPG_IMAGE);
 		// }
 		builder.append(";");
 		// /** XPG_THUMBNAIL */
-		// if (null != mIsQMSCurrentStatus.XPG_THUMBNAIL) {
-		// builder.append(mIsQMSCurrentStatus.XPG_THUMBNAIL);
+		// if (null != mIsQMSCurrentStatusXPG2.XPG_THUMBNAIL) {
+		// builder.append(mIsQMSCurrentStatusXPG2.XPG_THUMBNAIL);
 		// }
 		builder.append(";");
 		// /** XPG_PRECONTENT */
-		// if (null != mIsQMSCurrentStatus.XPG_PRECONTENT) {
-		// builder.append(mIsQMSCurrentStatus.XPG_PRECONTENT);
+		// if (null != mIsQMSCurrentStatusXPG2.XPG_PRECONTENT) {
+		// builder.append(mIsQMSCurrentStatusXPG2.XPG_PRECONTENT);
 		// }
 
 		return builder.toString();
@@ -558,8 +610,8 @@ public class IsQMSManager {
 
 		builder.append(";");
 		/** BBRATE */
-		// if (null != mIsQMSCurrentStatus.BBRATE) {
-		// builder.append(mIsQMSCurrentStatus.BBRATE);
+		// if (null != mIsQMSStatusBbrate.BBRATE) {
+		// builder.append(mIsQMSStatusBbrate.BBRATE);
 		// }
 
 		return builder.toString();
@@ -759,11 +811,11 @@ public class IsQMSManager {
 	public void setNetDhcpMode(boolean isDhcpMode) {
 		logDebug(LOGD, "setNetDhcpMode() called. isDhcpMode : " + isDhcpMode);
 		if (true == isDhcpMode) {
-			mIsQMSCurrentStatus.S_NET_DHCP_MODE = IsQMSData.RESULT_TRUE;
+			mIsQMSStatusNet.S_NET_DHCP_MODE = IsQMSData.RESULT_TRUE;
 		} else {
-			mIsQMSCurrentStatus.S_NET_DHCP_MODE = IsQMSData.RESULT_FALSE;
+			mIsQMSStatusNet.S_NET_DHCP_MODE = IsQMSData.RESULT_FALSE;
 		}
-		mIsQMSCheckResult.S_NET_DHCP_MODE = mIsQMSCurrentStatus.S_NET_DHCP_MODE;
+		mIsQMSCheckNet.S_NET_DHCP_MODE = mIsQMSStatusNet.S_NET_DHCP_MODE;
 	}
 
 	/**
@@ -777,8 +829,8 @@ public class IsQMSManager {
 	 */
 	public void setNetIpAddr(String netIpAddr) {
 		logDebug(LOGD, "setNetIpAddr() called. netIpAddr : " + netIpAddr);
-		mIsQMSCurrentStatus.S_NET_IPADDR = netIpAddr;
-		mIsQMSCheckResult.S_NET_IPADDR = mIsQMSCurrentStatus.S_NET_IPADDR;
+		mIsQMSStatusNet.S_NET_IPADDR = netIpAddr;
+		mIsQMSCheckNet.S_NET_IPADDR = mIsQMSStatusNet.S_NET_IPADDR;
 	}
 
 	/**
@@ -792,8 +844,8 @@ public class IsQMSManager {
 	 */
 	public void setNetIpMask(String netIpMask) {
 		logDebug(LOGD, "setNetIpMask() called. netIpMask : " + netIpMask);
-		mIsQMSCurrentStatus.S_NET_IPMASK = netIpMask;
-		mIsQMSCheckResult.S_NET_IPMASK = mIsQMSCurrentStatus.S_NET_IPMASK;
+		mIsQMSStatusNet.S_NET_IPMASK = netIpMask;
+		mIsQMSCheckNet.S_NET_IPMASK = mIsQMSStatusNet.S_NET_IPMASK;
 	}
 
 	/**
@@ -807,8 +859,8 @@ public class IsQMSManager {
 	 */
 	public void setNetIpGateway(String netIpGateway) {
 		logDebug(LOGD, "setNetIpGateway() called. netIpGateway : " + netIpGateway);
-		mIsQMSCurrentStatus.S_NET_IPGW = netIpGateway;
-		mIsQMSCheckResult.S_NET_IPGW = mIsQMSCurrentStatus.S_NET_IPGW;
+		mIsQMSStatusNet.S_NET_IPGW = netIpGateway;
+		mIsQMSCheckNet.S_NET_IPGW = mIsQMSStatusNet.S_NET_IPGW;
 	}
 
 	/**
@@ -822,8 +874,8 @@ public class IsQMSManager {
 	 */
 	public void setNetDNS1(String netDNS1) {
 		logDebug(LOGD, "setNetDNS1() called. netDNS1 : " + netDNS1);
-		mIsQMSCurrentStatus.S_NET_DNS1 = netDNS1;
-		mIsQMSCheckResult.S_NET_DNS1 = mIsQMSCurrentStatus.S_NET_DNS1;
+		mIsQMSStatusNet.S_NET_DNS1 = netDNS1;
+		mIsQMSCheckNet.S_NET_DNS1 = mIsQMSStatusNet.S_NET_DNS1;
 	}
 
 	/**
@@ -837,8 +889,8 @@ public class IsQMSManager {
 	 */
 	public void setNetDNS2(String netDNS2) {
 		logDebug(LOGD, "setNetDNS2() called. netDNS2 : " + netDNS2);
-		mIsQMSCurrentStatus.S_NET_DNS2 = netDNS2;
-		mIsQMSCheckResult.S_NET_DNS2 = mIsQMSCurrentStatus.S_NET_DNS2;
+		mIsQMSStatusNet.S_NET_DNS2 = netDNS2;
+		mIsQMSCheckNet.S_NET_DNS2 = mIsQMSStatusNet.S_NET_DNS2;
 	}
 
 	// =========================================================================
@@ -861,7 +913,7 @@ public class IsQMSManager {
 		}
 
 		String displayMode = display_MODE.name().replace(IsQMSEnumData.PREFIX_DISPLAY_MODE, "");
-		mIsQMSCurrentStatus.STB_SCR_RESOLUTION = displayMode;
+		mIsQMSStatusConf.STB_SCR_RESOLUTION = displayMode;
 	}
 
 	/**
@@ -881,7 +933,7 @@ public class IsQMSManager {
 		}
 
 		String rateMode = tv_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_TV_RATE_MODE, "");
-		mIsQMSCurrentStatus.STB_SCR_TV = rateMode;
+		mIsQMSStatusConf.STB_SCR_TV = rateMode;
 	}
 
 	/**
@@ -901,7 +953,7 @@ public class IsQMSManager {
 		}
 
 		String videoRateMode = video_RATE_MODE.name().replace(IsQMSEnumData.PREFIX_VIDEO_RATE_MODE, "");
-		mIsQMSCurrentStatus.STB_SCR_VIDEO = videoRateMode;
+		mIsQMSStatusConf.STB_SCR_VIDEO = videoRateMode;
 	}
 
 	/**
@@ -917,9 +969,9 @@ public class IsQMSManager {
 	public void setAllowStbAdult(boolean isAllowSTBAdult) {
 		logDebug(LOGD, "setAllowStbAdult() called. isAllowSTBAdult : " + isAllowSTBAdult);
 		if (true == isAllowSTBAdult) {
-			mIsQMSCurrentStatus.STB_ADULT = IsQMSData.RESULT_TRUE;
+			mIsQMSStatusConf.STB_ADULT = IsQMSData.RESULT_TRUE;
 		} else {
-			mIsQMSCurrentStatus.STB_ADULT = IsQMSData.RESULT_FALSE;
+			mIsQMSStatusConf.STB_ADULT = IsQMSData.RESULT_FALSE;
 		}
 	}
 
@@ -941,7 +993,7 @@ public class IsQMSManager {
 		}
 
 		String ageLimitType = age_LIMIT_TYPE.name().replace(IsQMSEnumData.PREFIX_AGE_LIMIT_TYPE, "");
-		mIsQMSCurrentStatus.STB_AGE_LIMIT = ageLimitType;
+		mIsQMSStatusConf.STB_AGE_LIMIT = ageLimitType;
 	}
 
 	/**
@@ -957,7 +1009,7 @@ public class IsQMSManager {
 	 */
 	public void setChildLimitTime(String childLimitTime) {
 		logDebug(LOGD, "setChildLimitTime() called. childLimitTime : " + childLimitTime);
-		mIsQMSCurrentStatus.STB_AGE_TIME = childLimitTime;
+		mIsQMSStatusConf.STB_AGE_TIME = childLimitTime;
 	}
 
 	/**
@@ -973,9 +1025,9 @@ public class IsQMSManager {
 	public void setAutoNext(boolean isAutoNext) {
 		logDebug(LOGD, "setAutoNext() called. isAutoNext : " + isAutoNext);
 		if (true == isAutoNext) {
-			mIsQMSCurrentStatus.STB_AUTONEXT = IsQMSData.RESULT_TRUE;
+			mIsQMSStatusConf.STB_AUTONEXT = IsQMSData.RESULT_TRUE;
 		} else {
-			mIsQMSCurrentStatus.STB_AUTONEXT = IsQMSData.RESULT_FALSE;
+			mIsQMSStatusConf.STB_AUTONEXT = IsQMSData.RESULT_FALSE;
 		}
 	}
 
@@ -993,7 +1045,7 @@ public class IsQMSManager {
 	 */
 	public void setXPG2XpgFullVersion(String xpgFullVersion) {
 		logDebug(LOGD, "setXPG2XpgFullVersion() called. xpgFullVersion : " + xpgFullVersion);
-		mIsQMSCurrentStatus.XPG_FULL = xpgFullVersion;
+		mIsQMSStatusXPG2.XPG_FULL = xpgFullVersion;
 	}
 
 	// =========================================================================
@@ -1029,7 +1081,7 @@ public class IsQMSManager {
 			default:
 				return;
 		}
-		mIsQMSCheckResult.UPG_C_SW_UPGRADE = upgSwUpgrade;
+		mIsQMSCheckUPG.UPG_C_SW_UPGRADE = upgSwUpgrade;
 	}
 
 	/**
@@ -1062,7 +1114,7 @@ public class IsQMSManager {
 			default:
 				return;
 		}
-		mIsQMSCheckResult.UPG_C_CH_UPGRADE = upgChannelUpgrade;
+		mIsQMSCheckUPG.UPG_C_CH_UPGRADE = upgChannelUpgrade;
 	}
 
 	// =========================================================================
@@ -1082,7 +1134,7 @@ public class IsQMSManager {
 	 */
 	public void setSVCVodCid(String vodCid) {
 		logDebug(LOGD, "setSVCVodCid() called. vodCid : " + vodCid);
-		mIsQMSCheckResult.SVC_C_VOD_CID = vodCid;
+		mIsQMSCheckSVC.SVC_C_VOD_CID = vodCid;
 	}
 
 	/**
@@ -1099,7 +1151,7 @@ public class IsQMSManager {
 	 */
 	public void setSVCVodAid(String vodAid) {
 		logDebug(LOGD, "setSVCVodAid() called. vodAid : " + vodAid);
-		mIsQMSCheckResult.SVC_C_VOD_AID = vodAid;
+		mIsQMSCheckSVC.SVC_C_VOD_AID = vodAid;
 	}
 
 	// =========================================================================
@@ -1116,7 +1168,7 @@ public class IsQMSManager {
 	 */
 	public void setVOD1VodScsIp(String vodScsIp) {
 		logDebug(LOGD, "setVOD1VodScsIp() called. vodScsIp : " + vodScsIp);
-		mIsQMSCheckResult.VOD1_C_VOD_SCS_IP = vodScsIp;
+		mIsQMSCheckVOD1.VOD1_C_VOD_SCS_IP = vodScsIp;
 	}
 
 	/**
@@ -1131,7 +1183,7 @@ public class IsQMSManager {
 	 */
 	public void setVOD1VodScsRt(String vodScsRt) {
 		logDebug(LOGD, "setVOD1VodScsRt() called. vodScsRt : " + vodScsRt);
-		mIsQMSCheckResult.VOD1_C_VOD_SCS_RT = vodScsRt;
+		mIsQMSCheckVOD1.VOD1_C_VOD_SCS_RT = vodScsRt;
 	}
 
 	/**
@@ -1147,7 +1199,7 @@ public class IsQMSManager {
 	 */
 	public void setVOD1VodDownRt(String vodDownRt) {
 		logDebug(LOGD, "setVOD1VodDownRt() called. vodDownRt : " + vodDownRt);
-		mIsQMSCheckResult.VOD1_C_VOD_DOWN_RT = vodDownRt;
+		mIsQMSCheckVOD1.VOD1_C_VOD_DOWN_RT = vodDownRt;
 	}
 
 	// =========================================================================
@@ -1164,7 +1216,7 @@ public class IsQMSManager {
 	 */
 	public void setVOD3VodContentName(String vodContentName) {
 		logDebug(LOGD, "setVOD3VodContentName() called. vodContentName : " + vodContentName);
-		mIsQMSCheckResult.VOD3_C_VOD_CONTENT_NAME = vodContentName;
+		mIsQMSCheckVOD3.VOD3_C_VOD_CONTENT_NAME = vodContentName;
 	}
 
 	/**
@@ -1178,7 +1230,7 @@ public class IsQMSManager {
 	 */
 	public void setVOD3VodContentUrl(String vodContentUrl) {
 		logDebug(LOGD, "setVOD3VodContentUrl() called. vodContentUrl : " + vodContentUrl);
-		mIsQMSCheckResult.VOD3_C_VOD_CONTENT_URL = vodContentUrl;
+		mIsQMSCheckVOD3.VOD3_C_VOD_CONTENT_URL = vodContentUrl;
 	}
 
 	// =========================================================================
@@ -1196,7 +1248,7 @@ public class IsQMSManager {
 	 */
 	public void setVOD4VodError(String vodError) {
 		logDebug(LOGD, "setVOD4VodError() called. vodError : " + vodError);
-		mIsQMSCheckResult.VOD4_C_VOD_ERR = vodError;
+		mIsQMSCheckVOD4.VOD4_C_VOD_ERR = vodError;
 	}
 
 	/**
@@ -1212,7 +1264,7 @@ public class IsQMSManager {
 	 */
 	public void setVOD4Message(String vodMessage) {
 		logDebug(LOGD, "setVOD4Message() called. vodMessage : " + vodMessage);
-		mIsQMSCheckResult.VOD4_C_MSG = vodMessage;
+		mIsQMSCheckVOD4.VOD4_C_MSG = vodMessage;
 	}
 
 	// =========================================================================
@@ -1233,7 +1285,7 @@ public class IsQMSManager {
 	 */
 	public void setIPTV1IptvChNum(String iptvChNum) {
 		logDebug(LOGD, "setIPTV1IptvChNum() called. iptvChNum : " + iptvChNum);
-		mIsQMSCheckResult.IPTV1_C_IPTV_CH_NUM = iptvChNum;
+		mIsQMSCheckIPTV1.IPTV1_C_IPTV_CH_NUM = iptvChNum;
 	}
 
 	/**
@@ -1248,7 +1300,7 @@ public class IsQMSManager {
 	 */
 	public void setIPTV1iptvChMode(String iptvChMode) {
 		logDebug(LOGD, "setIPTV1iptvChMode() called. iptvChMode : " + iptvChMode);
-		mIsQMSCheckResult.IPTV1_C_IPTV_CH_MODE = iptvChMode;
+		mIsQMSCheckIPTV1.IPTV1_C_IPTV_CH_MODE = iptvChMode;
 	}
 
 	// =========================================================================
@@ -1266,7 +1318,7 @@ public class IsQMSManager {
 	 */
 	public void setIPTV2iptvErrorCode(String iptvErrorCode) {
 		logDebug(LOGD, "setIPTV2iptvErrorCode() called. iptvErrorCode : " + iptvErrorCode);
-		mIsQMSCheckResult.IPTV2_C_IPTV_ECODE = iptvErrorCode;
+		mIsQMSCheckIPTV2.IPTV2_C_IPTV_ECODE = iptvErrorCode;
 	}
 
 	// =========================================================================
@@ -1283,7 +1335,7 @@ public class IsQMSManager {
 	 */
 	public void setSCSscsIp(String scsIp) {
 		logDebug(LOGD, "setSCSscsIp() called. scsIp : " + scsIp);
-		mIsQMSCheckResult.SCS_C_SCS_IP = scsIp;
+		mIsQMSCheckSCS.SCS_C_SCS_IP = scsIp;
 	}
 
 	/**
@@ -1298,7 +1350,7 @@ public class IsQMSManager {
 	 */
 	public void setSCSscsErrorCode(String scsErrorCode) {
 		logDebug(LOGD, "setSCSscsErrorCode() called. scsErrorCode : " + scsErrorCode);
-		mIsQMSCheckResult.SCS_C_SCS_ECODE = scsErrorCode;
+		mIsQMSCheckSCS.SCS_C_SCS_ECODE = scsErrorCode;
 	}
 
 	// =========================================================================
@@ -1316,7 +1368,7 @@ public class IsQMSManager {
 	 */
 	public void setLGSlgsErrorCode(String lgsErrorCode) {
 		logDebug(LOGD, "setLGSlgsErrorCode() called. lgsErrorCode : " + lgsErrorCode);
-		mIsQMSCheckResult.LGS_C_LGS_ECODE = lgsErrorCode;
+		mIsQMSCheckLGS.LGS_C_LGS_ECODE = lgsErrorCode;
 	}
 
 	// =========================================================================
@@ -1422,43 +1474,31 @@ public class IsQMSManager {
 	private boolean checkStatusAll() {
 		logDebug(LOGD, "checkStatusAll() called");
 		boolean result = false;
-		if (null == mIsQMSCurrentStatus) {
-			logDebug(LOGD, "checkStatusAll() mIsQMSCurrentStatus is null.");
+
+		result = checkStatusNet();
+		if (false == result) {
 			return result;
 		}
 
-		synchronized (mIsQMSCurrentStatus) {
-			result = checkStatusNet();
-			if (false == result) {
-				return result;
-			}
-
-			return result;
-		}
+		return result;
 	}
 
 	private boolean checkStatusNet() {
 		logDebug(LOGD, "checkStatusNet() called");
 		boolean result = false;
-		if (null == mIsQMSCurrentStatus) {
-			logDebug(LOGD, "checkStatusNet() mIsQMSCurrentStatus is null.");
-			return result;
-		}
 
-		synchronized (mIsQMSCurrentStatus) {
-			logDebug(LOGD, "checkStatusNet() S_NET_DHCP_MODE : " + mIsQMSCurrentStatus.S_NET_DHCP_MODE);
-			logDebug(LOGD, "checkStatusNet() S_NET_IPADDR : " + mIsQMSCurrentStatus.S_NET_IPADDR);
-			logDebug(LOGD, "checkStatusNet() S_NET_IPMASK : " + mIsQMSCurrentStatus.S_NET_IPMASK);
-			logDebug(LOGD, "checkStatusNet() S_NET_IPGW : " + mIsQMSCurrentStatus.S_NET_IPGW);
-			logDebug(LOGD, "checkStatusNet() S_NET_DNS1 : " + mIsQMSCurrentStatus.S_NET_DNS1);
-			logDebug(LOGD, "checkStatusNet() S_NET_DNS2 : " + mIsQMSCurrentStatus.S_NET_DNS2);
-			if (null != mIsQMSCurrentStatus.S_NET_DHCP_MODE && null != mIsQMSCurrentStatus.S_NET_IPADDR && null != mIsQMSCurrentStatus.S_NET_IPMASK //
-					&& null != mIsQMSCurrentStatus.S_NET_IPGW && null != mIsQMSCurrentStatus.S_NET_DNS1 && null != mIsQMSCurrentStatus.S_NET_DNS2) {
-				return true;
-			}
-			logDebug(LOGD, "checkStatusNet() result : " + result);
-			return result;
+		logDebug(LOGD, "checkStatusNet() S_NET_DHCP_MODE : " + mIsQMSStatusNet.S_NET_DHCP_MODE);
+		logDebug(LOGD, "checkStatusNet() S_NET_IPADDR : " + mIsQMSStatusNet.S_NET_IPADDR);
+		logDebug(LOGD, "checkStatusNet() S_NET_IPMASK : " + mIsQMSStatusNet.S_NET_IPMASK);
+		logDebug(LOGD, "checkStatusNet() S_NET_IPGW : " + mIsQMSStatusNet.S_NET_IPGW);
+		logDebug(LOGD, "checkStatusNet() S_NET_DNS1 : " + mIsQMSStatusNet.S_NET_DNS1);
+		logDebug(LOGD, "checkStatusNet() S_NET_DNS2 : " + mIsQMSStatusNet.S_NET_DNS2);
+		if (null != mIsQMSStatusNet.S_NET_DHCP_MODE && null != mIsQMSStatusNet.S_NET_IPADDR && null != mIsQMSStatusNet.S_NET_IPMASK //
+				&& null != mIsQMSStatusNet.S_NET_IPGW && null != mIsQMSStatusNet.S_NET_DNS1 && null != mIsQMSStatusNet.S_NET_DNS2) {
+			return true;
 		}
+		logDebug(LOGD, "checkStatusNet() result : " + result);
+		return result;
 	}
 
 	// =========================================================================

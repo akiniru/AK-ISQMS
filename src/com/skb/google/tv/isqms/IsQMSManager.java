@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 
 import com.skb.google.tv.common.util.LogUtil;
@@ -54,20 +55,34 @@ public class IsQMSManager {
 	private IUIAppToAgentService mBinder;
 
 	/** Listener */
-	public static enum eLISTENER_TYPE {
-		C03_RECENT_ALL_UPGRADE, //
-		C04_AGE_LIMIT_CHANGE, //
-		C05_AUTO_NEXT_CHANGE, //
-		C06_ADMETA_FILE_DOWNLOAD, //
-		C07_REBOOT, //
-		C09_RESOLUTION_CHANGE, //
-		C14_STB_PASSWORD_CHANGE, //
-		C15_CHILDLIMIT_PASSWORD_CHANGE, //
-		C17_CHILDLIMIT_TIME_CHANGE, //
-		C18_ADULT_AUTH_CHANGE, //
-		C95_SCS_NORMAL_ACCESS, //
-		C94_LGS_NORMAL_ACCESS //
-	}
+	// public static enum eLISTENER_TYPE {
+	// C03_RECENT_ALL_UPGRADE, //
+	// C04_AGE_LIMIT_CHANGE, //
+	// C05_AUTO_NEXT_CHANGE, //
+	// C06_ADMETA_FILE_DOWNLOAD, //
+	// C07_REBOOT, //
+	// C09_RESOLUTION_CHANGE, //
+	// C14_STB_PASSWORD_CHANGE, //
+	// C15_CHILDLIMIT_PASSWORD_CHANGE, //
+	// C17_CHILDLIMIT_TIME_CHANGE, //
+	// C18_ADULT_AUTH_CHANGE, //
+	// C94_LGS_NORMAL_ACCESS //
+	// C95_SCS_NORMAL_ACCESS, //
+	// }
+
+	private static final int MESSAGE_STARTID = 11000;
+	public static final int MESSAGE_C03_RECENT_ALL_UPGRADE = MESSAGE_STARTID + 3;
+	public static final int MESSAGE_C04_AGE_LIMIT_CHANGE = MESSAGE_STARTID + 4;
+	public static final int MESSAGE_C05_AUTO_NEXT_CHANGE = MESSAGE_STARTID + 5;
+	public static final int MESSAGE_C06_ADMETA_FILE_DOWNLOAD = MESSAGE_STARTID + 6;
+	public static final int MESSAGE_C07_REBOOT = MESSAGE_STARTID + 7;
+	public static final int MESSAGE_C09_RESOLUTION_CHANGE = MESSAGE_STARTID + 9;
+	public static final int MESSAGE_C14_STB_PASSWORD_CHANGE = MESSAGE_STARTID + 14;
+	public static final int MESSAGE_C15_CHILDLIMIT_PASSWORD_CHANGE = MESSAGE_STARTID + 15;
+	public static final int MESSAGE_C17_CHILDLIMIT_TIME_CHANGE = MESSAGE_STARTID + 17;
+	public static final int MESSAGE_C18_ADULT_AUTH_CHANGE = MESSAGE_STARTID + 18;
+	public static final int MESSAGE_C94_LGS_NORMAL_ACCESS = MESSAGE_STARTID + 94;
+	public static final int MESSAGE_C95_SCS_NORMAL_ACCESS = MESSAGE_STARTID + 95;
 
 	private OnRecentAllUpgradeListener mRecentAllUpgradeListener;
 	private OnAgeLimitChangeListener mAgeLimitChangeListener;
@@ -314,25 +329,24 @@ public class IsQMSManager {
 		 */
 
 		String CtrlSeq = null;
-		if (event_id == IsQMSData.EVENT_C02) {
+		if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C02)) {
 			// STB 인증 여부 처리
 			send_data(IsQMSData.COMMON, 0, getDataCommon());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C03) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C03)) {
 			// STB 전체 최신 Upgrade
 			// 업그래이드 완료후 -> COMMON, STATUS_ALLF 업데이트 수행-> C02
 			// 전부다 전달해줄 필요 없이 아래 함수들중에서 바뀐 부분들이 있는것들만 내려주면됨
 			// 최신 Upgrade후 재부팅이면 전달할 필요없음.
 
 			// ";S;0;201405161457580030"
-
 			send_data(IsQMSData.COMMON, 0, getDataCommon());
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_NET, getDataStatusNet());
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_XPG_2, getDataStatusXPG2());
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_BBRATE, getDataStatusBbrate());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C04) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C04)) {
 			// 604 STB 연령등급(시청제한나이) 조정
 			// 등급 조정 완료 -> STATUS_CONF 업데이트 -> C04 전달
 			// ";7;201405161536220046"
@@ -342,27 +356,28 @@ public class IsQMSManager {
 			// ";00;201405161537090047"
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C05) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C05)) {
 			// STB 연속재생 여부 조정
 			// 등급 조정 완료 -> STATUS_CONF 업데이트 -> C05 전달
 			// ";0;201405161538390052" => 연속 설정 안함
 			// ";1;201405161538390052" => 연속 설정
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C06) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C06)) {
 			// STB 광고 메타파일 재 Download
 			// 다운로드 완료 -> COMMON, STATUS_ALL중에서 변경된정보 업데이트 -> C06 전달
 			// ";201405161538390052"
 
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C07) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C07)) {
 			// STB Reboot
 			// ";201405161538390052"
-		} else if (event_id == IsQMSData.EVENT_C08) {
+			requestListener(MESSAGE_C07_REBOOT);
+			// } else if (event_id == IsQMSData.EVENT_C08) {
 			// STB HDD최적화 실행
 			// 리부팅 이면 데이터/이벤트 전달 하지 않아도됨
 			// ";201405161538390052"
-		} else if (event_id == IsQMSData.EVENT_C09) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C09)) {
 			// STB 해상도 변경
 			// 리부팅 이면 데이터/이벤트 전달 하지 않아도됨
 			// 해상도 변경후 -> STATUS_CONF 업데이트 -> C09 전달
@@ -370,20 +385,20 @@ public class IsQMSManager {
 
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C14) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C14)) {
 			// STB비밀번호재설정
 			// 번호 재설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";3333;201405161542280062"
 
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C15) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C15)) {
 			// 성인 비밀번호재설정
 			// 번호설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";3333;201405161542280062"
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C17) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C17)) {
 			// 자녀시청 제한 시간 설정
 			// 시간설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";00;201405161544020066" => 설정 안함
@@ -391,7 +406,7 @@ public class IsQMSManager {
 
 			send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, "");
 			send_event(event_id, CtrlSeq);
-		} else if (event_id == IsQMSData.EVENT_C18) {
+		} else if (event_id.equalsIgnoreCase(IsQMSData.EVENT_C18)) {
 			// 성인 메뉴 표시 여부
 			// 사용여부 설정후 -> STATUS_CONF 업데이트 -> C09 전달
 			// ";0;201405161546330068"
@@ -626,6 +641,45 @@ public class IsQMSManager {
 		builder.append(getDataStatusConf());
 		builder.append(getDataStatusXPG2());
 		builder.append(getDataStatusBbrate());
+
+		return builder.toString();
+	}
+
+	/** CHECK_UPG_C_SW_UPGRADE */
+	private String getDataCheckSwUpgrade() {
+		logInfo(LOGD, "getDataCheckSwUpgrade() called.");
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** UPG_C_SW_UPGRADE */
+		if (null != mIsQMSCheckUPG.UPG_C_SW_UPGRADE) {
+			builder.append(mIsQMSCheckUPG.UPG_C_SW_UPGRADE);
+		}
+
+		return builder.toString();
+	}
+
+	/** CHECK_UPG_C_CH_UPGRADE */
+	private String getDataCheckChUpgrade() {
+		logInfo(LOGD, "getDataCheckChUpgrade() called.");
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** UPG_C_CH_UPGRADE */
+		if (null != mIsQMSCheckUPG.UPG_C_CH_UPGRADE) {
+			builder.append(mIsQMSCheckUPG.UPG_C_CH_UPGRADE);
+		}
+
+		return builder.toString();
+	}
+
+	/** CHECK_UPG */
+	private String getDataCheckUPG() {
+		logInfo(LOGD, "getDataCheckUPG() called.");
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(getDataCheckSwUpgrade());
+		builder.append(getDataCheckChUpgrade());
 
 		return builder.toString();
 	}
@@ -1436,94 +1490,28 @@ public class IsQMSManager {
 	}
 
 	// =========================================================================
-	// < check IsQMS LISTENER
-	// =========================================================================
-	private boolean checkCommon() {
-		logDebug(LOGD, "checkCommon() called");
-		boolean result = false;
-		if (null == mIsQMSCommon) {
-			logDebug(LOGD, "checkCommon() mIsQMSCommon is null.");
-			return result;
-		}
-
-		synchronized (mIsQMSCommon) {
-			mIsQMSCommon.EVENT_ID = null;
-			mIsQMSCommon.EVENT_TS = null;
-			logDebug(LOGD, "checkCommon() EVENT_ID : " + mIsQMSCommon.EVENT_ID);
-			logDebug(LOGD, "checkCommon() EVENT_TS : " + mIsQMSCommon.EVENT_TS);
-			logDebug(LOGD, "checkCommon() STB_VER : " + mIsQMSCommon.STB_VER);
-			logDebug(LOGD, "checkCommon() STB_ID : " + mIsQMSCommon.STB_ID);
-			logDebug(LOGD, "checkCommon() STB_MAC : " + mIsQMSCommon.STB_MAC);
-			logDebug(LOGD, "checkCommon() STB_SW_VER : " + mIsQMSCommon.STB_SW_VER);
-			logDebug(LOGD, "checkCommon() STB_XPG_VER : " + mIsQMSCommon.STB_XPG_VER);
-			logDebug(LOGD, "checkCommon() STB_MODEL : " + mIsQMSCommon.STB_MODEL);
-			logDebug(LOGD, "checkCommon() STB_AUTH : " + mIsQMSCommon.STB_AUTH);
-			logDebug(LOGD, "checkCommon() STB_IPTV_AREA : " + mIsQMSCommon.STB_IPTV_AREA);
-			logDebug(LOGD, "checkCommon() STB_SVC_MODE : " + mIsQMSCommon.STB_SVC_MODE);
-			if (null != mIsQMSCommon.EVENT_TS && null != mIsQMSCommon.STB_VER && null != mIsQMSCommon.STB_ID //
-					&& null != mIsQMSCommon.STB_MAC && null != mIsQMSCommon.STB_SW_VER && null != mIsQMSCommon.STB_XPG_VER //
-					&& null != mIsQMSCommon.STB_MODEL && null != mIsQMSCommon.STB_AUTH && null != mIsQMSCommon.STB_IPTV_AREA //
-					&& null != mIsQMSCommon.STB_SVC_MODE) {
-				return true;
-			}
-			logDebug(LOGD, "checkCommon() result : " + result);
-			return result;
-		}
-	}
-
-	private boolean checkStatusAll() {
-		logDebug(LOGD, "checkStatusAll() called");
-		boolean result = false;
-
-		result = checkStatusNet();
-		if (false == result) {
-			return result;
-		}
-
-		return result;
-	}
-
-	private boolean checkStatusNet() {
-		logDebug(LOGD, "checkStatusNet() called");
-		boolean result = false;
-
-		logDebug(LOGD, "checkStatusNet() S_NET_DHCP_MODE : " + mIsQMSStatusNet.S_NET_DHCP_MODE);
-		logDebug(LOGD, "checkStatusNet() S_NET_IPADDR : " + mIsQMSStatusNet.S_NET_IPADDR);
-		logDebug(LOGD, "checkStatusNet() S_NET_IPMASK : " + mIsQMSStatusNet.S_NET_IPMASK);
-		logDebug(LOGD, "checkStatusNet() S_NET_IPGW : " + mIsQMSStatusNet.S_NET_IPGW);
-		logDebug(LOGD, "checkStatusNet() S_NET_DNS1 : " + mIsQMSStatusNet.S_NET_DNS1);
-		logDebug(LOGD, "checkStatusNet() S_NET_DNS2 : " + mIsQMSStatusNet.S_NET_DNS2);
-		if (null != mIsQMSStatusNet.S_NET_DHCP_MODE && null != mIsQMSStatusNet.S_NET_IPADDR && null != mIsQMSStatusNet.S_NET_IPMASK //
-				&& null != mIsQMSStatusNet.S_NET_IPGW && null != mIsQMSStatusNet.S_NET_DNS1 && null != mIsQMSStatusNet.S_NET_DNS2) {
-			return true;
-		}
-		logDebug(LOGD, "checkStatusNet() result : " + result);
-		return result;
-	}
-
-	// =========================================================================
 	// < reques IsQMS LISTENER
 	// =========================================================================
-	private void requestListener(eLISTENER_TYPE type) {
+	private void requestListener(int type) {
 		logDebug(LOGD, "requestListener() called");
 		requestListener(type, null);
 	}
 
-	private void requestListener(eLISTENER_TYPE type, Object data) {
-		if (null == type) {
+	private void requestListener(int type, Object data) {
+		if (0 == type) {
 			return;
 		}
 
 		logDebug(LOGD, "requestListener() called. eLISTENER_TYPE : " + type);
 		switch (type) {
-			case C03_RECENT_ALL_UPGRADE:
+			case MESSAGE_C03_RECENT_ALL_UPGRADE:
 				if (null != mRecentAllUpgradeListener) {
 					mRecentAllUpgradeListener.onRecentAllUpgrade();
 				} else {
 					logDebug(LOGD, "requestListener() mRecentAllUpgradeListener is null");
 				}
 				break;
-			case C04_AGE_LIMIT_CHANGE:
+			case MESSAGE_C04_AGE_LIMIT_CHANGE:
 				if (null != mAgeLimitChangeListener) {
 					if (null != data && true == (data instanceof eAGE_LIMIT_TYPE)) {
 						eAGE_LIMIT_TYPE age_LIMIT_TYPE = (eAGE_LIMIT_TYPE) data;
@@ -1535,7 +1523,7 @@ public class IsQMSManager {
 					logDebug(LOGD, "requestListener() mAgeLimitChangeListener is null");
 				}
 				break;
-			case C05_AUTO_NEXT_CHANGE:
+			case MESSAGE_C05_AUTO_NEXT_CHANGE:
 				if (null != mAutoNextChangeListener) {
 					if (null != data && true == (data instanceof Boolean)) {
 						Boolean result = (Boolean) data;
@@ -1547,21 +1535,21 @@ public class IsQMSManager {
 					logDebug(LOGD, "requestListener() mAutoNextChangeListener is null");
 				}
 				break;
-			case C06_ADMETA_FILE_DOWNLOAD:
+			case MESSAGE_C06_ADMETA_FILE_DOWNLOAD:
 				if (null != mAdMetaFileDownloadListener) {
 					mAdMetaFileDownloadListener.onAdMetaFileDownload();
 				} else {
 					logDebug(LOGD, "requestListener() mAdMetaFileDownloadListener is null");
 				}
 				break;
-			case C07_REBOOT:
+			case MESSAGE_C07_REBOOT:
 				if (null != mRebootListener) {
 					mRebootListener.onReboot();
 				} else {
 					logDebug(LOGD, "requestListener() mRebootListener is null");
 				}
 				break;
-			case C09_RESOLUTION_CHANGE:
+			case MESSAGE_C09_RESOLUTION_CHANGE:
 				if (null != mResolutionChangeListener) {
 					if (null != data && true == (data instanceof IsQMSMessage)) {
 						IsQMSMessage message = (IsQMSMessage) data;
@@ -1581,7 +1569,7 @@ public class IsQMSManager {
 					logDebug(LOGD, "requestListener() mResolutionChangeListener is null");
 				}
 				break;
-			case C14_STB_PASSWORD_CHANGE:
+			case MESSAGE_C14_STB_PASSWORD_CHANGE:
 				if (null != mStbPasswordChangeListener) {
 					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
 						String stbPassword = (String) data;
@@ -1593,7 +1581,7 @@ public class IsQMSManager {
 					logDebug(LOGD, "requestListener() mSTBPasswordChangeListener is null");
 				}
 				break;
-			case C15_CHILDLIMIT_PASSWORD_CHANGE:
+			case MESSAGE_C15_CHILDLIMIT_PASSWORD_CHANGE:
 				if (null != mChildLimitPasswordChangeListener) {
 					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
 						String childLimitPassword = (String) data;
@@ -1605,7 +1593,7 @@ public class IsQMSManager {
 					logDebug(LOGD, "requestListener() mChildLimitPasswordChangeListener is null");
 				}
 				break;
-			case C17_CHILDLIMIT_TIME_CHANGE:
+			case MESSAGE_C17_CHILDLIMIT_TIME_CHANGE:
 				if (null != mChildLimitTimeChangeListener) {
 					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
 						String childLimitTime = (String) data;
@@ -1617,7 +1605,7 @@ public class IsQMSManager {
 					logDebug(LOGD, "requestListener() mChildLimitTimeChangeListener is null");
 				}
 				break;
-			case C18_ADULT_AUTH_CHANGE:
+			case MESSAGE_C18_ADULT_AUTH_CHANGE:
 				if (null != mAdultAuthChangeListener) {
 					if (null != data && true == (data instanceof Boolean)) {
 						Boolean result = (Boolean) data;
@@ -1629,14 +1617,14 @@ public class IsQMSManager {
 					logDebug(LOGD, "requestListener() mAdultAuthChangeListener is null");
 				}
 				break;
-			case C95_SCS_NORMAL_ACCESS:
+			case MESSAGE_C95_SCS_NORMAL_ACCESS:
 				if (null != mScsNormalAccessListener) {
 					mScsNormalAccessListener.onScsNormalAccess();
 				} else {
 					logDebug(LOGD, "requestListener() mSCSNormalAccessListener is null");
 				}
 				break;
-			case C94_LGS_NORMAL_ACCESS:
+			case MESSAGE_C94_LGS_NORMAL_ACCESS:
 				if (null != mLgsNormalAccessListener) {
 					mLgsNormalAccessListener.onLgsNormalAccess();
 				} else {
@@ -1648,5 +1636,62 @@ public class IsQMSManager {
 				logDebug(LOGD, "requestListener() type is default");
 				break;
 		}
+	}
+
+	public boolean handleMessage(Message msg) {
+		logDebug(LOGD, "handleMessage() called. msg : " + msg);
+		String CtrlSeq = (String) msg.obj;
+		switch (msg.what) {
+			case MESSAGE_C03_RECENT_ALL_UPGRADE:
+				send_data(IsQMSData.COMMON, 0, getDataCommon());
+				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_NET, getDataStatusNet());
+				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
+				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_XPG_2, getDataStatusXPG2());
+				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_BBRATE, getDataStatusBbrate());
+				send_event(IsQMSData.EVENT_C03, CtrlSeq);
+				break;
+
+			case MESSAGE_C04_AGE_LIMIT_CHANGE:
+				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
+				send_event(IsQMSData.EVENT_C04, CtrlSeq);
+				break;
+
+			case MESSAGE_C05_AUTO_NEXT_CHANGE:
+				send_data(IsQMSData.CURRENT_STATUS, IsQMSData.STATUS_CONF, getDataStatusConf());
+				send_event(IsQMSData.EVENT_C05, CtrlSeq);
+				break;
+
+			case MESSAGE_C06_ADMETA_FILE_DOWNLOAD:
+				break;
+
+			// case MESSAGE_C07_REBOOT:
+			// break;
+
+			case MESSAGE_C09_RESOLUTION_CHANGE:
+				break;
+
+			case MESSAGE_C14_STB_PASSWORD_CHANGE:
+				break;
+
+			case MESSAGE_C15_CHILDLIMIT_PASSWORD_CHANGE:
+				break;
+
+			case MESSAGE_C17_CHILDLIMIT_TIME_CHANGE:
+				break;
+
+			case MESSAGE_C18_ADULT_AUTH_CHANGE:
+				break;
+
+			case MESSAGE_C94_LGS_NORMAL_ACCESS:
+				break;
+
+			case MESSAGE_C95_SCS_NORMAL_ACCESS:
+				break;
+
+			default:
+				break;
+		}
+
+		return false;
 	}
 }

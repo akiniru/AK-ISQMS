@@ -109,7 +109,7 @@ public class IsQMSData {
 			EVENT_C05 = "C05", // STB 연속재생 여부 조정
 			EVENT_C06 = "C06", // STB 광고 메타파일 재 Download
 			EVENT_C07 = "C07", // STB Reboot
-			EVENT_C08 = "C08", // STB HDD최적화 실행
+			// EVENT_C08 = "C08", // STB HDD최적화 실행
 			EVENT_C09 = "C09", // STB 해상도 변경
 			// EVENT_C10 = "C10", // IPTV 채널 Retune
 			// EVENT_C11 = "C11", // CPU사용율 임계 치 설정

@@ -5,7 +5,7 @@ import com.skb.google.tv.isqms.IsQMSEnumData.eDISPLAY_MODE;
 import com.skb.google.tv.isqms.IsQMSEnumData.eTV_RATE_MODE;
 import com.skb.google.tv.isqms.IsQMSEnumData.eVIDEO_RATE_MODE;
 
-public class IsQMSListener {
+public interface IsQMSListener {
 	/**
 	 * <pre>
 	 * EVENT_ID : C03

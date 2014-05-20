@@ -2,6 +2,15 @@ package com.skb.google.tv.isqms;
 
 public class ISQMSData {
 	public static final boolean DEBUG = true;
+	public static final int THREAD_WAIT_MILLE_SECONDS = 1000;
+	public static final int MESSAGE_REQUEST_AGENT = 20000;
+	public static final int MESSAGE_REQUEST_AGENT_THREAD_DESTROY = MESSAGE_REQUEST_AGENT - 1;
+	public static final int MESSAGE_REQUEST_AGENT_BINDING = MESSAGE_REQUEST_AGENT;
+	public static final int MESSAGE_REQUEST_AGENT_H01 = MESSAGE_REQUEST_AGENT + 1;
+
+	public static final int MESSAGE_RESPONSE_AGENT = 21000;
+	public static final int MESSAGE_RESPONSE_AGENT_OK = MESSAGE_RESPONSE_AGENT + 1;
+	public static final int MESSAGE_RESPONSE_AGENT_ERROR = MESSAGE_RESPONSE_AGENT + 2;
 
 	public static final String ISQMS_STRING_STB_VER = "3.0";
 

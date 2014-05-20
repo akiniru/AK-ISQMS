@@ -7,10 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
 
@@ -72,7 +72,7 @@ public class ISQMSManager {
 	private Object mLock;
 	private ArrayList<ISQMSReceiveEvent> mReceiveEventList;
 	private ReceiveEventThread mReceiveEventThread;
-	private CountDownTimer mH01CountDownTimer;
+	private AgentSendManager mAgentSendManager;
 
 	private Context mContext;
 	private IUIAppToAgentService mBinder;
@@ -118,6 +118,9 @@ public class ISQMSManager {
 		mReceiveEventThread = new ReceiveEventThread();
 		mReceiveEventThread.start();
 
+		mAgentSendManager = new AgentSendManager(mAgentSendHandler);
+		mAgentSendManager.start();
+
 		// Common data init
 		mISQMSCommon = new ISQMSCommon();
 
@@ -139,25 +142,6 @@ public class ISQMSManager {
 		mISQMSCheckLGS = new ISQMSCheckLGS();
 		mISQMSCheckNet = new ISQMSCheckNet();
 		mISQMSCheckWSCS = new ISQMSCheckWSCS();
-
-		mH01CountDownTimer = new CountDownTimer(10 * 60 * 1000, 1000) {
-			@Override
-			public void onTick(long millisUntilFinished) {
-			}
-
-			@Override
-			public void onFinish() {
-				// 메시지 내용 : COMMON, STATUS_ALL
-				agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_OPEN);
-				agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
-				agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_CLOSE);
-			}
-		};
-		mH01CountDownTimer.start();
 
 		mBinder = null;
 	}
@@ -238,7 +222,6 @@ public class ISQMSManager {
 
 	public void unbindingISQMSAgent() {
 		logInfo(LOGD, "unbindingISQMSAgent() called");
-		mH01CountDownTimer.cancel();
 
 		if (mBinder != null) {
 			mContext.unbindService(mConnection);
@@ -254,21 +237,12 @@ public class ISQMSManager {
 
 		if (nRet == ISQMSData.ISQMS_SUCCESS) {
 			logDebug(LOGD, "onBindedISQMSAgent() send_data start.");
-
-			// String pTemp = ";1.0;{EEDD354B-2B4C-11E3-AA84-C500C85E324C};78abbb7f806b;3.2.56-0024;100527102151;100527102152;100527102153;SMT_E5030;1;001;ITV";
-			agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-
-			// pTemp = ";0;1;192.168.0.1;255.255.255.0;192.168.0.1;168.126.0.1;168.126.0.2";
-			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
-
-			// pTemp = ";1080i;16:9;ORG;1;18;00;1";
-			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
-
-			// pTemp = ";100610140920;100504235913;100614202529;100617104141;100616052242;100609112111;100325102000";
-			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
-
-			// pTemp = ";3";
-			agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
+			Handler receiveHandler = mAgentSendManager.getManagerHandler();
+			if (receiveHandler != null) {
+				Message msg = receiveHandler.obtainMessage();
+				msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_BINDING;
+				receiveHandler.sendMessage(msg);
+			}
 		}
 	}
 
@@ -340,6 +314,136 @@ public class ISQMSManager {
 			return false;
 		}
 	});
+
+	private Handler mAgentSendHandler = new Handler(new Handler.Callback() {
+		public boolean handleMessage(Message msg) {
+			switch (msg.what) {
+				case ISQMSData.MESSAGE_RESPONSE_AGENT_OK:
+					logInfo(LOGD, "mAgentSendHandler.handleMessage() called. MESSAGE_RESPONSE_AGENT_OK");
+					break;
+				case ISQMSData.MESSAGE_RESPONSE_AGENT_ERROR:
+					logInfo(LOGD, "mAgentSendHandler.handleMessage() called. MESSAGE_RESPONSE_AGENT_ERROR");
+					break;
+
+				default:
+					logInfo(LOGD, "mAgentSendHandler.handleMessage() called. default");
+					break;
+			}
+			return false;
+		};
+	});
+
+	private class AgentSendManager extends Thread {
+		private Handler mRecvHandler = null;
+		private Handler mSendHandler = null;
+		private boolean mIsWait = false;
+
+		public AgentSendManager(Handler handler) {
+			this.mSendHandler = handler;
+		}
+
+		public Handler getManagerHandler() {
+			try {
+				if (mRecvHandler == null) {
+					synchronized (this) {
+						mIsWait = true;
+						wait(ISQMSData.THREAD_WAIT_MILLE_SECONDS);
+					}
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			return mRecvHandler;
+		}
+
+		@Override
+		public void destroy() {
+			if (mRecvHandler != null) {
+				mRecvHandler.sendMessage(mRecvHandler.obtainMessage(ISQMSData.MESSAGE_REQUEST_AGENT_THREAD_DESTROY, null));
+			}
+		}
+
+		@Override
+		public void run() {
+			// < You have to prepare the looper before creating the handler.
+			Looper.prepare();
+
+			// < Create the child handler on the child thread so it is bound to the child thread's message queue.
+			mRecvHandler = new Handler(new Handler.Callback() {
+				@Override
+				public boolean handleMessage(Message msg) {
+					try {
+						// < Mocking an expensive operation. It takes 100 milliseconds to complete.
+						sleep(100);
+
+						switch (msg.what) {
+							case ISQMSData.MESSAGE_REQUEST_AGENT_THREAD_DESTROY:
+								Looper.myLooper().quit();
+								break;
+							case ISQMSData.MESSAGE_REQUEST_AGENT_BINDING:
+								// String pTemp = ";1.0;{EEDD354B-2B4C-11E3-AA84-C500C85E324C};78abbb7f806b;3.2.56-0024;100527102151;100527102152;100527102153;SMT_E5030;1;001;ITV";
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// pTemp = ";0;1;192.168.0.1;255.255.255.0;192.168.0.1;168.126.0.1;168.126.0.2";
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
+								// pTemp = ";1080i;16:9;ORG;1;18;00;1";
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+								// pTemp = ";100610140920;100504235913;100614202529;100617104141;100616052242;100609112111;100325102000";
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+								// pTemp = ";3";
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
+								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
+								break;
+
+							case ISQMSData.MESSAGE_REQUEST_AGENT_H01:
+								// 메시지 내용 : COMMON, STATUS_ALL
+								agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_OPEN);
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBbrate());
+								agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_CLOSE);
+								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
+								break;
+
+							default:
+								AgentSendManager.this.sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_ERROR, null);
+								break;
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						AgentSendManager.this.sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_ERROR, null);
+					} catch (Exception e) {
+						e.printStackTrace();
+						AgentSendManager.this.sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_ERROR, null);
+					}
+
+					return false;
+				}
+			});
+
+			// < notify
+			if (mIsWait) {
+				synchronized (this) {
+					notify();
+					mIsWait = false;
+				}
+			}
+
+			// < Start looping the message queue of this thread.
+			Looper.loop();
+		}
+
+		private void sendMessage(int id, Object obj) {
+			if (mSendHandler != null) {
+				Message toMain = mSendHandler.obtainMessage();
+				toMain.what = id;
+				toMain.obj = obj;
+				mSendHandler.sendMessage(toMain);
+			}
+		}
+	}
 
 	private class ReceiveEventThread extends Thread {
 		@Override

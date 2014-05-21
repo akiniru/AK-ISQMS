@@ -52,20 +52,6 @@ import com.skb.isqms.IUIAppToAgentService;
 public class ISQMSManager {
 	private static final String LOGD = ISQMSManager.class.getSimpleName();
 
-	private static final int MESSAGE_STARTID = 10000;
-	public static final int MESSAGE_C03_RECENT_ALL_UPGRADE = MESSAGE_STARTID + 3;
-	public static final int MESSAGE_C04_AGE_LIMIT_CHANGE = MESSAGE_STARTID + 4;
-	public static final int MESSAGE_C05_AUTO_NEXT_CHANGE = MESSAGE_STARTID + 5;
-	public static final int MESSAGE_C06_ADMETA_FILE_DOWNLOAD = MESSAGE_STARTID + 6;
-	public static final int MESSAGE_C07_REBOOT = MESSAGE_STARTID + 7;
-	public static final int MESSAGE_C09_RESOLUTION_CHANGE = MESSAGE_STARTID + 9;
-	public static final int MESSAGE_C14_STB_PASSWORD_CHANGE = MESSAGE_STARTID + 14;
-	public static final int MESSAGE_C15_CHILDLIMIT_PASSWORD_CHANGE = MESSAGE_STARTID + 15;
-	public static final int MESSAGE_C17_CHILDLIMIT_TIME_CHANGE = MESSAGE_STARTID + 17;
-	public static final int MESSAGE_C18_ADULT_AUTH_CHANGE = MESSAGE_STARTID + 18;
-	public static final int MESSAGE_C94_LGS_NORMAL_ACCESS = MESSAGE_STARTID + 94;
-	public static final int MESSAGE_C95_SCS_NORMAL_ACCESS = MESSAGE_STARTID + 95;
-
 	private static ISQMSManager mISQMSManager;
 
 	private Object mLock;
@@ -575,34 +561,34 @@ public class ISQMSManager {
 
 					if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C02)) {
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C03)) {
-						requestListener(MESSAGE_C03_RECENT_ALL_UPGRADE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C04)) {
-						requestListener(MESSAGE_C04_AGE_LIMIT_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C05)) {
-						requestListener(MESSAGE_C05_AUTO_NEXT_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C06)) {
-						requestListener(MESSAGE_C06_ADMETA_FILE_DOWNLOAD, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C07)) {
-						requestListener(MESSAGE_C07_REBOOT, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C07_REBOOT, null);
 						mLockWakeHandler.sendEmptyMessage(0);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C09)) {
-						requestListener(MESSAGE_C09_RESOLUTION_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C14)) {
-						requestListener(MESSAGE_C14_STB_PASSWORD_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C15)) {
-						requestListener(MESSAGE_C15_CHILDLIMIT_PASSWORD_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C17)) {
-						requestListener(MESSAGE_C17_CHILDLIMIT_TIME_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C18)) {
-						requestListener(MESSAGE_C18_ADULT_AUTH_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C94)) {
-						requestListener(MESSAGE_C94_LGS_NORMAL_ACCESS, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C94_LGS_NORMAL_ACCESS, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C95)) {
-						requestListener(MESSAGE_C95_SCS_NORMAL_ACCESS, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS, null);
 						// } else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C96)) {
-						// requestListener(MESSAGE_C96, null);
+						// requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C96, null);
 						// } else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C98)) {
-						// requestListener(MESSAGE_C98, null);
+						// requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C98, null);
 					}
 				}
 			}
@@ -1489,14 +1475,14 @@ public class ISQMSManager {
 
 		ISQMSUtil.debug(LOGD, "requestListener() called. eLISTENER_TYPE : " + type);
 		switch (type) {
-			case MESSAGE_C03_RECENT_ALL_UPGRADE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE:
 				if (null != mRecentAllUpgradeListener) {
 					mRecentAllUpgradeListener.onRecentAllUpgrade();
 				} else {
 					ISQMSUtil.debug(LOGD, "requestListener() mRecentAllUpgradeListener is null");
 				}
 				break;
-			case MESSAGE_C04_AGE_LIMIT_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE:
 				if (null != mAgeLimitChangeListener) {
 					if (null != data && true == (data instanceof eAGE_LIMIT_TYPE)) {
 						eAGE_LIMIT_TYPE age_LIMIT_TYPE = (eAGE_LIMIT_TYPE) data;
@@ -1508,7 +1494,7 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mAgeLimitChangeListener is null");
 				}
 				break;
-			case MESSAGE_C05_AUTO_NEXT_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE:
 				if (null != mAutoNextChangeListener) {
 					if (null != data && true == (data instanceof Boolean)) {
 						Boolean result = (Boolean) data;
@@ -1520,21 +1506,21 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mAutoNextChangeListener is null");
 				}
 				break;
-			case MESSAGE_C06_ADMETA_FILE_DOWNLOAD:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD:
 				if (null != mAdMetaFileDownloadListener) {
 					mAdMetaFileDownloadListener.onAdMetaFileDownload();
 				} else {
 					ISQMSUtil.debug(LOGD, "requestListener() mAdMetaFileDownloadListener is null");
 				}
 				break;
-			case MESSAGE_C07_REBOOT:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C07_REBOOT:
 				if (null != mRebootListener) {
 					mRebootListener.onReboot();
 				} else {
 					ISQMSUtil.debug(LOGD, "requestListener() mRebootListener is null");
 				}
 				break;
-			case MESSAGE_C09_RESOLUTION_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE:
 				if (null != mResolutionChangeListener) {
 					if (null != data && true == (data instanceof ISQMSMessage)) {
 						ISQMSMessage message = (ISQMSMessage) data;
@@ -1554,7 +1540,7 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mResolutionChangeListener is null");
 				}
 				break;
-			case MESSAGE_C14_STB_PASSWORD_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE:
 				if (null != mStbPasswordChangeListener) {
 					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
 						String stbPassword = (String) data;
@@ -1566,7 +1552,7 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mSTBPasswordChangeListener is null");
 				}
 				break;
-			case MESSAGE_C15_CHILDLIMIT_PASSWORD_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE:
 				if (null != mChildLimitPasswordChangeListener) {
 					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
 						String childLimitPassword = (String) data;
@@ -1578,7 +1564,7 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mChildLimitPasswordChangeListener is null");
 				}
 				break;
-			case MESSAGE_C17_CHILDLIMIT_TIME_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE:
 				if (null != mChildLimitTimeChangeListener) {
 					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
 						String childLimitTime = (String) data;
@@ -1590,7 +1576,7 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mChildLimitTimeChangeListener is null");
 				}
 				break;
-			case MESSAGE_C18_ADULT_AUTH_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE:
 				if (null != mAdultAuthChangeListener) {
 					if (null != data && true == (data instanceof Boolean)) {
 						Boolean result = (Boolean) data;
@@ -1602,14 +1588,14 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mAdultAuthChangeListener is null");
 				}
 				break;
-			case MESSAGE_C95_SCS_NORMAL_ACCESS:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS:
 				if (null != mScsNormalAccessListener) {
 					mScsNormalAccessListener.onScsNormalAccess();
 				} else {
 					ISQMSUtil.debug(LOGD, "requestListener() mSCSNormalAccessListener is null");
 				}
 				break;
-			case MESSAGE_C94_LGS_NORMAL_ACCESS:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C94_LGS_NORMAL_ACCESS:
 				if (null != mLgsNormalAccessListener) {
 					mLgsNormalAccessListener.onLgsNormalAccess();
 				} else {
@@ -1664,7 +1650,7 @@ public class ISQMSManager {
 
 		String CtrlSeq = (String) msg.obj;
 		switch (msg.what) {
-			case MESSAGE_C03_RECENT_ALL_UPGRADE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE:
 				agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
 				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
 				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
@@ -1673,38 +1659,38 @@ public class ISQMSManager {
 				agent_send_event(ISQMSData.EVENT_C03, CtrlSeq);
 				break;
 
-			case MESSAGE_C04_AGE_LIMIT_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE:
 				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
 				agent_send_event(ISQMSData.EVENT_C04, CtrlSeq);
 				break;
 
-			case MESSAGE_C05_AUTO_NEXT_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE:
 				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
 				agent_send_event(ISQMSData.EVENT_C05, CtrlSeq);
 				break;
 
-			case MESSAGE_C06_ADMETA_FILE_DOWNLOAD:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD:
 				break;
 
-			case MESSAGE_C09_RESOLUTION_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE:
 				break;
 
-			case MESSAGE_C14_STB_PASSWORD_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE:
 				break;
 
-			case MESSAGE_C15_CHILDLIMIT_PASSWORD_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE:
 				break;
 
-			case MESSAGE_C17_CHILDLIMIT_TIME_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE:
 				break;
 
-			case MESSAGE_C18_ADULT_AUTH_CHANGE:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE:
 				break;
 
-			case MESSAGE_C94_LGS_NORMAL_ACCESS:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C94_LGS_NORMAL_ACCESS:
 				break;
 
-			case MESSAGE_C95_SCS_NORMAL_ACCESS:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS:
 				break;
 
 			default:

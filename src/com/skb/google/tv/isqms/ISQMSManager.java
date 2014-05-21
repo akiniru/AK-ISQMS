@@ -33,6 +33,7 @@ import com.skb.google.tv.isqms.ISQMSListener.OnResolutionChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnScsNormalAccessListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnStbPasswordChangeListener;
 import com.skb.google.tv.isqms.check.ISQMSCheckERR1;
+import com.skb.google.tv.isqms.check.ISQMSCheckERRORCODE;
 import com.skb.google.tv.isqms.check.ISQMSCheckIPTV;
 import com.skb.google.tv.isqms.check.ISQMSCheckLGS;
 import com.skb.google.tv.isqms.check.ISQMSCheckNET;
@@ -96,6 +97,7 @@ public class ISQMSManager {
 	protected ISQMSCheckNET mISQMSCheckNET;
 	protected ISQMSCheckWSCS mISQMSCheckWSCS;
 	protected ISQMSCheckERR1 mISQMSCheckERR1;
+	protected ISQMSCheckERRORCODE mISQMSCheckERRORCODE;
 
 	protected SparseArray<ISQMSCheckVOD> mISQMSCheckVODList;
 	protected SparseArray<ISQMSCheckIPTV> mISQMSCheckIPTVList;
@@ -129,6 +131,7 @@ public class ISQMSManager {
 		mISQMSCheckNET = new ISQMSCheckNET();
 		mISQMSCheckWSCS = new ISQMSCheckWSCS();
 		mISQMSCheckERR1 = new ISQMSCheckERR1();
+		mISQMSCheckERRORCODE = new ISQMSCheckERRORCODE();
 
 		// List init
 		mISQMSCheckVODList = new SparseArray<ISQMSCheckVOD>(2);
@@ -365,26 +368,23 @@ public class ISQMSManager {
 							case ISQMSData.MESSAGE_REQUEST_AGENT_THREAD_DESTROY:
 								Looper.myLooper().quit();
 								break;
+
 							case ISQMSData.MESSAGE_REQUEST_AGENT_BINDING:
-								// String pTemp = ";1.0;{EEDD354B-2B4C-11E3-AA84-C500C85E324C};78abbb7f806b;3.2.56-0024;100527102151;100527102152;100527102153;SMT_E5030;1;001;ITV";
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								// pTemp = ";0;1;192.168.0.1;255.255.255.0;192.168.0.1;168.126.0.1;168.126.0.2";
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
-								// pTemp = ";1080i;16:9;ORG;1;18;00;1";
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
-								// pTemp = ";100610140920;100504235913;100614202529;100617104141;100616052242;100609112111;100325102000";
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
 								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
-								// pTemp = ";3";
 								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H01:
+								// 행동 : 전원ON, Reset시작 등 주요 핵심동작시
 								// 메시지 내용 : COMMON, STATUS_ALL
 								agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
 								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
 								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
 								agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_CLOSE);
@@ -392,15 +392,17 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H02:
+								// 행동 : Network설정변경시
 								// 메시지 내용 : COMMON, STATUS_NET
 								agent_send_event(ISQMSData.EVENT_H02, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
 								agent_send_event(ISQMSData.EVENT_H02, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H06:
+								// 행동 : SW Upgrade 진행 중
 								// 메시지 내용 : COMMON, C_SW_UPGRADE
 								agent_send_event(ISQMSData.EVENT_H06, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
@@ -410,6 +412,7 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H08:
+								// 행동 : Channel Upgrade 진행 중
 								// 메시지 내용 : COMMON, C_CH_UPGRADE
 								agent_send_event(ISQMSData.EVENT_H08, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
@@ -419,6 +422,7 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H09:
+								// 행동 : 서비스상태변경시 (UI- Home, MP- ITV, VoD, SM- SLP, WKP, VAS)
 								// 메시지 내용 : COMMON
 								agent_send_event(ISQMSData.EVENT_H09, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
@@ -427,6 +431,7 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10:
+								// 행동 : VOD요청 시
 								// 메시지 내용 : COMMON, CHECK_SVC, CHECK_VOD1, CHECK_VOD3
 								agent_send_event(ISQMSData.EVENT_H10, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
@@ -438,6 +443,7 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H13:
+								// 행동 : 채널집입 후 5초 이상시 1회
 								// 메시지 내용 : COMMON, CHECK_IPTV1, CHECK_IPTV2
 								agent_send_event(ISQMSData.EVENT_H13, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
@@ -448,6 +454,7 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H15:
+								// 행동 : STB인증 시도시
 								// 메시지 내용 : COMMON
 								agent_send_event(ISQMSData.EVENT_H15, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
@@ -456,35 +463,60 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E03:
+								// 행동 : 네트워크 연결 불가
 								// 메시지 내용 : COMMON, STATUS_NET, CHECK_ERR1
 								agent_send_event(ISQMSData.EVENT_E03, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
+								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
 								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
 								agent_send_event(ISQMSData.EVENT_E03, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09:
+								// 행동 : 화면정지시
+								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_SVC, CHECK_VOD3, CHECK_ERRORCODE
 								agent_send_event(ISQMSData.EVENT_E09, ISQMSData.ISQMS_STRING_OPEN);
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERRORCODE, ISQMSDataBuilder.getDataCheckERRORCODE());
 								agent_send_event(ISQMSData.EVENT_E09, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E14:
+								// 행동 : VOD 장애 발생 시 (VOD 요청 시 장애 전송, VOD 재생시 장애 전송)
+								// 메시지 내용 : COMMON, CHECK_SVC, CHECK_VOD1, CHECK_VOD3, CHECK_VOD4
 								agent_send_event(ISQMSData.EVENT_E14, ISQMSData.ISQMS_STRING_OPEN);
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD1, ISQMSDataBuilder.getDataCheckVOD1(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD4, ISQMSDataBuilder.getDataCheckVOD4(key));
 								agent_send_event(ISQMSData.EVENT_E14, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E18:
+								// 행동 : WSCS 장애 발생
+								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_WSCS
 								agent_send_event(ISQMSData.EVENT_E18, ISQMSData.ISQMS_STRING_OPEN);
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_WSCS, ISQMSDataBuilder.getDataCheckWSCS());
 								agent_send_event(ISQMSData.EVENT_E18, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E19:
+								// 행동 : 네트워크 변동시 문제 발생시
+								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_NET
 								agent_send_event(ISQMSData.EVENT_E19, ISQMSData.ISQMS_STRING_OPEN);
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_NET, ISQMSDataBuilder.getDataCheckNET());
 								agent_send_event(ISQMSData.EVENT_E19, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -1611,13 +1643,21 @@ public class ISQMSManager {
 		}
 	}
 
+	/** Key */
 	public int openEvent(int eventMessage) {
-		// mISQMScheckIPTVList
 		++mEventKey;
+
 		switch (eventMessage) {
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09:
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E14:
 				ISQMSCheckVOD mISQMSCheckVOD = new ISQMSCheckVOD();
 				mISQMSCheckVODList.put(mEventKey, mISQMSCheckVOD);
+				break;
+
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H13:
+				ISQMSCheckIPTV mISQMSCheckIPTV = new ISQMSCheckIPTV();
+				mISQMSCheckIPTVList.put(mEventKey, mISQMSCheckIPTV);
 				break;
 		}
 
@@ -1652,20 +1692,20 @@ public class ISQMSManager {
 		switch (msg.what) {
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE:
 				agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNet());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
 				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
 				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
 				agent_send_event(ISQMSData.EVENT_C03, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE:
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
 				agent_send_event(ISQMSData.EVENT_C04, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE:
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusConf());
+				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
 				agent_send_event(ISQMSData.EVENT_C05, CtrlSeq);
 				break;
 

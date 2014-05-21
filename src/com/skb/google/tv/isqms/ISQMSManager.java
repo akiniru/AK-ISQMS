@@ -71,7 +71,7 @@ public class ISQMSManager {
 
 	private Object mLock;
 	private ArrayList<ISQMSReceiveEvent> mReceiveEventList;
-	private ReceiveEventThread mReceiveEventThread;
+	private ReceiveEventManager mReceiveEventManager;
 	private AgentSendManager mAgentSendManager;
 
 	private Context mContext;
@@ -89,6 +89,8 @@ public class ISQMSManager {
 	private OnAdultAuthChangeListener mAdultAuthChangeListener;
 	private OnScsNormalAccessListener mScsNormalAccessListener;
 	private OnLgsNormalAccessListener mLgsNormalAccessListener;
+
+	private int mEventKey = 0;
 
 	/** COMMON DATA */
 	protected ISQMSCommon mISQMSCommon;
@@ -115,8 +117,8 @@ public class ISQMSManager {
 	private ISQMSManager() {
 		mLock = new Object();
 		mReceiveEventList = new ArrayList<ISQMSReceiveEvent>();
-		mReceiveEventThread = new ReceiveEventThread();
-		mReceiveEventThread.start();
+		mReceiveEventManager = new ReceiveEventManager();
+		mReceiveEventManager.start();
 
 		mAgentSendManager = new AgentSendManager(mAgentSendHandler);
 		mAgentSendManager.start();
@@ -208,7 +210,7 @@ public class ISQMSManager {
 	 * 
 	 * @param callback
 	 */
-	public void bindingISQMSAgent() {
+	private void bindingISQMSAgent() {
 		bindingISQMSAgent(mContext);
 	}
 
@@ -395,7 +397,7 @@ public class ISQMSManager {
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
-							case ISQMSData.MESSAGE_REQUEST_AGENT_H01:
+							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H01:
 								// 메시지 내용 : COMMON, STATUS_ALL
 								agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_OPEN);
 								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
@@ -445,7 +447,7 @@ public class ISQMSManager {
 		}
 	}
 
-	private class ReceiveEventThread extends Thread {
+	private class ReceiveEventManager extends Thread {
 		@Override
 		public void run() {
 			while (true) {
@@ -463,7 +465,7 @@ public class ISQMSManager {
 					if (null == event_id || event_id.length() <= 0) {
 						continue;
 					}
-					logInfo(LOGD, "ReceiveEventThread.run() called. event_id : " + event_id);
+					logInfo(LOGD, "ReceiveEventManager.run() called. event_id : " + event_id);
 
 					if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C02)) {
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C03)) {
@@ -1462,13 +1464,31 @@ public class ISQMSManager {
 			default:
 				logDebug(LOGD, "requestListener() type is default");
 				Message msg = new Message();
-				close_event(msg);
+				closeHolePunchingEvent(msg);
 				break;
 		}
 	}
 
-	public void close_event(Message msg) {
-		logDebug(LOGD, "close_event() called. msg : " + msg);
+	public int openEvent(int eventMessage) {
+		Integer integer = Integer.valueOf(0);
+		++integer;
+		return ++mEventKey;
+	}
+
+	/** UI에서 Event_H, Event_E 발생 시, 값 설정 후에 호출 */
+	public void closeEvent(int eventMessage) {
+		logDebug(LOGD, "closeHolePunchingEvent() called. eventMessage : " + eventMessage);
+		Handler receiveHandler = mAgentSendManager.getManagerHandler();
+		if (receiveHandler != null) {
+			Message msg = receiveHandler.obtainMessage();
+			msg.what = eventMessage;
+			receiveHandler.sendMessage(msg);
+		}
+	}
+
+	/** UI에서 해당 HolePunching 이벤트 처리 후 호출 */
+	public void closeHolePunchingEvent(Message msg) {
+		logInfo(LOGD, "closeHolePunchingEvent() called. msg : " + msg);
 		if (null == msg) {
 			mLockWakeHandler.sendEmptyMessage(0);
 			return;

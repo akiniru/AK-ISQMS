@@ -522,13 +522,23 @@ public class ISQMSManager {
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E20:
+								// 행동 : SCS관련 문제 발생시
+								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_SCS
 								agent_send_event(ISQMSData.EVENT_E20, ISQMSData.ISQMS_STRING_OPEN);
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SCS, ISQMSDataBuilder.getDataCheckSCS());
 								agent_send_event(ISQMSData.EVENT_E20, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E21:
+								// 행동 : LGS관련 문제 발생시
+								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_LGS
 								agent_send_event(ISQMSData.EVENT_E21, ISQMSData.ISQMS_STRING_OPEN);
+								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_LGS, ISQMSDataBuilder.getDataCheckLGS());
 								agent_send_event(ISQMSData.EVENT_E21, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;

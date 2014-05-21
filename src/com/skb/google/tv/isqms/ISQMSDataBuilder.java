@@ -5,7 +5,9 @@ import android.util.SparseArray;
 import com.skb.google.tv.isqms.check.ISQMSCheckERR1;
 import com.skb.google.tv.isqms.check.ISQMSCheckERRORCODE;
 import com.skb.google.tv.isqms.check.ISQMSCheckIPTV;
+import com.skb.google.tv.isqms.check.ISQMSCheckLGS;
 import com.skb.google.tv.isqms.check.ISQMSCheckNET;
+import com.skb.google.tv.isqms.check.ISQMSCheckSCS;
 import com.skb.google.tv.isqms.check.ISQMSCheckSVC;
 import com.skb.google.tv.isqms.check.ISQMSCheckUPG;
 import com.skb.google.tv.isqms.check.ISQMSCheckVOD;
@@ -492,6 +494,56 @@ public class ISQMSDataBuilder {
 		/** ERRORCODE_C_MSG */
 		// if (null != mISQMSCheckERRORCODE.ERRORCODE_C_MSG) {
 		// builder.append(mISQMSCheckERRORCODE.ERRORCODE_C_MSG);
+		// }
+
+		return builder.toString();
+	}
+
+	/** CHECK_SCS */
+	public static String getDataCheckSCS() {
+		ISQMSUtil.info(LOGD, "getDataCheckSCS() called.");
+		ISQMSCheckSCS mISQMSCheckSCS = ISQMSManager.getInstance().mISQMSCheckSCS;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** SCS_C_SCS_IP */
+		if (null != mISQMSCheckSCS.SCS_C_SCS_IP) {
+			builder.append(mISQMSCheckSCS.SCS_C_SCS_IP);
+		}
+		builder.append(";");
+		/** SCS_C_SCS_ECODE */
+		if (null != mISQMSCheckSCS.SCS_C_SCS_ECODE) {
+			builder.append(mISQMSCheckSCS.SCS_C_SCS_ECODE);
+		}
+		builder.append(";");
+		/** SCS_C_MSG */
+		// if (null != mISQMSCheckSCS.SCS_C_MSG) {
+		// builder.append(mISQMSCheckSCS.SCS_C_MSG);
+		// }
+
+		return builder.toString();
+	}
+
+	/** CHECK_LGS */
+	public static String getDataCheckLGS() {
+		ISQMSUtil.info(LOGD, "getDataCheckLGS() called.");
+		ISQMSCheckLGS mISQMSCheckLGS = ISQMSManager.getInstance().mISQMSCheckLGS;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** LGS_C_LGS_ECODE */
+		if (null != mISQMSCheckLGS.LGS_C_LGS_ECODE) {
+			builder.append(mISQMSCheckLGS.LGS_C_LGS_ECODE);
+		}
+		builder.append(";");
+		/** LGS_C_LGS_IP */
+		// if (null != mISQMSCheckLGS.LGS_C_LGS_IP) {
+		// builder.append(mISQMSCheckLGS.LGS_C_LGS_IP);
+		// }
+		builder.append(";");
+		/** LGS_C_MSG */
+		// if (null != mISQMSCheckLGS.LGS_C_MSG) {
+		// builder.append(mISQMSCheckLGS.LGS_C_MSG);
 		// }
 
 		return builder.toString();

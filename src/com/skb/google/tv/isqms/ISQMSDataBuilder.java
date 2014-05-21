@@ -1,13 +1,12 @@
 package com.skb.google.tv.isqms;
 
-import com.skb.google.tv.common.util.LogUtil;
+import android.util.SparseArray;
+
 import com.skb.google.tv.isqms.check.ISQMSCheckERR1;
-import com.skb.google.tv.isqms.check.ISQMSCheckIPTV1;
-import com.skb.google.tv.isqms.check.ISQMSCheckIPTV2;
+import com.skb.google.tv.isqms.check.ISQMSCheckIPTV;
 import com.skb.google.tv.isqms.check.ISQMSCheckSVC;
 import com.skb.google.tv.isqms.check.ISQMSCheckUPG;
-import com.skb.google.tv.isqms.check.ISQMSCheckVOD1;
-import com.skb.google.tv.isqms.check.ISQMSCheckVOD3;
+import com.skb.google.tv.isqms.check.ISQMSCheckVOD;
 import com.skb.google.tv.isqms.common.ISQMSCommon;
 import com.skb.google.tv.isqms.status.ISQMSStatusCONF;
 import com.skb.google.tv.isqms.status.ISQMSStatusNET;
@@ -16,31 +15,26 @@ import com.skb.google.tv.isqms.status.ISQMSStatusXPG2;
 public class ISQMSDataBuilder {
 	private static final String LOGD = ISQMSDataBuilder.class.getSimpleName();
 
-	private static void logInfo(String tag, String msg) {
-		if (ISQMSData.DEBUG) {
-			LogUtil.info(tag, msg);
-		}
-	}
-
 	// =========================================================================
 	// < create IsQMS Data
 	// =========================================================================
 	/** COMMON */
 	public static String getDataCommon() {
-		logInfo(LOGD, "getDataCommon() called.");
+		ISQMSUtil.info(LOGD, "getDataCommon() called.");
 		ISQMSCommon mISQMSCommon = ISQMSManager.getInstance().mISQMSCommon;
 		StringBuilder builder = new StringBuilder();
 
 		// builder.append(";");
 		/** EVENT_ID */
-		// if (null != mIsQMSCommon.EVENT_ID) {
-		// builder.append(mIsQMSCommon.EVENT_ID);
+		// if (null != mISQMSCommon.EVENT_ID) {
+		// builder.append(mISQMSCommon.EVENT_ID);
 		// }
 		// builder.append(";");
 		/** EVENT_TS */
-		// if (null != mIsQMSCommon.EVENT_TS) {
-		// builder.append(mIsQMSCommon.EVENT_TS);
-		// }
+		mISQMSCommon.EVENT_TS = ISQMSManager.getEventTS();
+		if (null != mISQMSCommon.EVENT_TS) {
+			builder.append(mISQMSCommon.EVENT_TS);
+		}
 		builder.append(";");
 		/** STB_VER */
 		if (null != mISQMSCommon.STB_VER) {
@@ -92,14 +86,14 @@ public class ISQMSDataBuilder {
 
 	/** STATUS_NET */
 	public static String getDataStatusNet() {
-		logInfo(LOGD, "getDataStatusNet() called.");
+		ISQMSUtil.info(LOGD, "getDataStatusNet() called.");
 		ISQMSStatusNET mISQMSStatusNET = ISQMSManager.getInstance().mISQMSStatusNET;
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(";");
 		// /** S_NETWORK_MODE */
-		// if (null != mIsQMSCurrentStatusNet.S_NETWORK_MODE) {
-		// builder.append(mIsQMSCurrentStatusNet.S_NETWORK_MODE);
+		// if (null != mISQMSStatusNET.S_NETWORK_MODE) {
+		// builder.append(mISQMSStatusNET.S_NETWORK_MODE);
 		// }
 		builder.append(";");
 		/** S_NET_DHCP_MODE */
@@ -137,7 +131,7 @@ public class ISQMSDataBuilder {
 
 	/** STATUS_CONF */
 	public static String getDataStatusConf() {
-		logInfo(LOGD, "getDataStatusConf() called.");
+		ISQMSUtil.info(LOGD, "getDataStatusConf() called.");
 		ISQMSStatusCONF mISQMSStatusCONF = ISQMSManager.getInstance().mISQMSStatusCONF;
 		StringBuilder builder = new StringBuilder();
 
@@ -182,7 +176,7 @@ public class ISQMSDataBuilder {
 
 	/** STATUS_XPG2 */
 	public static String getDataStatusXPG2() {
-		logInfo(LOGD, "getDataStatusXPG2() called.");
+		ISQMSUtil.info(LOGD, "getDataStatusXPG2() called.");
 		ISQMSStatusXPG2 mISQMSStatusXPG2 = ISQMSManager.getInstance().mISQMSStatusXPG2;
 		StringBuilder builder = new StringBuilder();
 
@@ -227,7 +221,7 @@ public class ISQMSDataBuilder {
 
 	/** STATUS_BBRATE */
 	public static String getDataStatusBBRATE() {
-		logInfo(LOGD, "getDataStatusBBRATE() called.");
+		ISQMSUtil.info(LOGD, "getDataStatusBBRATE() called.");
 		// ISQMSStatusBBRATE mISQMSStatusBBRATE = ISQMSManager.getInstance().mISQMSStatusBBRATE;
 		StringBuilder builder = new StringBuilder();
 
@@ -242,7 +236,7 @@ public class ISQMSDataBuilder {
 
 	/** STATUS_ALL */
 	public static String getDataStatusAll() {
-		logInfo(LOGD, "getDataStatusAll() called.");
+		ISQMSUtil.info(LOGD, "getDataStatusAll() called.");
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(getDataStatusNet());
@@ -255,7 +249,7 @@ public class ISQMSDataBuilder {
 
 	/** CHECK_UPG_C_SW_UPGRADE */
 	public static String getDataCheckSwUpgrade() {
-		logInfo(LOGD, "getDataCheckSwUpgrade() called.");
+		ISQMSUtil.info(LOGD, "getDataCheckSwUpgrade() called.");
 		ISQMSCheckUPG mISQMSCheckUPG = ISQMSManager.getInstance().mISQMSCheckUPG;
 		StringBuilder builder = new StringBuilder();
 
@@ -270,7 +264,7 @@ public class ISQMSDataBuilder {
 
 	/** CHECK_UPG_C_CH_UPGRADE */
 	public static String getDataCheckChUpgrade() {
-		logInfo(LOGD, "getDataCheckChUpgrade() called.");
+		ISQMSUtil.info(LOGD, "getDataCheckChUpgrade() called.");
 		ISQMSCheckUPG mISQMSCheckUPG = ISQMSManager.getInstance().mISQMSCheckUPG;
 		StringBuilder builder = new StringBuilder();
 
@@ -285,7 +279,7 @@ public class ISQMSDataBuilder {
 
 	/** CHECK_SVC */
 	public static String getDataCheckSVC() {
-		logInfo(LOGD, "getDataCheckSVC() called.");
+		ISQMSUtil.info(LOGD, "getDataCheckSVC() called.");
 		ISQMSCheckSVC mISQMSCheckSVC = ISQMSManager.getInstance().mISQMSCheckSVC;
 		StringBuilder builder = new StringBuilder();
 
@@ -314,85 +308,142 @@ public class ISQMSDataBuilder {
 	}
 
 	/** CHECK_VOD1 */
-	public static String getDataCheckVOD1() {
-		logInfo(LOGD, "getDataCheckVOD1() called.");
-		ISQMSCheckVOD1 mISQMSCheckVOD1 = ISQMSManager.getInstance().mISQMSCheckVOD1;
+	public static String getDataCheckVOD1(Integer key) {
+		ISQMSUtil.info(LOGD, "getDataCheckVOD1() called.");
 		StringBuilder builder = new StringBuilder();
+		SparseArray<ISQMSCheckVOD> mISQMSCheckVODList = ISQMSManager.getInstance().mISQMSCheckVODList;
+		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
+		if (null == mISQMSCheckVOD) {
+			ISQMSUtil.debug(LOGD, "getDataCheckVOD1() mISQMSCheckVOD is null");
+			builder.append(";");
+			builder.append(";");
+			builder.append(";");
+			builder.append(";");
+			return builder.toString();
+		}
 
 		builder.append(";");
 		/** VOD1_C_VOD_SCS_IP */
-		if (null != mISQMSCheckVOD1.VOD1_C_VOD_SCS_IP) {
-			builder.append(mISQMSCheckVOD1.VOD1_C_VOD_SCS_IP);
+		if (null != mISQMSCheckVOD.VOD1_C_VOD_SCS_IP) {
+			builder.append(mISQMSCheckVOD.VOD1_C_VOD_SCS_IP);
 		}
 		builder.append(";");
 		/** VOD1_C_VOD_SCS_RT */
-		if (null != mISQMSCheckVOD1.VOD1_C_VOD_SCS_RT) {
-			builder.append(mISQMSCheckVOD1.VOD1_C_VOD_SCS_RT);
+		if (null != mISQMSCheckVOD.VOD1_C_VOD_SCS_RT) {
+			builder.append(mISQMSCheckVOD.VOD1_C_VOD_SCS_RT);
 		}
 		builder.append(";");
 		/** VOD1_C_VOD_DOWN_IP */
-		// if (null != mISQMSCheckVOD1.VOD1_C_VOD_DOWN_IP) {
-		// builder.append(mISQMSCheckVOD1.VOD1_C_VOD_DOWN_IP);
+		// if (null != mISQMSCheckVOD.VOD1_C_VOD_DOWN_IP) {
+		// builder.append(mISQMSCheckVOD.VOD1_C_VOD_DOWN_IP);
 		// }
 		builder.append(";");
 		/** VOD1_C_VOD_DOWN_RT */
-		if (null != mISQMSCheckVOD1.VOD1_C_VOD_DOWN_RT) {
-			builder.append(mISQMSCheckVOD1.VOD1_C_VOD_DOWN_RT);
+		if (null != mISQMSCheckVOD.VOD1_C_VOD_DOWN_RT) {
+			builder.append(mISQMSCheckVOD.VOD1_C_VOD_DOWN_RT);
 		}
 
 		return builder.toString();
 	}
 
 	/** CHECK_VOD3 */
-	public static String getDataCheckVOD3() {
-		logInfo(LOGD, "getDataCheckVOD3() called.");
-		ISQMSCheckVOD3 mISQMSCheckVOD3 = ISQMSManager.getInstance().mISQMSCheckVOD3;
+	public static String getDataCheckVOD3(Integer key) {
+		ISQMSUtil.info(LOGD, "getDataCheckVOD3() called.");
 		StringBuilder builder = new StringBuilder();
+		SparseArray<ISQMSCheckVOD> mISQMSCheckVODList = ISQMSManager.getInstance().mISQMSCheckVODList;
+		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
+		if (null == mISQMSCheckVOD) {
+			ISQMSUtil.debug(LOGD, "getDataCheckVOD3() mISQMSCheckVOD is null");
+			builder.append(";");
+			builder.append(";");
+			return builder.toString();
+		}
 
 		builder.append(";");
 		/** VOD3_C_VOD_CONTENT_NAME */
-		if (null != mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_NAME) {
-			builder.append(mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_NAME);
+		if (null != mISQMSCheckVOD.VOD3_C_VOD_CONTENT_NAME) {
+			builder.append(mISQMSCheckVOD.VOD3_C_VOD_CONTENT_NAME);
 		}
 		builder.append(";");
 		/** VOD3_C_VOD_CONTENT_URL */
-		if (null != mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_URL) {
-			builder.append(mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_URL);
+		if (null != mISQMSCheckVOD.VOD3_C_VOD_CONTENT_URL) {
+			builder.append(mISQMSCheckVOD.VOD3_C_VOD_CONTENT_URL);
+		}
+
+		return builder.toString();
+	}
+
+	/** CHECK_VOD4 */
+	public static String getDataCheckVOD4(Integer key) {
+		ISQMSUtil.info(LOGD, "getDataCheckVOD4() called.");
+		StringBuilder builder = new StringBuilder();
+		SparseArray<ISQMSCheckVOD> mISQMSCheckVODList = ISQMSManager.getInstance().mISQMSCheckVODList;
+		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
+		if (null == mISQMSCheckVOD) {
+			ISQMSUtil.debug(LOGD, "getDataCheckVOD4() mISQMSCheckVOD is null");
+			builder.append(";");
+			builder.append(";");
+			return builder.toString();
+		}
+
+		builder.append(";");
+		/** VOD4_C_VOD_ERR */
+		if (null != mISQMSCheckVOD.VOD4_C_VOD_ERR) {
+			builder.append(mISQMSCheckVOD.VOD4_C_VOD_ERR);
+		}
+		builder.append(";");
+		/** VOD4_C_MSG */
+		if (null != mISQMSCheckVOD.VOD4_C_MSG) {
+			builder.append(mISQMSCheckVOD.VOD4_C_MSG);
 		}
 
 		return builder.toString();
 	}
 
 	/** CHECK_IPTV1 */
-	public static String getDataCheckIPTV1() {
-		logInfo(LOGD, "getDataCheckIPTV1() called.");
-		ISQMSCheckIPTV1 mISQMSCheckIPTV1 = ISQMSManager.getInstance().mISQMSCheckIPTV1;
+	public static String getDataCheckIPTV1(Integer key) {
+		ISQMSUtil.info(LOGD, "getDataCheckIPTV1() called.");
 		StringBuilder builder = new StringBuilder();
+		SparseArray<ISQMSCheckIPTV> mISQMSCheckIPTVList = ISQMSManager.getInstance().mISQMSCheckIPTVList;
+		ISQMSCheckIPTV mISQMSCheckIPTV = mISQMSCheckIPTVList.get(key);
+		if (null == mISQMSCheckIPTV) {
+			ISQMSUtil.debug(LOGD, "getDataCheckIPTV1() mISQMSCheckIPTV is null");
+			builder.append(";");
+			builder.append(";");
+			return builder.toString();
+		}
 
 		builder.append(";");
 		/** IPTV1_C_IPTV_CH_NUM */
-		if (null != mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_NUM) {
-			builder.append(mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_NUM);
+		if (null != mISQMSCheckIPTV.IPTV1_C_IPTV_CH_NUM) {
+			builder.append(mISQMSCheckIPTV.IPTV1_C_IPTV_CH_NUM);
 		}
 		builder.append(";");
 		/** IPTV1_C_IPTV_CH_MODE */
-		if (null != mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_MODE) {
-			builder.append(mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_MODE);
+		if (null != mISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE) {
+			builder.append(mISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE);
 		}
 
 		return builder.toString();
 	}
 
 	/** CHECK_IPTV2 */
-	public static String getDataCheckIPTV2() {
-		logInfo(LOGD, "getDataCheckIPTV2() called.");
-		ISQMSCheckIPTV2 mISQMSCheckIPTV2 = ISQMSManager.getInstance().mISQMSCheckIPTV2;
+	public static String getDataCheckIPTV2(Integer key) {
+		ISQMSUtil.info(LOGD, "getDataCheckIPTV2() called.");
 		StringBuilder builder = new StringBuilder();
+		SparseArray<ISQMSCheckIPTV> mISQMSCheckIPTVList = ISQMSManager.getInstance().mISQMSCheckIPTVList;
+		ISQMSCheckIPTV mISQMSCheckIPTV = mISQMSCheckIPTVList.get(key);
+		if (null == mISQMSCheckIPTV) {
+			ISQMSUtil.debug(LOGD, "getDataCheckIPTV2() mISQMSCheckIPTV is null");
+			builder.append(";");
+			builder.append(";");
+			return builder.toString();
+		}
 
 		builder.append(";");
 		/** IPTV2_C_IPTV_ECODE */
-		if (null != mISQMSCheckIPTV2.IPTV2_C_IPTV_ECODE) {
-			builder.append(mISQMSCheckIPTV2.IPTV2_C_IPTV_ECODE);
+		if (null != mISQMSCheckIPTV.IPTV2_C_IPTV_ECODE) {
+			builder.append(mISQMSCheckIPTV.IPTV2_C_IPTV_ECODE);
 		}
 		builder.append(";");
 		/** IPTV2_C_MSG */
@@ -405,7 +456,7 @@ public class ISQMSDataBuilder {
 
 	/** CHECK_ERR1 */
 	public static String getDataCheckERR1() {
-		logInfo(LOGD, "getDataCheckERR1() called.");
+		ISQMSUtil.info(LOGD, "getDataCheckERR1() called.");
 		ISQMSCheckERR1 mISQMSCheckERR1 = ISQMSManager.getInstance().mISQMSCheckERR1;
 		StringBuilder builder = new StringBuilder();
 

@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.skb.google.tv.common.util.LogUtil;
+
 public class ISQMSUtil {
 	/** 날짜 변환 **/
 	public static String toDateFormat(String format, Date date) {
@@ -12,5 +14,17 @@ public class ISQMSUtil {
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.KOREA);
 		return sdf.format(date);
+	}
+
+	public static void debug(String tag, String msg) {
+		if (ISQMSData.DEBUG) {
+			LogUtil.debug(tag, msg);
+		}
+	}
+
+	public static void info(String tag, String msg) {
+		if (ISQMSData.DEBUG) {
+			LogUtil.info(tag, msg);
+		}
 	}
 }

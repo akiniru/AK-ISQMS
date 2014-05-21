@@ -1,6 +1,6 @@
 package com.skb.google.tv.isqms.status;
 
-public class ISQMSStatusConf {
+public class ISQMSStatusCONF {
 	/** CONF */
 	public String STB_SCR_RESOLUTION;
 	public String STB_SCR_TV;

@@ -1,10 +1,16 @@
 package com.skb.google.tv.isqms;
 
 import com.skb.google.tv.common.util.LogUtil;
+import com.skb.google.tv.isqms.check.ISQMSCheckERR1;
+import com.skb.google.tv.isqms.check.ISQMSCheckIPTV1;
+import com.skb.google.tv.isqms.check.ISQMSCheckIPTV2;
+import com.skb.google.tv.isqms.check.ISQMSCheckSVC;
 import com.skb.google.tv.isqms.check.ISQMSCheckUPG;
+import com.skb.google.tv.isqms.check.ISQMSCheckVOD1;
+import com.skb.google.tv.isqms.check.ISQMSCheckVOD3;
 import com.skb.google.tv.isqms.common.ISQMSCommon;
-import com.skb.google.tv.isqms.status.ISQMSStatusConf;
-import com.skb.google.tv.isqms.status.ISQMSStatusNet;
+import com.skb.google.tv.isqms.status.ISQMSStatusCONF;
+import com.skb.google.tv.isqms.status.ISQMSStatusNET;
 import com.skb.google.tv.isqms.status.ISQMSStatusXPG2;
 
 public class ISQMSDataBuilder {
@@ -87,7 +93,7 @@ public class ISQMSDataBuilder {
 	/** STATUS_NET */
 	public static String getDataStatusNet() {
 		logInfo(LOGD, "getDataStatusNet() called.");
-		ISQMSStatusNet mISQMSStatusNet = ISQMSManager.getInstance().mISQMSStatusNet;
+		ISQMSStatusNET mISQMSStatusNET = ISQMSManager.getInstance().mISQMSStatusNET;
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(";");
@@ -97,33 +103,33 @@ public class ISQMSDataBuilder {
 		// }
 		builder.append(";");
 		/** S_NET_DHCP_MODE */
-		if (null != mISQMSStatusNet.S_NET_DHCP_MODE) {
-			builder.append(mISQMSStatusNet.S_NET_DHCP_MODE);
+		if (null != mISQMSStatusNET.S_NET_DHCP_MODE) {
+			builder.append(mISQMSStatusNET.S_NET_DHCP_MODE);
 		}
 		builder.append(";");
 		/** S_NET_IPADDR */
-		if (null != mISQMSStatusNet.S_NET_IPADDR) {
-			builder.append(mISQMSStatusNet.S_NET_IPADDR);
+		if (null != mISQMSStatusNET.S_NET_IPADDR) {
+			builder.append(mISQMSStatusNET.S_NET_IPADDR);
 		}
 		builder.append(";");
 		/** S_NET_IPMASK */
-		if (null != mISQMSStatusNet.S_NET_IPMASK) {
-			builder.append(mISQMSStatusNet.S_NET_IPMASK);
+		if (null != mISQMSStatusNET.S_NET_IPMASK) {
+			builder.append(mISQMSStatusNET.S_NET_IPMASK);
 		}
 		builder.append(";");
 		/** S_NET_IPGW */
-		if (null != mISQMSStatusNet.S_NET_IPGW) {
-			builder.append(mISQMSStatusNet.S_NET_IPGW);
+		if (null != mISQMSStatusNET.S_NET_IPGW) {
+			builder.append(mISQMSStatusNET.S_NET_IPGW);
 		}
 		builder.append(";");
 		/** S_NET_DNS1 */
-		if (null != mISQMSStatusNet.S_NET_DNS1) {
-			builder.append(mISQMSStatusNet.S_NET_DNS1);
+		if (null != mISQMSStatusNET.S_NET_DNS1) {
+			builder.append(mISQMSStatusNET.S_NET_DNS1);
 		}
 		builder.append(";");
 		/** S_NET_DNS2 */
-		if (null != mISQMSStatusNet.S_NET_DNS2) {
-			builder.append(mISQMSStatusNet.S_NET_DNS2);
+		if (null != mISQMSStatusNET.S_NET_DNS2) {
+			builder.append(mISQMSStatusNET.S_NET_DNS2);
 		}
 
 		return builder.toString();
@@ -132,43 +138,43 @@ public class ISQMSDataBuilder {
 	/** STATUS_CONF */
 	public static String getDataStatusConf() {
 		logInfo(LOGD, "getDataStatusConf() called.");
-		ISQMSStatusConf mISQMSStatusConf = ISQMSManager.getInstance().mISQMSStatusConf;
+		ISQMSStatusCONF mISQMSStatusCONF = ISQMSManager.getInstance().mISQMSStatusCONF;
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(";");
 		/** STB_SCR_RESOLUTION */
-		if (null != mISQMSStatusConf.STB_SCR_RESOLUTION) {
-			builder.append(mISQMSStatusConf.STB_SCR_RESOLUTION);
+		if (null != mISQMSStatusCONF.STB_SCR_RESOLUTION) {
+			builder.append(mISQMSStatusCONF.STB_SCR_RESOLUTION);
 		}
 		builder.append(";");
 		/** STB_SCR_TV */
-		if (null != mISQMSStatusConf.STB_SCR_TV) {
-			builder.append(mISQMSStatusConf.STB_SCR_TV);
+		if (null != mISQMSStatusCONF.STB_SCR_TV) {
+			builder.append(mISQMSStatusCONF.STB_SCR_TV);
 		}
 		builder.append(";");
 		/** STB_SCR_VIDEO */
-		if (null != mISQMSStatusConf.STB_SCR_VIDEO) {
-			builder.append(mISQMSStatusConf.STB_SCR_VIDEO);
+		if (null != mISQMSStatusCONF.STB_SCR_VIDEO) {
+			builder.append(mISQMSStatusCONF.STB_SCR_VIDEO);
 		}
 		builder.append(";");
 		/** STB_ADULT */
-		if (null != mISQMSStatusConf.STB_ADULT) {
-			builder.append(mISQMSStatusConf.STB_ADULT);
+		if (null != mISQMSStatusCONF.STB_ADULT) {
+			builder.append(mISQMSStatusCONF.STB_ADULT);
 		}
 		builder.append(";");
 		/** STB_AGE_LIMIT */
-		if (null != mISQMSStatusConf.STB_AGE_LIMIT) {
-			builder.append(mISQMSStatusConf.STB_AGE_LIMIT);
+		if (null != mISQMSStatusCONF.STB_AGE_LIMIT) {
+			builder.append(mISQMSStatusCONF.STB_AGE_LIMIT);
 		}
 		builder.append(";");
 		/** STB_AGE_TIME */
-		if (null != mISQMSStatusConf.STB_AGE_TIME) {
-			builder.append(mISQMSStatusConf.STB_AGE_TIME);
+		if (null != mISQMSStatusCONF.STB_AGE_TIME) {
+			builder.append(mISQMSStatusCONF.STB_AGE_TIME);
 		}
 		builder.append(";");
 		/** STB_AUTONEXT */
-		if (null != mISQMSStatusConf.STB_AUTONEXT) {
-			builder.append(mISQMSStatusConf.STB_AUTONEXT);
+		if (null != mISQMSStatusCONF.STB_AUTONEXT) {
+			builder.append(mISQMSStatusCONF.STB_AUTONEXT);
 		}
 
 		return builder.toString();
@@ -220,15 +226,15 @@ public class ISQMSDataBuilder {
 	}
 
 	/** STATUS_BBRATE */
-	public static String getDataStatusBbrate() {
-		logInfo(LOGD, "getDataStatusBbrate() called.");
-		// ISQMSStatusBbrate mISQMSStatusBbrate = ISQMSManager.getInstance().mISQMSStatusBbrate;
+	public static String getDataStatusBBRATE() {
+		logInfo(LOGD, "getDataStatusBBRATE() called.");
+		// ISQMSStatusBBRATE mISQMSStatusBBRATE = ISQMSManager.getInstance().mISQMSStatusBBRATE;
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(";");
 		/** BBRATE */
-		// if (null != mISQMSStatusBbrate.BBRATE) {
-		// builder.append(mISQMSStatusBbrate.BBRATE);
+		// if (null != mISQMSStatusBBRATE.BBRATE) {
+		// builder.append(mISQMSStatusBBRATE.BBRATE);
 		// }
 
 		return builder.toString();
@@ -242,7 +248,7 @@ public class ISQMSDataBuilder {
 		builder.append(getDataStatusNet());
 		builder.append(getDataStatusConf());
 		builder.append(getDataStatusXPG2());
-		builder.append(getDataStatusBbrate());
+		builder.append(getDataStatusBBRATE());
 
 		return builder.toString();
 	}
@@ -277,13 +283,147 @@ public class ISQMSDataBuilder {
 		return builder.toString();
 	}
 
-	/** CHECK_UPG */
-	public static String getDataCheckUPG() {
-		logInfo(LOGD, "getDataCheckUPG() called.");
+	/** CHECK_SVC */
+	public static String getDataCheckSVC() {
+		logInfo(LOGD, "getDataCheckSVC() called.");
+		ISQMSCheckSVC mISQMSCheckSVC = ISQMSManager.getInstance().mISQMSCheckSVC;
 		StringBuilder builder = new StringBuilder();
 
-		builder.append(getDataCheckSwUpgrade());
-		builder.append(getDataCheckChUpgrade());
+		builder.append(";");
+		/** SVC_C_VOD_CID */
+		if (null != mISQMSCheckSVC.SVC_C_VOD_CID) {
+			builder.append(mISQMSCheckSVC.SVC_C_VOD_CID);
+		}
+		builder.append(";");
+		/** SVC_C_VOD_AID */
+		if (null != mISQMSCheckSVC.SVC_C_VOD_AID) {
+			builder.append(mISQMSCheckSVC.SVC_C_VOD_AID);
+		}
+		builder.append(";");
+		/** SVC_C_PSWD_STB */
+		// if (null != mISQMSCheckSVC.SVC_C_PSWD_STB) {
+		// builder.append(mISQMSCheckSVC.SVC_C_PSWD_STB);
+		// }
+		builder.append(";");
+		/** SVC_C_PSWD_AGE */
+		// if (null != mISQMSCheckSVC.SVC_C_PSWD_AGE) {
+		// builder.append(mISQMSCheckSVC.SVC_C_PSWD_AGE);
+		// }
+
+		return builder.toString();
+	}
+
+	/** CHECK_VOD1 */
+	public static String getDataCheckVOD1() {
+		logInfo(LOGD, "getDataCheckVOD1() called.");
+		ISQMSCheckVOD1 mISQMSCheckVOD1 = ISQMSManager.getInstance().mISQMSCheckVOD1;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** VOD1_C_VOD_SCS_IP */
+		if (null != mISQMSCheckVOD1.VOD1_C_VOD_SCS_IP) {
+			builder.append(mISQMSCheckVOD1.VOD1_C_VOD_SCS_IP);
+		}
+		builder.append(";");
+		/** VOD1_C_VOD_SCS_RT */
+		if (null != mISQMSCheckVOD1.VOD1_C_VOD_SCS_RT) {
+			builder.append(mISQMSCheckVOD1.VOD1_C_VOD_SCS_RT);
+		}
+		builder.append(";");
+		/** VOD1_C_VOD_DOWN_IP */
+		// if (null != mISQMSCheckVOD1.VOD1_C_VOD_DOWN_IP) {
+		// builder.append(mISQMSCheckVOD1.VOD1_C_VOD_DOWN_IP);
+		// }
+		builder.append(";");
+		/** VOD1_C_VOD_DOWN_RT */
+		if (null != mISQMSCheckVOD1.VOD1_C_VOD_DOWN_RT) {
+			builder.append(mISQMSCheckVOD1.VOD1_C_VOD_DOWN_RT);
+		}
+
+		return builder.toString();
+	}
+
+	/** CHECK_VOD3 */
+	public static String getDataCheckVOD3() {
+		logInfo(LOGD, "getDataCheckVOD3() called.");
+		ISQMSCheckVOD3 mISQMSCheckVOD3 = ISQMSManager.getInstance().mISQMSCheckVOD3;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** VOD3_C_VOD_CONTENT_NAME */
+		if (null != mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_NAME) {
+			builder.append(mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_NAME);
+		}
+		builder.append(";");
+		/** VOD3_C_VOD_CONTENT_URL */
+		if (null != mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_URL) {
+			builder.append(mISQMSCheckVOD3.VOD3_C_VOD_CONTENT_URL);
+		}
+
+		return builder.toString();
+	}
+
+	/** CHECK_IPTV1 */
+	public static String getDataCheckIPTV1() {
+		logInfo(LOGD, "getDataCheckIPTV1() called.");
+		ISQMSCheckIPTV1 mISQMSCheckIPTV1 = ISQMSManager.getInstance().mISQMSCheckIPTV1;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** IPTV1_C_IPTV_CH_NUM */
+		if (null != mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_NUM) {
+			builder.append(mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_NUM);
+		}
+		builder.append(";");
+		/** IPTV1_C_IPTV_CH_MODE */
+		if (null != mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_MODE) {
+			builder.append(mISQMSCheckIPTV1.IPTV1_C_IPTV_CH_MODE);
+		}
+
+		return builder.toString();
+	}
+
+	/** CHECK_IPTV2 */
+	public static String getDataCheckIPTV2() {
+		logInfo(LOGD, "getDataCheckIPTV2() called.");
+		ISQMSCheckIPTV2 mISQMSCheckIPTV2 = ISQMSManager.getInstance().mISQMSCheckIPTV2;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** IPTV2_C_IPTV_ECODE */
+		if (null != mISQMSCheckIPTV2.IPTV2_C_IPTV_ECODE) {
+			builder.append(mISQMSCheckIPTV2.IPTV2_C_IPTV_ECODE);
+		}
+		builder.append(";");
+		/** IPTV2_C_MSG */
+		// if (null != mISQMSCheckIPTV2.IPTV2_C_MSG) {
+		// builder.append(mISQMSCheckIPTV2.IPTV2_C_MSG);
+		// }
+
+		return builder.toString();
+	}
+
+	/** CHECK_ERR1 */
+	public static String getDataCheckERR1() {
+		logInfo(LOGD, "getDataCheckERR1() called.");
+		ISQMSCheckERR1 mISQMSCheckERR1 = ISQMSManager.getInstance().mISQMSCheckERR1;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(";");
+		/** ERR1_ERR_DURATION */
+		// if (null != mISQMSCheckERR1.ERR1_ERR_DURATION) {
+		// builder.append(mISQMSCheckERR1.ERR1_ERR_DURATION);
+		// }
+		builder.append(";");
+		/** ERR1_ERR_REPEAT */
+		// if (null != mISQMSCheckERR1.ERR1_ERR_REPEAT) {
+		// builder.append(mISQMSCheckERR1.ERR1_ERR_REPEAT);
+		// }
+		builder.append(";");
+		/** ERR1_C_TS */
+		// if (null != mISQMSCheckERR1.ERR1_C_TS) {
+		// builder.append(mISQMSCheckERR1.ERR1_C_TS);
+		// }
 
 		return builder.toString();
 	}

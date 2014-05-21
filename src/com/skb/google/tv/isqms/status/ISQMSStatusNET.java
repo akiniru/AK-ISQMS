@@ -1,7 +1,8 @@
-package com.skb.google.tv.isqms.check;
+package com.skb.google.tv.isqms.status;
 
-public class ISQMSCheckNet {
+public class ISQMSStatusNET {
 	/** NET */
+	// public String S_NETWORK_MODE; // 미사용
 	public String S_NET_DHCP_MODE;
 	public String S_NET_IPADDR;
 	public String S_NET_IPMASK;

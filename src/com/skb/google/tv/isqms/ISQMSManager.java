@@ -191,6 +191,9 @@ public class ISQMSManager {
 	 * @param callback
 	 */
 	private void bindingISQMSAgent() {
+		if (true == ISQMSData.DEBUG) {
+			return;
+		}
 		bindingISQMSAgent(mContext);
 	}
 

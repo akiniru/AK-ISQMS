@@ -2,6 +2,7 @@ package com.skb.google.tv.isqms;
 
 public class ISQMSData {
 	public static final boolean DEBUG = true;
+
 	public static final int THREAD_WAIT_MILLE_SECONDS = 1000;
 	private static final int MESSAGE_REQUEST_AGENT = 20000;
 	public static final int MESSAGE_REQUEST_AGENT_THREAD_DESTROY = MESSAGE_REQUEST_AGENT - 1;

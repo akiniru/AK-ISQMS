@@ -655,7 +655,7 @@ public class ISQMSManager {
 	/**
 	 * <pre>
 	 * Data Define :
-	 * YYMMDDhhmmss
+	 * yyMMddHHmmss
 	 * 
 	 * Data Define Description :
 	 * 현재 이벤트를 처리/보고한 STB시각
@@ -665,7 +665,7 @@ public class ISQMSManager {
 	 * @return EVENT_TS
 	 */
 	public static String getEventTS() {
-		String eventTS = ISQMSUtil.toDateFormat("YYMMDDhhmmss", new Date());
+		String eventTS = ISQMSUtil.toDateFormat("yyMMddHHmmss", new Date());
 		return eventTS;
 	}
 
@@ -1654,18 +1654,25 @@ public class ISQMSManager {
 	}
 
 	/** Key */
-	public int openEvent(int eventMessage) {
+	public Integer openEvent(int eventMessage) {
+		ISQMSUtil.info(LOGD, "openEvent() called. eventMessage : " + eventMessage);
 		++mEventKey;
 
 		switch (eventMessage) {
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10:
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09:
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E14:
+				if (2 <= mISQMSCheckVODList.size()) {
+					mISQMSCheckVODList.removeAt(0);
+				}
 				ISQMSCheckVOD mISQMSCheckVOD = new ISQMSCheckVOD();
 				mISQMSCheckVODList.put(mEventKey, mISQMSCheckVOD);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H13:
+				if (2 <= mISQMSCheckIPTVList.size()) {
+					mISQMSCheckIPTVList.removeAt(0);
+				}
 				ISQMSCheckIPTV mISQMSCheckIPTV = new ISQMSCheckIPTV();
 				mISQMSCheckIPTVList.put(mEventKey, mISQMSCheckIPTV);
 				break;
@@ -1680,7 +1687,7 @@ public class ISQMSManager {
 	}
 
 	public void closeEvent(Integer key, int eventMessage) {
-		ISQMSUtil.debug(LOGD, "closeHolePunchingEvent() called. eventMessage : " + eventMessage);
+		ISQMSUtil.info(LOGD, "closeEvent() called. key : " + key + ", eventMessage : " + eventMessage);
 		Handler receiveHandler = mAgentSendManager.getManagerHandler();
 		if (receiveHandler != null) {
 			Message msg = receiveHandler.obtainMessage();

@@ -1,7 +1,8 @@
 package com.skb.google.tv.isqms;
 
 public class ISQMSData {
-	public static final boolean DEBUG = true;
+	public static final boolean ACTION_ISQMS = true;
+	public static final boolean SHOW_LOG = true;
 
 	public static final int THREAD_WAIT_MILLE_SECONDS = 1000;
 	private static final int MESSAGE_REQUEST_AGENT = 20000;

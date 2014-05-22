@@ -17,13 +17,13 @@ public class ISQMSUtil {
 	}
 
 	public static void debug(String tag, String msg) {
-		if (ISQMSData.DEBUG) {
+		if (ISQMSData.SHOW_LOG) {
 			LogUtil.debug(tag, msg);
 		}
 	}
 
 	public static void info(String tag, String msg) {
-		if (ISQMSData.DEBUG) {
+		if (ISQMSData.SHOW_LOG) {
 			LogUtil.info(tag, msg);
 		}
 	}

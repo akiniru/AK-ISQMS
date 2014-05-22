@@ -191,7 +191,7 @@ public class ISQMSManager {
 	 * @param callback
 	 */
 	private void bindingISQMSAgent() {
-		if (true == ISQMSData.DEBUG) {
+		if (false == ISQMSData.ACTION_ISQMS) {
 			return;
 		}
 		bindingISQMSAgent(mContext);
@@ -201,6 +201,9 @@ public class ISQMSManager {
 		ISQMSUtil.info(LOGD, "bindingISQMSAgent() called");
 		mContext = context;
 
+		if (false == ISQMSData.ACTION_ISQMS) {
+			return;
+		}
 		Intent intent = new Intent("com.skb.isqms.AgentService"); // service Name
 		mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}

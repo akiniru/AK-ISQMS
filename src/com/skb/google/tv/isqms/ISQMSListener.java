@@ -107,7 +107,7 @@ public interface ISQMSListener {
 	 * EVENT_ID : C17
 	 * 내용 : STB_AGE_TIME 설정(자녀시청 제한 시간 설정)
 	 * 
-	 * STB_AGE_LIMIT:19
+	 * STB_AGE_TIME:19
 	 * </pre>
 	 */
 	public interface OnChildLimitTimeChangeListener { // STBAPIManager.getInstance().setChildrenSeeLimit(STBAPIManager.RESULT_DISABLE);

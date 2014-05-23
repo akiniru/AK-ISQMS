@@ -7,7 +7,6 @@ import android.util.Log;
 import com.skb.google.tv.common.util.LogUtil;
 import com.skb.google.tv.isqms.ISQMSData;
 import com.skb.google.tv.isqms.ISQMSListener;
-import com.skb.google.tv.isqms.ISQMSEnumData.eSCV_MODE;
 import com.skb.google.tv.isqms.ISQMSListener.OnAutoNextChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnRebootListener;
 import com.skb.google.tv.isqms.ISQMSManager;
@@ -31,8 +30,8 @@ public class MainActivity extends Activity {
 		// mIsQMSManager.setStbPasswordChangeListener(mStbPasswordChangeListener);
 
 		// set Common
-		mIsQMSManager.setStbVersion("1");
-		mIsQMSManager.setAutoNext(true);
+		mIsQMSManager.setCommonStbVer("1");
+		mIsQMSManager.setStatusConfStbAutoNext(true);
 
 		// binding
 		mIsQMSManager.bindingISQMSAgent(getApplicationContext());
@@ -46,17 +45,17 @@ public class MainActivity extends Activity {
 		Integer keyEventH10 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
 		LogUtil.debug(LOGD, "keyEventH10_1 : " + keyEventH10);
 		// 값 설정 : COMMON, CHECK_SVC, CHECK_VOD1, CHECK_VOD3
-		mIsQMSManager.setSVCVodAid("VOD 재생용 광고 Id");
-		mIsQMSManager.setSVCVodCid("VOD Content Id");
-		mIsQMSManager.setSVCPasswordSTB("SetTop 구매인증 비밀번호");
-		mIsQMSManager.setSVCPasswordAge("성인(자녀제한) 비밀번호");
+		mIsQMSManager.setCheckSvcVodAid("VOD 재생용 광고 Id");
+		mIsQMSManager.setCheckSvcVodCid("VOD Content Id");
+		mIsQMSManager.setCheckSvcPswdStb("SetTop 구매인증 비밀번호");
+		mIsQMSManager.setCheckSvcPswdAge("성인(자녀제한) 비밀번호");
 
-		mIsQMSManager.setVOD1VodScsIp(keyEventH10, "IPv4 Address - SCS Server IP");
-		mIsQMSManager.setVOD1VodScsRt(keyEventH10, "SCS요청후 회신까지 소요시간");
-		mIsQMSManager.setVOD1VodDownRt(keyEventH10, "Download 요청후 회신까지 소요시간");
+		mIsQMSManager.setCheckVod1VodScsIp(keyEventH10, "IPv4 Address - SCS Server IP");
+		mIsQMSManager.setCheckVod1VodScsRt(keyEventH10, "SCS요청후 회신까지 소요시간");
+		mIsQMSManager.setCheckVod1VodDownRt(keyEventH10, "Download 요청후 회신까지 소요시간");
 
-		mIsQMSManager.setVOD3VodContentName(keyEventH10, "컨텐츠명  ( 부러진화살 )");
-		mIsQMSManager.setVOD3VodContentUrl(keyEventH10, "컨텐츠 URL ( RTSP://*** )");
+		mIsQMSManager.setCheckVod3VodContentName(keyEventH10, "컨텐츠명  ( 부러진화살 )");
+		mIsQMSManager.setCheckVod3VodContentUrl(keyEventH10, "컨텐츠 URL ( RTSP://*** )");
 
 		mIsQMSManager.closeEvent(keyEventH10, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
 
@@ -90,7 +89,7 @@ public class MainActivity extends Activity {
 		@Override
 		public void onAutoNextChange(boolean result) {
 			LogUtil.info(LOGD, "OnAutoNextChangeListener.onAutoNextChange() called.");
-			mIsQMSManager.setAutoNext(result);
+			mIsQMSManager.setStatusConfStbAutoNext(result);
 			try {
 				Thread.sleep(5 * 1000);
 			} catch (InterruptedException e) {

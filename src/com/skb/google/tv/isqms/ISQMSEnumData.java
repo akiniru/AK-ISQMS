@@ -12,7 +12,6 @@ public class ISQMSEnumData {
 	// < DEFINITION Enumerate variables
 	// =========================================================================
 	public static enum eSCV_MODE {
-		SCV_MODE_NONE, //
 		SCV_MODE_SLP, //
 		SCV_MODE_WAK, //
 		SCV_MODE_HOM, //

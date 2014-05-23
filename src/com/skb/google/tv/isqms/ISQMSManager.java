@@ -693,15 +693,29 @@ public class ISQMSManager {
 	/**
 	 * <pre>
 	 * Data Define :
+	 * XX.XX
+	 * 
+	 * Data Define Description :
+	 * STB에 적용되어 사용중인 ISQMS의 데이터 및 프로토콜 버전
+	 * </pre>
+	 */
+	// public void setCommonProtocolVer(String protocolVer) {
+	// ISQMSUtil.debug(LOGD, "setCommonProtocolVer() called. protocolVer : " + protocolVer);
+	// mISQMSCommon.PROTOCOL_VER = protocolVer;
+	// }
+
+	/**
+	 * <pre>
+	 * Data Define :
 	 * X.X
 	 * 
 	 * Data Define Description :
 	 * 현재 STB의 구성 버전 (Legacy/IPTV2.0)
 	 * </pre>
 	 */
-	public void setStbVersion(String stbVersion) { // IsQMSData.ISQMS_STRING_TAG_STB_VER;
-		ISQMSUtil.debug(LOGD, "setStbVersion() called. stbVersion : " + stbVersion);
-		mISQMSCommon.STB_VER = stbVersion;
+	public void setCommonStbVer(String stbVer) {
+		ISQMSUtil.debug(LOGD, "setCommonStbVer() called. stbVer : " + stbVer);
+		mISQMSCommon.STB_VER = stbVer;
 	}
 
 	/**
@@ -713,8 +727,8 @@ public class ISQMSManager {
 	 * 8-4-4-12자리구성의 문자열
 	 * </pre>
 	 */
-	public void setStbId(String stbId) { // String value = STBAPIManager.getInstance().getSTBId();
-		ISQMSUtil.debug(LOGD, "setStbId() called. stbId : " + stbId);
+	public void setCommonStbId(String stbId) {
+		ISQMSUtil.debug(LOGD, "setCommonStbId() called. stbId : " + stbId);
 		if (null != stbId) {
 			stbId = stbId.replace("{", "");
 			stbId = stbId.replace("}", "");
@@ -731,14 +745,14 @@ public class ISQMSManager {
 	 * 12자리의 표준 MAC Address 문자열
 	 * </pre>
 	 */
-	public void setMacAddress(String macAddress) { // String value = STBAPIManager.getInstance().getMacAddress();
-		ISQMSUtil.debug(LOGD, "setMacAddress() called. macAddress : " + macAddress);
-		if (null != macAddress) {
-			macAddress = macAddress.replace("{", "");
-			macAddress = macAddress.replace("}", "");
-			macAddress = macAddress.replace(":", "");
+	public void setCommonStbMac(String stbMac) {
+		ISQMSUtil.debug(LOGD, "setCommonStbMac() called. stbMac : " + stbMac);
+		if (null != stbMac) {
+			stbMac = stbMac.replace("{", "");
+			stbMac = stbMac.replace("}", "");
+			stbMac = stbMac.replace(":", "");
 		}
-		mISQMSCommon.STB_MAC = macAddress;
+		mISQMSCommon.STB_MAC = stbMac;
 	}
 
 	/**
@@ -750,9 +764,9 @@ public class ISQMSManager {
 	 * STB에 적용되어 사용중인 SW버젼
 	 * </pre>
 	 */
-	public void setSwVersion(String swVersion) {
-		ISQMSUtil.debug(LOGD, "setSwVersion() called. swVersion : " + swVersion);
-		mISQMSCommon.STB_SW_VER = swVersion;
+	public void setCommonStbSwVer(String stbSwVer) {
+		ISQMSUtil.debug(LOGD, "setCommonStbSwVer() called. stbSwVer : " + stbSwVer);
+		mISQMSCommon.STB_SW_VER = stbSwVer;
 	}
 
 	/**
@@ -765,9 +779,37 @@ public class ISQMSManager {
 	 * -뒤6자리는 시간으로추정되나 의미 없음
 	 * </pre>
 	 */
-	public void setXpgVersion(String xpgVersion) {
-		ISQMSUtil.debug(LOGD, "setXpgVersion() called. xpgVersion : " + xpgVersion);
-		mISQMSCommon.STB_XPG_VER = xpgVersion;
+	public void setCommonStbXpgVer(String stbXpgVer) {
+		ISQMSUtil.debug(LOGD, "setCommonStbXpgVer() called. stbXpgVer : " + stbXpgVer);
+		mISQMSCommon.STB_XPG_VER = stbXpgVer;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDXXXXXX
+	 * 
+	 * Data Define Description :
+	 * 12자리로 구성된 DVB-SI EPG Version
+	 * -뒤6자리는 시간으로추정되나 의미 없음
+	 * </pre>
+	 */
+	public void setCommonStbEpgVer(String stbEpgVer) {
+		ISQMSUtil.debug(LOGD, "setCommonStbEpgVer() called. stbEpgVer : " + stbEpgVer);
+		mISQMSCommon.STB_EPG_VER = stbEpgVer;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDXXXXXX
+	 * 
+	 * Data Define Description :
+	 * </pre>
+	 */
+	public void setCommonStbVasVer(String stbVasVer) {
+		ISQMSUtil.debug(LOGD, "setCommonStbVasVer() called. stbVasVer : " + stbVasVer);
+		mISQMSCommon.STB_VAS_VER = stbVasVer;
 	}
 
 	/**
@@ -779,9 +821,9 @@ public class ISQMSManager {
 	 * STB장비의 HW모델 10자리 문자
 	 * </pre>
 	 */
-	public void setModelName(String modelName) {
-		ISQMSUtil.debug(LOGD, "setModelName() called. modelName : " + modelName);
-		mISQMSCommon.STB_MODEL = modelName;
+	public void setCommonStbModel(String stbModel) {
+		ISQMSUtil.debug(LOGD, "setCommonStbModel() called. stbModel : " + stbModel);
+		mISQMSCommon.STB_MODEL = stbModel;
 	}
 
 	/**
@@ -794,9 +836,13 @@ public class ISQMSManager {
 	 * {0:False|1:True}
 	 * </pre>
 	 */
-	public void setStbAuth(boolean isSTBAuth) {
-		ISQMSUtil.debug(LOGD, "setStbAuth() called. isSTBAuth : " + isSTBAuth);
-		mISQMSCommon.STB_AUTH = Boolean.toString(isSTBAuth);
+	public void setCommonStbAuth(boolean isSTBAuth) {
+		ISQMSUtil.debug(LOGD, "setCommonStbAuth() called. isSTBAuth : " + isSTBAuth);
+		if (true == isSTBAuth) {
+			mISQMSCommon.STB_AUTH = ISQMSData.RESULT_TRUE;
+		} else {
+			mISQMSCommon.STB_AUTH = ISQMSData.RESULT_FALSE;
+		}
 	}
 
 	/**
@@ -809,8 +855,8 @@ public class ISQMSManager {
 	 * 000~999
 	 * </pre>
 	 */
-	public void setIptvArea(String iptvArea) {
-		ISQMSUtil.debug(LOGD, "setIptvArea() called. iptvArea : " + iptvArea);
+	public void setCommonIptvArea(String iptvArea) {
+		ISQMSUtil.debug(LOGD, "setCommonIptvArea() called. iptvArea : " + iptvArea);
 		mISQMSCommon.STB_IPTV_AREA = iptvArea;
 	}
 
@@ -824,14 +870,13 @@ public class ISQMSManager {
 	 * 3자리의 상태 코드 값
 	 * </pre>
 	 */
-	public void setSVCMode(ISQMSEnumData.eSCV_MODE scv_MODE) {
-		ISQMSUtil.debug(LOGD, "setSVCMode() called. scv_MODE : " + scv_MODE);
+	public void setCommonSvcMode(ISQMSEnumData.eSCV_MODE scv_MODE) {
+		ISQMSUtil.debug(LOGD, "setCommonSvcMode() called. scv_MODE : " + scv_MODE);
 		if (null == scv_MODE) {
 			return;
 		}
 
-		String scvModeName = scv_MODE.name();
-		scvModeName = scvModeName.replace(ISQMSEnumData.PREFIX_SCV_MODE, "");
+		String scvModeName = scv_MODE.name().replace(ISQMSEnumData.PREFIX_SCV_MODE, "");
 		mISQMSCommon.STB_SVC_MODE = scvModeName;
 	}
 
@@ -844,12 +889,33 @@ public class ISQMSManager {
 	 * X
 	 * 
 	 * Data Define Description :
+	 * 사용 설정된 망 정보
+	 * {0:SKB|1:기타미정의}
+	 * </pre>
+	 */
+	// public void setStatusNetNetworkMode(boolean isNotSKBNetworkMode) {
+	// ISQMSUtil.debug(LOGD, "setStatusNetNetworkMode() called. isNotSKBNetworkMode : " + isNotSKBNetworkMode);
+	// if (true == isNotSKBNetworkMode) {
+	// mISQMSStatusNET.S_NETWORK_MODE = ISQMSData.RESULT_TRUE;
+	// } else {
+	// mISQMSStatusNET.S_NETWORK_MODE = ISQMSData.RESULT_FALSE;
+	// }
+	//
+	// mISQMSCheckNET.S_NETWORK_MODE = mISQMSStatusNET.S_NETWORK_MODE;
+	// }
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * X
+	 * 
+	 * Data Define Description :
 	 * DHCP 사용 설정 정보
 	 * {0:사용안함|1:사용함}
 	 * </pre>
 	 */
-	public void setNetDhcpMode(boolean isDhcpMode) {
-		ISQMSUtil.debug(LOGD, "setNetDhcpMode() called. isDhcpMode : " + isDhcpMode);
+	public void setStatusNetDhcpMode(boolean isDhcpMode) {
+		ISQMSUtil.debug(LOGD, "setStatusNetDhcpMode() called. isDhcpMode : " + isDhcpMode);
 		if (true == isDhcpMode) {
 			mISQMSStatusNET.S_NET_DHCP_MODE = ISQMSData.RESULT_TRUE;
 		} else {
@@ -867,8 +933,8 @@ public class ISQMSManager {
 	 * IPv4 Address
 	 * </pre>
 	 */
-	public void setNetIpAddr(String netIpAddr) {
-		ISQMSUtil.debug(LOGD, "setNetIpAddr() called. netIpAddr : " + netIpAddr);
+	public void setStatusNetIpAddr(String netIpAddr) {
+		ISQMSUtil.debug(LOGD, "setStatusNetIpAddr() called. netIpAddr : " + netIpAddr);
 		mISQMSStatusNET.S_NET_IPADDR = netIpAddr;
 		mISQMSCheckNET.S_NET_IPADDR = mISQMSStatusNET.S_NET_IPADDR;
 	}
@@ -882,8 +948,8 @@ public class ISQMSManager {
 	 * IPv4 Subnet Mask
 	 * </pre>
 	 */
-	public void setNetIpMask(String netIpMask) {
-		ISQMSUtil.debug(LOGD, "setNetIpMask() called. netIpMask : " + netIpMask);
+	public void setStatusNetIpMask(String netIpMask) {
+		ISQMSUtil.debug(LOGD, "setStatusNetIpMask() called. netIpMask : " + netIpMask);
 		mISQMSStatusNET.S_NET_IPMASK = netIpMask;
 		mISQMSCheckNET.S_NET_IPMASK = mISQMSStatusNET.S_NET_IPMASK;
 	}
@@ -897,8 +963,8 @@ public class ISQMSManager {
 	 * IPv4 Default Gateway
 	 * </pre>
 	 */
-	public void setNetIpGateway(String netIpGateway) {
-		ISQMSUtil.debug(LOGD, "setNetIpGateway() called. netIpGateway : " + netIpGateway);
+	public void setStatusNetIpGateway(String netIpGateway) {
+		ISQMSUtil.debug(LOGD, "setStatusNetIpGateway() called. netIpGateway : " + netIpGateway);
 		mISQMSStatusNET.S_NET_IPGW = netIpGateway;
 		mISQMSCheckNET.S_NET_IPGW = mISQMSStatusNET.S_NET_IPGW;
 	}
@@ -912,7 +978,7 @@ public class ISQMSManager {
 	 * IPv4 DNS 1st
 	 * </pre>
 	 */
-	public void setNetDNS1(String netDNS1) {
+	public void setStatusNetDNS1(String netDNS1) {
 		ISQMSUtil.debug(LOGD, "setNetDNS1() called. netDNS1 : " + netDNS1);
 		mISQMSStatusNET.S_NET_DNS1 = netDNS1;
 		mISQMSCheckNET.S_NET_DNS1 = mISQMSStatusNET.S_NET_DNS1;
@@ -927,7 +993,7 @@ public class ISQMSManager {
 	 * IPv4 DNS 2nd
 	 * </pre>
 	 */
-	public void setNetDNS2(String netDNS2) {
+	public void setStatusNetDNS2(String netDNS2) {
 		ISQMSUtil.debug(LOGD, "setNetDNS2() called. netDNS2 : " + netDNS2);
 		mISQMSStatusNET.S_NET_DNS2 = netDNS2;
 		mISQMSCheckNET.S_NET_DNS2 = mISQMSStatusNET.S_NET_DNS2;
@@ -946,8 +1012,8 @@ public class ISQMSManager {
 	 * {1080i|720p|480p|480i}
 	 * </pre>
 	 */
-	public void setStbScreenResolution(eDISPLAY_MODE display_MODE) {
-		ISQMSUtil.debug(LOGD, "setStbScreenResolution() called. display_MODE : " + display_MODE);
+	public void setStatusConfStbScrResolution(eDISPLAY_MODE display_MODE) {
+		ISQMSUtil.debug(LOGD, "setStatusConfStbScrResolution() called. display_MODE : " + display_MODE);
 		if (null == display_MODE) {
 			return;
 		}
@@ -966,8 +1032,8 @@ public class ISQMSManager {
 	 * {16:9|4:3}
 	 * </pre>
 	 */
-	public void setStbScreenTVRate(eTV_RATE_MODE tv_RATE_MODE) {
-		ISQMSUtil.debug(LOGD, "setStbScreenTVRate() called. display_MODE : " + tv_RATE_MODE);
+	public void setStatusConfStbScrTv(eTV_RATE_MODE tv_RATE_MODE) {
+		ISQMSUtil.debug(LOGD, "setStatusConfStbScrTv() called. display_MODE : " + tv_RATE_MODE);
 		if (null == tv_RATE_MODE) {
 			return;
 		}
@@ -986,8 +1052,8 @@ public class ISQMSManager {
 	 * {ORG|SCR}
 	 * </pre>
 	 */
-	public void setStbScreenVideoRate(eVIDEO_RATE_MODE video_RATE_MODE) {
-		ISQMSUtil.debug(LOGD, "setStbScreenVideoRate() called. video_RATE_MODE : " + video_RATE_MODE);
+	public void setStatusConfStbScrVideo(eVIDEO_RATE_MODE video_RATE_MODE) {
+		ISQMSUtil.debug(LOGD, "setStatusConfStbScrVideo() called. video_RATE_MODE : " + video_RATE_MODE);
 		if (null == video_RATE_MODE) {
 			return;
 		}
@@ -1006,8 +1072,8 @@ public class ISQMSManager {
 	 * {0:NotAllow|1:Allow}
 	 * </pre>
 	 */
-	public void setAllowStbAdult(boolean isAllowSTBAdult) {
-		ISQMSUtil.debug(LOGD, "setAllowStbAdult() called. isAllowSTBAdult : " + isAllowSTBAdult);
+	public void setStatusConfStbAdult(boolean isAllowSTBAdult) {
+		ISQMSUtil.debug(LOGD, "setStatusConfStbAdult() called. isAllowSTBAdult : " + isAllowSTBAdult);
 		if (true == isAllowSTBAdult) {
 			mISQMSStatusCONF.STB_ADULT = ISQMSData.RESULT_TRUE;
 		} else {
@@ -1026,8 +1092,8 @@ public class ISQMSManager {
 	 * 07, 12, 15, 18이상, 00는제한없음
 	 * </pre>
 	 */
-	public void setAgeLimit(eAGE_LIMIT_TYPE age_LIMIT_TYPE) {
-		ISQMSUtil.debug(LOGD, "setAgeLimit() called. age_LIMIT_TYPE : " + age_LIMIT_TYPE);
+	public void setStatusConfStbAgeLimit(eAGE_LIMIT_TYPE age_LIMIT_TYPE) {
+		ISQMSUtil.debug(LOGD, "setStatusConfStbAgeLimit() called. age_LIMIT_TYPE : " + age_LIMIT_TYPE);
 		if (null == age_LIMIT_TYPE) {
 			return;
 		}
@@ -1047,8 +1113,8 @@ public class ISQMSManager {
 	 * 00:제한없음, 01~99:시간단위설정
 	 * </pre>
 	 */
-	public void setChildLimitTime(String childLimitTime) {
-		ISQMSUtil.debug(LOGD, "setChildLimitTime() called. childLimitTime : " + childLimitTime);
+	public void setStatusConfStbAgeTime(String childLimitTime) {
+		ISQMSUtil.debug(LOGD, "setStatusConfStbAgeTime() called. childLimitTime : " + childLimitTime);
 		mISQMSStatusCONF.STB_AGE_TIME = childLimitTime;
 	}
 
@@ -1062,8 +1128,8 @@ public class ISQMSManager {
 	 * {0:No|1:Yes}
 	 * </pre>
 	 */
-	public void setAutoNext(boolean isAutoNext) {
-		ISQMSUtil.debug(LOGD, "setAutoNext() called. isAutoNext : " + isAutoNext);
+	public void setStatusConfStbAutoNext(boolean isAutoNext) {
+		ISQMSUtil.debug(LOGD, "setStatusConfStbAutoNext() called. isAutoNext : " + isAutoNext);
 		if (true == isAutoNext) {
 			mISQMSStatusCONF.STB_AUTONEXT = ISQMSData.RESULT_TRUE;
 		} else {
@@ -1072,7 +1138,7 @@ public class ISQMSManager {
 	}
 
 	// =========================================================================
-	// < setter CHECK RESULT XPG2
+	// < setter CURRENT STATUS XPG2
 	// =========================================================================
 	/**
 	 * <pre>
@@ -1083,10 +1149,112 @@ public class ISQMSManager {
 	 * XPG FULL 버전
 	 * </pre>
 	 */
-	public void setXPG2XpgFullVersion(String xpgFullVersion) {
-		ISQMSUtil.debug(LOGD, "setXPG2XpgFullVersion() called. xpgFullVersion : " + xpgFullVersion);
+	public void setStatusXpg2XpgFull(String xpgFullVersion) {
+		ISQMSUtil.debug(LOGD, "setStatusXpg2XpgFull() called. xpgFullVersion : " + xpgFullVersion);
 		mISQMSStatusXPG2.XPG_FULL = xpgFullVersion;
 	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDhhmmss
+	 * 
+	 * Data Define Description :
+	 * 콘텐츠 정보 구성 버전
+	 * </pre>
+	 */
+	// public void setStatusXpg2XpgContent(String xpgContent) {
+	// ISQMSUtil.debug(LOGD, "setStatusXpg2XpgContent() called. xpgcontent : " + xpgContent);
+	// mISQMSStatusXPG2.XPG_CONTENT = xpgContent;
+	// }
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDhhmmss
+	 * 
+	 * Data Define Description :
+	 * VOD 메뉴구성 버전
+	 * </pre>
+	 */
+	// public void setStatusXpg2XpgMenu(String xpgMenu) {
+	// ISQMSUtil.debug(LOGD, "setStatusXpg2XpgMenu() called. xpgMenu : " + xpgMenu);
+	// mISQMSStatusXPG2.XPG_MENU = xpgMenu;
+	// }
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDhhmmss
+	 * 
+	 * Data Define Description :
+	 * IPTV 메뉴구성 버전
+	 * </pre>
+	 */
+	// public void setStatusXpg2XpgIptvMenu(String xpgIptvMenu) {
+	// ISQMSUtil.debug(LOGD, "setStatusXpg2XpgIptvMenu() called. xpgIptvMenu : " + xpgIptvMenu);
+	// mISQMSStatusXPG2.XPG_IPTV_MENU = xpgIptvMenu;
+	// }
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDhhmmss
+	 * 
+	 * Data Define Description :
+	 * 이미지 구성 버전
+	 * </pre>
+	 */
+	// public void setStatusXpg2XpgImage(String xpgImage) {
+	// ISQMSUtil.debug(LOGD, "setStatusXpg2XpgImage() called. xpgImage : " + xpgImage);
+	// mISQMSStatusXPG2.XPG_IMAGE = xpgImage;
+	// }
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDhhmmss
+	 * 
+	 * Data Define Description :
+	 * 포스터 구성 버전
+	 * </pre>
+	 */
+	// public void setStatusXpg2XpgThumbnail(String xpgThumbnail) {
+	// ISQMSUtil.debug(LOGD, "setStatusXpg2XpgThumbnail() called. xpgThumbnail : " + xpgThumbnail);
+	// mISQMSStatusXPG2.XPG_THUMBNAIL = xpgThumbnail;
+	// }
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * YYMMDDhhmmss
+	 * 
+	 * Data Define Description :
+	 * 포스터 구성 버전
+	 * </pre>
+	 */
+	// public void setStatusXpg2XpgPreContent(String preContent) {
+	// ISQMSUtil.debug(LOGD, "setStatusXpg2XpgPreContent() called. preContent : " + preContent);
+	// mISQMSStatusXPG2.XPG_PRECONTENT = preContent;
+	// }
+
+	// =========================================================================
+	// < setter CURRENT STATUS BBRATE
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX
+	 * 
+	 * Data Define Description :
+	 * 0~100
+	 * 삼성 STB인경우 Bad Block Rate 정보를 얻어옴
+	 * </pre>
+	 */
+	// public void setStatusBbratebbrate(String badBlockRate) {
+	// ISQMSUtil.debug(LOGD, "setStatusBbratebbrate() called. bbrate : " + badBlockRate);
+	// mISQMSStatusBBRATE.S_BBRATE = badBlockRate;
+	// }
 
 	// =========================================================================
 	// < setter CHECK RESULT UPG
@@ -1101,8 +1269,8 @@ public class ISQMSManager {
 	 * {000:시작|100:완료|9XX:실패}
 	 * </pre>
 	 */
-	public void setUPGSwUpgrade(eUPG_UPGRADE upg_UPGRADE) {
-		ISQMSUtil.debug(LOGD, "setUPGSwUpgrade() called. upg_UPGRADE : " + upg_UPGRADE);
+	public void setCheckUpgSwUpgrade(eUPG_UPGRADE upg_UPGRADE) {
+		ISQMSUtil.debug(LOGD, "setCheckUpgSwUpgrade() called. upg_UPGRADE : " + upg_UPGRADE);
 		if (null == upg_UPGRADE) {
 			return;
 		}
@@ -1134,8 +1302,8 @@ public class ISQMSManager {
 	 * {000:시작|100:완료|9XX:실패}
 	 * </pre>
 	 */
-	public void setUPGChannelUpgrade(eUPG_UPGRADE upg_UPGRADE) {
-		ISQMSUtil.debug(LOGD, "setUPGChannelUpgrade() called. upg_UPGRADE : " + upg_UPGRADE);
+	public void setCheckUpgChUpgrade(eUPG_UPGRADE upg_UPGRADE) {
+		ISQMSUtil.debug(LOGD, "setCheckUpgChUpgrade() called. upg_UPGRADE : " + upg_UPGRADE);
 		if (null == upg_UPGRADE) {
 			return;
 		}
@@ -1172,8 +1340,8 @@ public class ISQMSManager {
 	 * 2B6C4220-7FEA-40DC-AC56-5AE29F364C97
 	 * </pre>
 	 */
-	public void setSVCVodCid(String vodCid) {
-		ISQMSUtil.debug(LOGD, "setSVCVodCid() called. vodCid : " + vodCid);
+	public void setCheckSvcVodCid(String vodCid) {
+		ISQMSUtil.debug(LOGD, "setCheckSvcVodCid() called. vodCid : " + vodCid);
 		mISQMSCheckSVC.SVC_C_VOD_CID = vodCid;
 	}
 
@@ -1189,8 +1357,8 @@ public class ISQMSManager {
 	 * 2B6C4220-7FEA-40DC-AC56-5AE29F364C97
 	 * </pre>
 	 */
-	public void setSVCVodAid(String vodAid) {
-		ISQMSUtil.debug(LOGD, "setSVCVodAid() called. vodAid : " + vodAid);
+	public void setCheckSvcVodAid(String vodAid) {
+		ISQMSUtil.debug(LOGD, "setCheckSvcVodAid() called. vodAid : " + vodAid);
 		mISQMSCheckSVC.SVC_C_VOD_AID = vodAid;
 	}
 
@@ -1203,8 +1371,8 @@ public class ISQMSManager {
 	 * SetTop 구매인증 비밀번호(재설정 및 확인에 사용)
 	 * </pre>
 	 */
-	public void setSVCPasswordSTB(String passwordStb) {
-		ISQMSUtil.debug(LOGD, "setSVCPasswordSTB() called. passwordStb : " + passwordStb);
+	public void setCheckSvcPswdStb(String passwordStb) {
+		ISQMSUtil.debug(LOGD, "setCheckSvcPswdStb() called. passwordStb : " + passwordStb);
 		mISQMSCheckSVC.SVC_C_PSWD_STB = passwordStb;
 	}
 
@@ -1217,8 +1385,8 @@ public class ISQMSManager {
 	 * 성인(자녀제한) 비밀번호(재설정 및 확인에 사용)
 	 * </pre>
 	 */
-	public void setSVCPasswordAge(String passwordAge) {
-		ISQMSUtil.debug(LOGD, "setSVCPasswordAge() called. vodAid : " + passwordAge);
+	public void setCheckSvcPswdAge(String passwordAge) {
+		ISQMSUtil.debug(LOGD, "setCheckSvcPswdAge() called. vodAid : " + passwordAge);
 		mISQMSCheckSVC.SVC_C_PSWD_AGE = passwordAge;
 	}
 
@@ -1234,11 +1402,11 @@ public class ISQMSManager {
 	 * IPv4 Address - SCS Server IP
 	 * </pre>
 	 */
-	public void setVOD1VodScsIp(Integer key, String vodScsIp) {
-		ISQMSUtil.debug(LOGD, "setVOD1VodScsIp() called. vodScsIp : " + vodScsIp);
+	public void setCheckVod1VodScsIp(Integer key, String vodScsIp) {
+		ISQMSUtil.debug(LOGD, "setCheckVod1VodScsIp() called. vodScsIp : " + vodScsIp);
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
-			ISQMSUtil.debug(LOGD, "setVOD1VodScsIp() mISQMSCheckVOD is null");
+			ISQMSUtil.debug(LOGD, "setCheckVod1VodScsIp() mISQMSCheckVOD is null");
 			return;
 		}
 		mISQMSCheckVOD.VOD1_C_VOD_SCS_IP = vodScsIp;
@@ -1254,11 +1422,11 @@ public class ISQMSManager {
 	 * SSS(second), XXX(msec)
 	 * </pre>
 	 */
-	public void setVOD1VodScsRt(Integer key, String vodScsRt) {
-		ISQMSUtil.debug(LOGD, "setVOD1VodScsRt() called. vodScsRt : " + vodScsRt);
+	public void setCheckVod1VodScsRt(Integer key, String vodScsRt) {
+		ISQMSUtil.debug(LOGD, "setCheckVod1VodScsRt() called. vodScsRt : " + vodScsRt);
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
-			ISQMSUtil.debug(LOGD, "setVOD1VodScsRt() mISQMSCheckVOD is null");
+			ISQMSUtil.debug(LOGD, "setCheckVod1VodScsRt() mISQMSCheckVOD is null");
 			return;
 		}
 		mISQMSCheckVOD.VOD1_C_VOD_SCS_RT = vodScsRt;
@@ -1275,11 +1443,11 @@ public class ISQMSManager {
 	 * - RTSP 인 경우 재생 요청 후 play 이벤트가 올라오는 시점으로 변경
 	 * </pre>
 	 */
-	public void setVOD1VodDownRt(Integer key, String vodDownRt) {
-		ISQMSUtil.debug(LOGD, "setVOD1VodDownRt() called. vodDownRt : " + vodDownRt);
+	public void setCheckVod1VodDownRt(Integer key, String vodDownRt) {
+		ISQMSUtil.debug(LOGD, "setCheckVod1VodDownRt() called. vodDownRt : " + vodDownRt);
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
-			ISQMSUtil.debug(LOGD, "setVOD1VodScsRt() mISQMSCheckVOD is null");
+			ISQMSUtil.debug(LOGD, "setCheckVod1VodDownRt() mISQMSCheckVOD is null");
 			return;
 		}
 		mISQMSCheckVOD.VOD1_C_VOD_DOWN_RT = vodDownRt;
@@ -1297,11 +1465,11 @@ public class ISQMSManager {
 	 * 컨텐츠명  ( 부러진화살 )
 	 * </pre>
 	 */
-	public void setVOD3VodContentName(Integer key, String vodContentName) {
-		ISQMSUtil.debug(LOGD, "setVOD3VodContentName() called. vodContentName : " + vodContentName);
+	public void setCheckVod3VodContentName(Integer key, String vodContentName) {
+		ISQMSUtil.debug(LOGD, "setCheckVod3VodContentName() called. vodContentName : " + vodContentName);
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
-			ISQMSUtil.debug(LOGD, "setVOD3VodContentName() mISQMSCheckVOD is null");
+			ISQMSUtil.debug(LOGD, "setCheckVod3VodContentName() mISQMSCheckVOD is null");
 			return;
 		}
 		mISQMSCheckVOD.VOD3_C_VOD_CONTENT_NAME = vodContentName;
@@ -1316,11 +1484,11 @@ public class ISQMSManager {
 	 * 컨텐츠 URL ( RTSP://*** )
 	 * </pre>
 	 */
-	public void setVOD3VodContentUrl(Integer key, String vodContentUrl) {
-		ISQMSUtil.debug(LOGD, "setVOD3VodContentUrl() called. vodContentUrl : " + vodContentUrl);
+	public void setCheckVod3VodContentUrl(Integer key, String vodContentUrl) {
+		ISQMSUtil.debug(LOGD, "setCheckVod3VodContentUrl() called. vodContentUrl : " + vodContentUrl);
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
-			ISQMSUtil.debug(LOGD, "setVOD3VodContentUrl() mISQMSCheckVOD is null");
+			ISQMSUtil.debug(LOGD, "setCheckVod3VodContentUrl() mISQMSCheckVOD is null");
 			return;
 		}
 		mISQMSCheckVOD.VOD3_C_VOD_CONTENT_URL = vodContentUrl;
@@ -1339,11 +1507,11 @@ public class ISQMSManager {
 	 * 0:실패 C_MSG 에러 정보
 	 * </pre>
 	 */
-	public void setVOD4VodError(Integer key, String vodError) {
-		ISQMSUtil.debug(LOGD, "setVOD4VodError() called. vodError : " + vodError);
+	public void setCheckVod4VodErr(Integer key, String vodError) {
+		ISQMSUtil.debug(LOGD, "setCheckVod4VodErr() called. vodError : " + vodError);
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
-			ISQMSUtil.debug(LOGD, "setVOD4VodError() mISQMSCheckVOD is null");
+			ISQMSUtil.debug(LOGD, "setCheckVod4VodErr() mISQMSCheckVOD is null");
 			return;
 		}
 		mISQMSCheckVOD.VOD4_C_VOD_ERR = vodError;
@@ -1360,11 +1528,11 @@ public class ISQMSManager {
 	 * RXXXXXXX:VOD 재생 에러(UI 에러코드)
 	 * </pre>
 	 */
-	public void setVOD4Message(Integer key, String vodMessage) {
-		ISQMSUtil.debug(LOGD, "setVOD4Message() called. vodMessage : " + vodMessage);
+	public void setCheckVod4Msg(Integer key, String vodMessage) {
+		ISQMSUtil.debug(LOGD, "setCheckVod4Msg() called. vodMessage : " + vodMessage);
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
-			ISQMSUtil.debug(LOGD, "setVOD4Message() mISQMSCheckVOD is null");
+			ISQMSUtil.debug(LOGD, "setCheckVod4Msg() mISQMSCheckVOD is null");
 			return;
 		}
 		mISQMSCheckVOD.VOD4_C_MSG = vodMessage;
@@ -1386,11 +1554,11 @@ public class ISQMSManager {
 	 * MBC[11]
 	 * </pre>
 	 */
-	public void setIPTV1IptvChNum(Integer key, String iptvChNum) {
-		ISQMSUtil.debug(LOGD, "setIPTV1IptvChNum() called. iptvChNum : " + iptvChNum);
+	public void setCheckIptv1IptvChNum(Integer key, String iptvChNum) {
+		ISQMSUtil.debug(LOGD, "setCheckIptv1IptvChNum() called. iptvChNum : " + iptvChNum);
 		ISQMSCheckIPTV mISQMSCheckIPTV = mISQMSCheckIPTVList.get(key);
 		if (null == mISQMSCheckIPTV) {
-			ISQMSUtil.debug(LOGD, "setIPTV1IptvChNum() mISQMSCheckIPTV is null");
+			ISQMSUtil.debug(LOGD, "setCheckIptv1IptvChNum() mISQMSCheckIPTV is null");
 			return;
 		}
 		mISQMSCheckIPTV.IPTV1_C_IPTV_CH_NUM = iptvChNum;
@@ -1406,11 +1574,11 @@ public class ISQMSManager {
 	 * {01:직접입력|02:채널버튼|03:miniEPG|04:전체EPG:|05EPG}
 	 * </pre>
 	 */
-	public void setIPTV1iptvChMode(Integer key, String iptvChMode) {
-		ISQMSUtil.debug(LOGD, "setIPTV1iptvChMode() called. iptvChMode : " + iptvChMode);
+	public void setCheckIptv1iptvChMode(Integer key, String iptvChMode) {
+		ISQMSUtil.debug(LOGD, "setCheckIptv1iptvChMode() called. iptvChMode : " + iptvChMode);
 		ISQMSCheckIPTV mISQMSCheckIPTV = mISQMSCheckIPTVList.get(key);
 		if (null == mISQMSCheckIPTV) {
-			ISQMSUtil.debug(LOGD, "setIPTV1iptvChMode() mISQMSCheckIPTV is null");
+			ISQMSUtil.debug(LOGD, "setCheckIptv1iptvChMode() mISQMSCheckIPTV is null");
 			return;
 		}
 		mISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE = iptvChMode;
@@ -1429,11 +1597,11 @@ public class ISQMSManager {
 	 * {000:정상|001:신호약함|999:기타}
 	 * </pre>
 	 */
-	public void setIPTV2iptvErrorCode(Integer key, String iptvErrorCode) {
-		ISQMSUtil.debug(LOGD, "setIPTV2iptvErrorCode() called. iptvErrorCode : " + iptvErrorCode);
+	public void setCheckIptv2iptvEcode(Integer key, String iptvErrorCode) {
+		ISQMSUtil.debug(LOGD, "setCheckIptv2iptvEcode() called. iptvErrorCode : " + iptvErrorCode);
 		ISQMSCheckIPTV mISQMSCheckIPTV = mISQMSCheckIPTVList.get(key);
 		if (null == mISQMSCheckIPTV) {
-			ISQMSUtil.debug(LOGD, "setIPTV2iptvErrorCode() mISQMSCheckIPTV is null");
+			ISQMSUtil.debug(LOGD, "setCheckIptv2iptvEcode() mISQMSCheckIPTV is null");
 			return;
 		}
 		mISQMSCheckIPTV.IPTV2_C_IPTV_ECODE = iptvErrorCode;
@@ -1451,8 +1619,8 @@ public class ISQMSManager {
 	 * IPv4 Address - Test Requested SCS IP
 	 * </pre>
 	 */
-	public void setSCSscsIp(String scsIp) {
-		ISQMSUtil.debug(LOGD, "setSCSscsIp() called. scsIp : " + scsIp);
+	public void setCheckScsScsIp(String scsIp) {
+		ISQMSUtil.debug(LOGD, "setCheckScsScsIp() called. scsIp : " + scsIp);
 		mISQMSCheckSCS.SCS_C_SCS_IP = scsIp;
 	}
 
@@ -1466,8 +1634,8 @@ public class ISQMSManager {
 	 * {01:연결불가|02:응답없음|03:응답오류}
 	 * </pre>
 	 */
-	public void setSCSscsErrorCode(String scsErrorCode) {
-		ISQMSUtil.debug(LOGD, "setSCSscsErrorCode() called. scsErrorCode : " + scsErrorCode);
+	public void setCheckScsScsEcode(String scsErrorCode) {
+		ISQMSUtil.debug(LOGD, "setCheckScsScsEcode() called. scsErrorCode : " + scsErrorCode);
 		mISQMSCheckSCS.SCS_C_SCS_ECODE = scsErrorCode;
 	}
 
@@ -1484,8 +1652,8 @@ public class ISQMSManager {
 	 * {01:연결불가|02:응답없음|03:응답오류}
 	 * </pre>
 	 */
-	public void setLGSlgsErrorCode(String lgsErrorCode) {
-		ISQMSUtil.debug(LOGD, "setLGSlgsErrorCode() called. lgsErrorCode : " + lgsErrorCode);
+	public void setCheckLgslgsEcode(String lgsErrorCode) {
+		ISQMSUtil.debug(LOGD, "setCheckLgslgsEcode() called. lgsErrorCode : " + lgsErrorCode);
 		mISQMSCheckLGS.LGS_C_LGS_ECODE = lgsErrorCode;
 	}
 

@@ -28,7 +28,7 @@ public interface ISQMSListener {
 	 * STB_AGE_LIMIT:14
 	 * </pre>
 	 */
-	public interface OnAgeLimitChangeListener { // STBAPIManager.getInstance().setAgeLimit(STBAPIManager.INFO_VALUE_07);
+	public interface OnAgeLimitChangeListener {
 		public void onAgeLimitChange(eAGE_LIMIT_TYPE age_LIMIT_TYPE);
 	}
 
@@ -40,7 +40,7 @@ public interface ISQMSListener {
 	 * STB_AUTONEXT:Y/N
 	 * </pre>
 	 */
-	public interface OnAutoNextChangeListener { // STBAPIManager.getInstance().setConsecutivePlay(STBAPIManager.RESULT_ENABLE);
+	public interface OnAutoNextChangeListener {
 		public void onAutoNextChange(boolean result);
 	}
 
@@ -98,7 +98,7 @@ public interface ISQMSListener {
 	 * C_PSWD_AGE:1111
 	 * </pre>
 	 */
-	public interface OnChildLimitPasswordChangeListener { // SCS Server
+	public interface OnChildLimitPasswordChangeListener {
 		public void onChildLimitPasswordChange(String childLimitPassword);
 	}
 
@@ -110,7 +110,7 @@ public interface ISQMSListener {
 	 * STB_AGE_TIME:19
 	 * </pre>
 	 */
-	public interface OnChildLimitTimeChangeListener { // STBAPIManager.getInstance().setChildrenSeeLimit(STBAPIManager.RESULT_DISABLE);
+	public interface OnChildLimitTimeChangeListener {
 		public void onChildLimitTimeChange(String childLimitTime);
 	}
 

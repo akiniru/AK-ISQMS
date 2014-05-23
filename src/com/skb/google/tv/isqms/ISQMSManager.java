@@ -601,6 +601,9 @@ public class ISQMSManager {
 					}
 
 					final ISQMSReceiveEvent receiveEvent = mReceiveEventList.remove(0);
+					if (null == receiveEvent) {
+						continue;
+					}
 					String event_id = receiveEvent.event_id;
 					if (null == event_id || event_id.length() <= 0) {
 						continue;
@@ -613,7 +616,16 @@ public class ISQMSManager {
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C04)) {
 						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C05)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE, null);
+						if (null != receiveEvent.data && 0 < receiveEvent.data.length()) {
+							if (receiveEvent.data.equalsIgnoreCase(ISQMSData.RESULT_TRUE)) {
+								requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE, Boolean.TRUE);
+							}
+							if (receiveEvent.data.equalsIgnoreCase(ISQMSData.RESULT_FALSE)) {
+								requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE, Boolean.FALSE);
+							}
+						} else {
+							ISQMSUtil.debug(LOGD, "ReceiveEventManager.run() receiveEvent.data : " + receiveEvent.data);
+						}
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C06)) {
 						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C07)) {
@@ -643,7 +655,7 @@ public class ISQMSManager {
 		}
 	}
 
-	private void recv_event(String event_id, String data) {
+	public void recv_event(String event_id, String data) {
 		ISQMSUtil.info(LOGD, "recv_event() called. event_id = " + event_id + ", data = " + data);
 		if (null == event_id || event_id.length() <= 0) {
 			return;
@@ -1630,7 +1642,7 @@ public class ISQMSManager {
 						Boolean result = (Boolean) data;
 						mAdultAuthChangeListener.onAdultAuthChange(result);
 					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() mChildLimitTimeChangeListener is null");
+						ISQMSUtil.debug(LOGD, "requestListener() mAdultAuthChangeListener is null");
 					}
 				} else {
 					ISQMSUtil.debug(LOGD, "requestListener() mAdultAuthChangeListener is null");

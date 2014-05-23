@@ -1694,7 +1694,7 @@ public class ISQMSManager {
 			default:
 				ISQMSUtil.debug(LOGD, "requestListener() type is default");
 				Message msg = new Message();
-				closeHolePunchingEvent(msg);
+				sendResultHolePunchingEvent(msg);
 				break;
 		}
 	}
@@ -1728,12 +1728,17 @@ public class ISQMSManager {
 	}
 
 	/** UI에서 Event_H, Event_E 발생 시, 값 설정 후에 호출 */
-	public void closeEvent(int eventMessage) {
+	public void sendEvent(int eventMessage) {
 		closeEvent(null, eventMessage);
 	}
 
 	public void closeEvent(Integer key, int eventMessage) {
-		ISQMSUtil.info(LOGD, "closeEvent() called. key : " + key + ", eventMessage : " + eventMessage);
+		if (null != key) {
+			ISQMSUtil.info(LOGD, "sendEvent() called. key : " + key + ", eventMessage : " + eventMessage);
+		} else {
+			ISQMSUtil.info(LOGD, "closeEvent() called. eventMessage : " + eventMessage);
+		}
+
 		Handler receiveHandler = mAgentSendManager.getManagerHandler();
 		if (receiveHandler != null) {
 			Message msg = receiveHandler.obtainMessage();
@@ -1744,8 +1749,8 @@ public class ISQMSManager {
 	}
 
 	/** UI에서 해당 HolePunching 이벤트 처리 후 호출 */
-	public void closeHolePunchingEvent(Message msg) {
-		ISQMSUtil.info(LOGD, "closeHolePunchingEvent() called. msg : " + msg);
+	public void sendResultHolePunchingEvent(Message msg) {
+		ISQMSUtil.info(LOGD, "sendResultHolePunchingEvent() called. msg : " + msg);
 		if (null == msg) {
 			mLockWakeHandler.sendEmptyMessage(0);
 			return;

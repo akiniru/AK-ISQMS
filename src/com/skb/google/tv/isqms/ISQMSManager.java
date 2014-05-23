@@ -1194,6 +1194,34 @@ public class ISQMSManager {
 		mISQMSCheckSVC.SVC_C_VOD_AID = vodAid;
 	}
 
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXXX
+	 * 
+	 * Data Define Description :
+	 * SetTop 구매인증 비밀번호(재설정 및 확인에 사용)
+	 * </pre>
+	 */
+	public void setSVCPasswordSTB(String passwordStb) {
+		ISQMSUtil.debug(LOGD, "setSVCPasswordSTB() called. passwordStb : " + passwordStb);
+		mISQMSCheckSVC.SVC_C_PSWD_STB = passwordStb;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXXX
+	 * 
+	 * Data Define Description :
+	 * 성인(자녀제한) 비밀번호(재설정 및 확인에 사용)
+	 * </pre>
+	 */
+	public void setSVCPasswordAge(String passwordAge) {
+		ISQMSUtil.debug(LOGD, "setSVCPasswordAge() called. vodAid : " + passwordAge);
+		mISQMSCheckSVC.SVC_C_PSWD_AGE = passwordAge;
+	}
+
 	// =========================================================================
 	// < setter CHECK RESULT VOD1
 	// =========================================================================

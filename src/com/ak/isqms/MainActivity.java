@@ -7,6 +7,7 @@ import android.util.Log;
 import com.skb.google.tv.common.util.LogUtil;
 import com.skb.google.tv.isqms.ISQMSData;
 import com.skb.google.tv.isqms.ISQMSListener;
+import com.skb.google.tv.isqms.ISQMSEnumData.eSCV_MODE;
 import com.skb.google.tv.isqms.ISQMSListener.OnAutoNextChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnRebootListener;
 import com.skb.google.tv.isqms.ISQMSManager;
@@ -42,27 +43,34 @@ public class MainActivity extends Activity {
 		// mIsQMSManager.recv_event(ISQMSData.EVENT_C07, null);
 
 		// Send_event
+		Integer keyEventH10 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
+		LogUtil.debug(LOGD, "keyEventH10_1 : " + keyEventH10);
+		// 값 설정 : COMMON, CHECK_SVC, CHECK_VOD1, CHECK_VOD3
+		mIsQMSManager.setSVCVodAid("VOD 재생용 광고 Id");
+		mIsQMSManager.setSVCVodCid("VOD Content Id");
+		mIsQMSManager.setSVCPasswordSTB("SetTop 구매인증 비밀번호");
+		mIsQMSManager.setSVCPasswordAge("성인(자녀제한) 비밀번호");
 
-		Integer keyEventH10_1 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
-		LogUtil.debug(LOGD, "keyEventH10_1 : " + keyEventH10_1);
-		// mIsQMSManager.closeEvent(keyEventH10_1, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
+		mIsQMSManager.setVOD1VodScsIp(keyEventH10, "IPv4 Address - SCS Server IP");
+		mIsQMSManager.setVOD1VodScsRt(keyEventH10, "SCS요청후 회신까지 소요시간");
+		mIsQMSManager.setVOD1VodDownRt(keyEventH10, "Download 요청후 회신까지 소요시간");
+
+		mIsQMSManager.setVOD3VodContentName(keyEventH10, "컨텐츠명  ( 부러진화살 )");
+		mIsQMSManager.setVOD3VodContentUrl(keyEventH10, "컨텐츠 URL ( RTSP://*** )");
+
+		mIsQMSManager.closeEvent(keyEventH10, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
 
 		Integer keyEventE09_1 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09);
 		LogUtil.debug(LOGD, "keyEventE09_1 : " + keyEventE09_1);
 		mIsQMSManager.closeEvent(keyEventE09_1, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09);
 
-		Integer keyEventH10_2 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
-		LogUtil.debug(LOGD, "keyEventH10_2 : " + keyEventH10_2);
+		// Integer keyEventH10_2 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
+		// LogUtil.debug(LOGD, "keyEventH10_2 : " + keyEventH10_2);
 		// mIsQMSManager.closeEvent(keyEventH10_2, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
-
-		Integer keyEventE09_2 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09);
-		LogUtil.debug(LOGD, "keyEventE09_2 : " + keyEventE09_2);
-		mIsQMSManager.closeEvent(keyEventE09_2, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09);
-
-		mIsQMSManager.closeEvent(keyEventH10_1, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
-		// mIsQMSManager.closeEvent(keyEventE09_1, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09);
-		mIsQMSManager.closeEvent(keyEventH10_2, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H10);
-
+		//
+		// Integer keyEventE09_2 = mIsQMSManager.openEvent(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09);
+		// LogUtil.debug(LOGD, "keyEventE09_2 : " + keyEventE09_2);
+		// mIsQMSManager.closeEvent(keyEventE09_2, ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_E09);
 	}
 
 	@Override

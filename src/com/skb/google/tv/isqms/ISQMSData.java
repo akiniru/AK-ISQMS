@@ -63,6 +63,28 @@ public class ISQMSData {
 	public static final String ISQMS_STRING_UPG_UPGRADE_SUCCESS = "100";
 	public static final String ISQMS_STRING_UPG_UPGRADE_FAIL = "9XX";
 
+	public static final String ISQMS_STRING_IPTV_CH_MODE_DIRECT_INPUT = "01";
+	public static final String ISQMS_STRING_IPTV_CH_MODE_CH_BUTTON = "02";
+	public static final String ISQMS_STRING_IPTV_CH_MODE_MINI_EPG = "03";
+	public static final String ISQMS_STRING_IPTV_CH_MODE_ALL_EPG = "04";
+	public static final String ISQMS_STRING_IPTV_CH_MODE_EPG = "05";
+
+	public static final String ISQMS_STRING_IPTV_ERROR_CODE_NORMAL = "000";
+	public static final String ISQMS_STRING_IPTV_ERROR_CODE_WEAK_SIGNAL = "001";
+	public static final String ISQMS_STRING_IPTV_ERROR_CODE_OTHER = "999";
+
+	public static final String ISQMS_STRING_SCS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
+	public static final String ISQMS_STRING_SCS_ECODE_RECEIVE_NO_REPLY = "02";
+	public static final String ISQMS_STRING_SCS_ECODE_RESPONSE_ERROR = "03";
+
+	public static final String ISQMS_STRING_LGS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
+	public static final String ISQMS_STRING_LGS_ECODE_RECEIVE_NO_REPLY = "02";
+	public static final String ISQMS_STRING_LGS_ECODE_RESPONSE_ERROR = "03";
+
+	public static final String ISQMS_STRING_WSCS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
+	public static final String ISQMS_STRING_WSCS_ECODE_RECEIVE_NO_REPLY = "02";
+	public static final String ISQMS_STRING_WSCS_ECODE_RESPONSE_ERROR = "03";
+
 	public static final int //
 			COMMON = 0, //
 			CURRENT_STATUS = 1, //

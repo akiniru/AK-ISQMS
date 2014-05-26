@@ -17,9 +17,14 @@ import android.util.SparseArray;
 
 import com.skb.google.tv.isqms.ISQMSEnumData.eAGE_LIMIT_TYPE;
 import com.skb.google.tv.isqms.ISQMSEnumData.eDISPLAY_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eIPTV_CH_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eIPTV_ERROR_CODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eLGS_ECODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eSCS_ECODE;
 import com.skb.google.tv.isqms.ISQMSEnumData.eTV_RATE_MODE;
 import com.skb.google.tv.isqms.ISQMSEnumData.eUPG_UPGRADE;
 import com.skb.google.tv.isqms.ISQMSEnumData.eVIDEO_RATE_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eWSCS_ECODE;
 import com.skb.google.tv.isqms.ISQMSListener.OnAdMetaFileDownloadListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnAdultAuthChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnAgeLimitChangeListener;
@@ -1575,15 +1580,40 @@ public class ISQMSManager {
 	 * 
 	 * Data Define Description :
 	 * 채널진입방법
-	 * {01:직접입력|02:채널버튼|03:miniEPG|04:전체EPG:|05EPG}
+	 * {01:직접입력|02:채널버튼|03:miniEPG|04:전체EPG|05:EPG}
 	 * </pre>
 	 */
-	public void setCheckIptv1iptvChMode(Integer key, String iptvChMode) {
-		ISQMSUtil.debug(LOGD, "setCheckIptv1iptvChMode() called. iptvChMode : " + iptvChMode);
+	public void setCheckIptv1iptvChMode(Integer key, eIPTV_CH_MODE iptv_CH_MODE) {
+		ISQMSUtil.debug(LOGD, "setCheckIptv1iptvChMode() called. iptv_CH_MODE : " + iptv_CH_MODE);
+		if (null == iptv_CH_MODE) {
+			ISQMSUtil.debug(LOGD, "setCheckIptv1iptvChMode() iptv_CH_MODE is null");
+			return;
+		}
 		ISQMSCheckIPTV mISQMSCheckIPTV = mISQMSCheckIPTVList.get(key);
 		if (null == mISQMSCheckIPTV) {
 			ISQMSUtil.debug(LOGD, "setCheckIptv1iptvChMode() mISQMSCheckIPTV is null");
 			return;
+		}
+
+		String iptvChMode = null;
+		switch (iptv_CH_MODE) {
+			case MODE_DIRECT_INPUT:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_DIRECT_INPUT;
+				break;
+			case MODE_CH_BUTTON:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_CH_BUTTON;
+				break;
+			case MODE_MINI_EPG:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_MINI_EPG;
+				break;
+			case MODE_ALL_EPG:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_ALL_EPG;
+				break;
+			case MODE_EPG:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_EPG;
+				break;
+			default:
+				break;
 		}
 		mISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE = iptvChMode;
 	}
@@ -1601,12 +1631,31 @@ public class ISQMSManager {
 	 * {000:정상|001:신호약함|999:기타}
 	 * </pre>
 	 */
-	public void setCheckIptv2iptvEcode(Integer key, String iptvErrorCode) {
-		ISQMSUtil.debug(LOGD, "setCheckIptv2iptvEcode() called. iptvErrorCode : " + iptvErrorCode);
+	public void setCheckIptv2iptvEcode(Integer key, eIPTV_ERROR_CODE iptv_ERROR_CODE) {
+		ISQMSUtil.debug(LOGD, "setCheckIptv2iptvEcode() called. iptv_ERROR_CODE : " + iptv_ERROR_CODE);
+		if (null == iptv_ERROR_CODE) {
+			ISQMSUtil.debug(LOGD, "setCheckIptv2iptvEcode() iptv_ERROR_CODE is null");
+			return;
+		}
 		ISQMSCheckIPTV mISQMSCheckIPTV = mISQMSCheckIPTVList.get(key);
 		if (null == mISQMSCheckIPTV) {
 			ISQMSUtil.debug(LOGD, "setCheckIptv2iptvEcode() mISQMSCheckIPTV is null");
 			return;
+		}
+
+		String iptvErrorCode = null;
+		switch (iptv_ERROR_CODE) {
+			case MODE_NORMAL:
+				iptvErrorCode = ISQMSData.ISQMS_STRING_IPTV_ERROR_CODE_NORMAL;
+				break;
+			case MODE_WEAK_SIGNAL:
+				iptvErrorCode = ISQMSData.ISQMS_STRING_IPTV_ERROR_CODE_WEAK_SIGNAL;
+				break;
+			case MODE_OTHER:
+				iptvErrorCode = ISQMSData.ISQMS_STRING_IPTV_ERROR_CODE_OTHER;
+				break;
+			default:
+				break;
 		}
 		mISQMSCheckIPTV.IPTV2_C_IPTV_ECODE = iptvErrorCode;
 	}
@@ -1638,8 +1687,27 @@ public class ISQMSManager {
 	 * {01:연결불가|02:응답없음|03:응답오류}
 	 * </pre>
 	 */
-	public void setCheckScsScsEcode(String scsErrorCode) {
-		ISQMSUtil.debug(LOGD, "setCheckScsScsEcode() called. scsErrorCode : " + scsErrorCode);
+	public void setCheckScsScsEcode(eSCS_ECODE scs_ECODE) {
+		ISQMSUtil.debug(LOGD, "setCheckScsScsEcode() called. scs_ECODE : " + scs_ECODE);
+		if (null == scs_ECODE) {
+			ISQMSUtil.debug(LOGD, "setCheckScsScsEcode() scs_ECODE is null");
+			return;
+		}
+
+		String scsErrorCode = null;
+		switch (scs_ECODE) {
+			case IMPOSSIBLE_TO_CONNECT:
+				scsErrorCode = ISQMSData.ISQMS_STRING_SCS_ECODE_IMPOSSIBLE_TO_CONNECT;
+				break;
+			case RECEIVE_NO_REPLY:
+				scsErrorCode = ISQMSData.ISQMS_STRING_SCS_ECODE_RECEIVE_NO_REPLY;
+				break;
+			case RESPONSE_ERROR:
+				scsErrorCode = ISQMSData.ISQMS_STRING_SCS_ECODE_RESPONSE_ERROR;
+				break;
+			default:
+				break;
+		}
 		mISQMSCheckSCS.SCS_C_SCS_ECODE = scsErrorCode;
 	}
 
@@ -1685,8 +1753,27 @@ public class ISQMSManager {
 	 * {01:연결불가|02:응답없음|03:응답오류}
 	 * </pre>
 	 */
-	public void setCheckLgslgsEcode(String lgsErrorCode) {
-		ISQMSUtil.debug(LOGD, "setCheckLgslgsEcode() called. lgsErrorCode : " + lgsErrorCode);
+	public void setCheckLgslgsEcode(eLGS_ECODE lgs_ECODE) {
+		ISQMSUtil.debug(LOGD, "setCheckLgslgsEcode() called. lgs_ECODE : " + lgs_ECODE);
+		if (null == lgs_ECODE) {
+			ISQMSUtil.debug(LOGD, "setCheckLgslgsEcode() lgsErrorCode is null");
+			return;
+		}
+
+		String lgsErrorCode = null;
+		switch (lgs_ECODE) {
+			case IMPOSSIBLE_TO_CONNECT:
+				lgsErrorCode = ISQMSData.ISQMS_STRING_LGS_ECODE_IMPOSSIBLE_TO_CONNECT;
+				break;
+			case RECEIVE_NO_REPLY:
+				lgsErrorCode = ISQMSData.ISQMS_STRING_LGS_ECODE_RECEIVE_NO_REPLY;
+				break;
+			case RESPONSE_ERROR:
+				lgsErrorCode = ISQMSData.ISQMS_STRING_LGS_ECODE_RESPONSE_ERROR;
+				break;
+			default:
+				break;
+		}
 		mISQMSCheckLGS.LGS_C_LGS_ECODE = lgsErrorCode;
 	}
 
@@ -1728,13 +1815,32 @@ public class ISQMSManager {
 	 * XX
 	 * 
 	 * Data Define Description :
-	 * SCS오류코드
+	 * WSCS오류코드
 	 * {01:연결불가|02:응답없음|03:응답오류}
 	 * </pre>
 	 */
-	public void setCheckWscsWscsEcode(String wscsEcode) {
-		ISQMSUtil.debug(LOGD, "setCheckWscsWscsEcode() called. wscsEcode : " + wscsEcode);
-		mISQMSCheckWSCS.WSCS_C_WSCS_ECODE = wscsEcode;
+	public void setCheckWscsWscsEcode(eWSCS_ECODE wscs_ECODE) {
+		ISQMSUtil.debug(LOGD, "setCheckWscsWscsEcode() called. wscs_ECODE : " + wscs_ECODE);
+		if (null == wscs_ECODE) {
+			ISQMSUtil.debug(LOGD, "setCheckWscsWscsEcode() wscs_ECODE is null");
+			return;
+		}
+
+		String wscsErrorCode = null;
+		switch (wscs_ECODE) {
+			case IMPOSSIBLE_TO_CONNECT:
+				wscsErrorCode = ISQMSData.ISQMS_STRING_WSCS_ECODE_IMPOSSIBLE_TO_CONNECT;
+				break;
+			case RECEIVE_NO_REPLY:
+				wscsErrorCode = ISQMSData.ISQMS_STRING_WSCS_ECODE_RECEIVE_NO_REPLY;
+				break;
+			case RESPONSE_ERROR:
+				wscsErrorCode = ISQMSData.ISQMS_STRING_WSCS_ECODE_RESPONSE_ERROR;
+				break;
+			default:
+				break;
+		}
+		mISQMSCheckWSCS.WSCS_C_WSCS_ECODE = wscsErrorCode;
 	}
 
 	/**

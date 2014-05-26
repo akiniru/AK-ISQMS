@@ -52,4 +52,36 @@ public class ISQMSEnumData {
 		MODE_SUCCESS, // 100 : 완료
 		MODE_FAIL, // 9XX : 실패
 	}
+
+	public enum eIPTV_CH_MODE {
+		MODE_DIRECT_INPUT, // 직접입력
+		MODE_CH_BUTTON, // 채널버튼
+		MODE_MINI_EPG, // miniEPG
+		MODE_ALL_EPG, // 전체PG
+		MODE_EPG, // EPG
+	}
+
+	public enum eIPTV_ERROR_CODE {
+		MODE_NORMAL, // 000:정상
+		MODE_WEAK_SIGNAL, // 001:신호약함
+		MODE_OTHER, // 999:기타
+	}
+
+	public enum eSCS_ECODE {
+		IMPOSSIBLE_TO_CONNECT, // 01:연결불가
+		RECEIVE_NO_REPLY, // 02:응답없음
+		RESPONSE_ERROR, // 03:응답오류
+	}
+
+	public enum eLGS_ECODE {
+		IMPOSSIBLE_TO_CONNECT, // 01:연결불가
+		RECEIVE_NO_REPLY, // 02:응답없음
+		RESPONSE_ERROR, // 03:응답오류
+	}
+
+	public enum eWSCS_ECODE {
+		IMPOSSIBLE_TO_CONNECT, // 01:연결불가
+		RECEIVE_NO_REPLY, // 02:응답없음
+		RESPONSE_ERROR, // 03:응답오류
+	}
 }

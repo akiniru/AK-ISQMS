@@ -26,12 +26,14 @@ import com.skb.google.tv.isqms.ISQMSListener.OnAgeLimitChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnAutoNextChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnChildLimitPasswordChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnChildLimitTimeChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnIptvQualityStatusListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnLgsNormalAccessListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnRebootListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnRecentAllUpgradeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnResolutionChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnScsNormalAccessListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnStbPasswordChangeListener;
+import com.skb.google.tv.isqms.ISQMSListener.OnVodQualityStatusListener;
 import com.skb.google.tv.isqms.check.ISQMSCheckERR1;
 import com.skb.google.tv.isqms.check.ISQMSCheckERRORCODE;
 import com.skb.google.tv.isqms.check.ISQMSCheckIPTV;
@@ -73,8 +75,10 @@ public class ISQMSManager {
 	private OnChildLimitPasswordChangeListener mChildLimitPasswordChangeListener;
 	private OnChildLimitTimeChangeListener mChildLimitTimeChangeListener;
 	private OnAdultAuthChangeListener mAdultAuthChangeListener;
-	private OnScsNormalAccessListener mScsNormalAccessListener;
 	private OnLgsNormalAccessListener mLgsNormalAccessListener;
+	private OnScsNormalAccessListener mScsNormalAccessListener;
+	private OnIptvQualityStatusListener mOnIptvQualityStatusListener;
+	private OnVodQualityStatusListener mOnVodQualityStatusListener;
 
 	private int mEventKey = 0;
 
@@ -645,10 +649,10 @@ public class ISQMSManager {
 						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C94_LGS_NORMAL_ACCESS, null);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C95)) {
 						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS, null);
-						// } else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C96)) {
-						// requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C96, null);
-						// } else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C98)) {
-						// requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C98, null);
+					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C96)) {
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C96_IPTV_QUALITY_STATUS, null);
+					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C98)) {
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C98_VOD_QUALITY_STATUS, null);
 					}
 				}
 			}
@@ -1639,9 +1643,38 @@ public class ISQMSManager {
 		mISQMSCheckSCS.SCS_C_SCS_ECODE = scsErrorCode;
 	}
 
+	/**
+	 * <pre>
+	 * Data Define :
+	 * 비정형 가변 문자열
+	 * 
+	 * Data Define Description :
+	 * SCS소그룹 작업 결과의 회신된 결과가 있는 경우 
+	 * 비정형 메시지
+	 * </pre>
+	 */
+	public void setCheckScsMsg(String msg) {
+		ISQMSUtil.debug(LOGD, "setCheckScsMsg() called. msg : " + msg);
+		mISQMSCheckSCS.SCS_C_MSG = msg;
+	}
+
 	// =========================================================================
 	// < setter CHECK RESULT LGS
 	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * Data Define Description :
+	 * IPv4 Address - Requested LGS IP
+	 * </pre>
+	 */
+	public void setCheckLgslgsIp(String lgsIp) {
+		ISQMSUtil.debug(LOGD, "setCheckLgslgsIp() called. lgsIp : " + lgsIp);
+		mISQMSCheckLGS.LGS_C_LGS_IP = lgsIp;
+	}
+
 	/**
 	 * <pre>
 	 * Data Define :
@@ -1655,6 +1688,67 @@ public class ISQMSManager {
 	public void setCheckLgslgsEcode(String lgsErrorCode) {
 		ISQMSUtil.debug(LOGD, "setCheckLgslgsEcode() called. lgsErrorCode : " + lgsErrorCode);
 		mISQMSCheckLGS.LGS_C_LGS_ECODE = lgsErrorCode;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * 비정형 가변 문자열
+	 * 
+	 * Data Define Description :
+	 * LGS소그룹 작업 결과의 회신된 결과가 있는 경우 
+	 * 비정형 메시지
+	 * </pre>
+	 */
+	public void setCheckLgsMsg(String msg) {
+		ISQMSUtil.debug(LOGD, "setCheckLgsMsg() called. msg : " + msg);
+		mISQMSCheckLGS.LGS_C_MSG = msg;
+	}
+
+	// =========================================================================
+	// < setter CHECK RESULT WSCS
+	// =========================================================================
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XXX.XXX.XXX.XXX
+	 * 
+	 * Data Define Description :
+	 * IPv4 Address - Test Requested WSCS IP
+	 * </pre>
+	 */
+	public void setCheckWscsWscsIp(String wscsIp) {
+		ISQMSUtil.debug(LOGD, "setCheckWscsWscsIp() called. wscsIp : " + wscsIp);
+		mISQMSCheckWSCS.WSCS_C_WSCS_IP = wscsIp;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * XX
+	 * 
+	 * Data Define Description :
+	 * SCS오류코드
+	 * {01:연결불가|02:응답없음|03:응답오류}
+	 * </pre>
+	 */
+	public void setCheckWscsWscsEcode(String wscsEcode) {
+		ISQMSUtil.debug(LOGD, "setCheckWscsWscsEcode() called. wscsEcode : " + wscsEcode);
+		mISQMSCheckWSCS.WSCS_C_WSCS_ECODE = wscsEcode;
+	}
+
+	/**
+	 * <pre>
+	 * Data Define :
+	 * 
+	 * Data Define Description :
+	 * SCS소그룹 작업 결과의 회신된 결과가 있는 경우 
+	 * 비정형 메시지
+	 * </pre>
+	 */
+	public void setCheckWscsMsg(String msg) {
+		ISQMSUtil.debug(LOGD, "setCheckWscsMsg() called. msg : " + msg);
+		mISQMSCheckWSCS.WSCS_C_MSG = msg;
 	}
 
 	// =========================================================================
@@ -1711,14 +1805,24 @@ public class ISQMSManager {
 		this.mAdultAuthChangeListener = adultAuthChangeListener;
 	}
 
+	public void setLGSNormalAccessListener(OnLgsNormalAccessListener lgsNormalAccessListener) {
+		ISQMSUtil.debug(LOGD, "setLGSNormalAccessListener() called");
+		this.mLgsNormalAccessListener = lgsNormalAccessListener;
+	}
+
 	public void setSCSNormalAccessListener(OnScsNormalAccessListener scsNormalAccessListener) {
 		ISQMSUtil.debug(LOGD, "setSCSNormalAccessListener() called");
 		this.mScsNormalAccessListener = scsNormalAccessListener;
 	}
 
-	public void setLGSNormalAccessListener(OnLgsNormalAccessListener lgsNormalAccessListener) {
-		ISQMSUtil.debug(LOGD, "setLGSNormalAccessListener() called");
-		this.mLgsNormalAccessListener = lgsNormalAccessListener;
+	public void setIptvQualityStatusListener(OnIptvQualityStatusListener onIptvQualityStatusListener) {
+		ISQMSUtil.debug(LOGD, "setIptvQualityStatusListener() called");
+		this.mOnIptvQualityStatusListener = onIptvQualityStatusListener;
+	}
+
+	public void setVodQualityStatusListener(OnVodQualityStatusListener onVodQualityStatusListener) {
+		ISQMSUtil.debug(LOGD, "setVodQualityStatusListener() called");
+		this.mOnVodQualityStatusListener = onVodQualityStatusListener;
 	}
 
 	// =========================================================================
@@ -1858,6 +1962,20 @@ public class ISQMSManager {
 					ISQMSUtil.debug(LOGD, "requestListener() mLGSNormalAccessListener is null");
 				}
 				break;
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C96_IPTV_QUALITY_STATUS:
+				if (null != mOnIptvQualityStatusListener) {
+					mOnIptvQualityStatusListener.onIptvQualityStatus();
+				} else {
+					ISQMSUtil.debug(LOGD, "requestListener() mOnIptvQualityStatusListener is null");
+				}
+				break;
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C98_VOD_QUALITY_STATUS:
+				if (null != mOnVodQualityStatusListener) {
+					mOnVodQualityStatusListener.onVodQualityStatus();
+				} else {
+					ISQMSUtil.debug(LOGD, "requestListener() mOnVodQualityStatusListener is null");
+				}
+				break;
 
 			default:
 				ISQMSUtil.debug(LOGD, "requestListener() type is default");
@@ -1967,6 +2085,12 @@ public class ISQMSManager {
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS:
+				break;
+
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C96_IPTV_QUALITY_STATUS:
+				break;
+
+			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C98_VOD_QUALITY_STATUS:
 				break;
 
 			default:

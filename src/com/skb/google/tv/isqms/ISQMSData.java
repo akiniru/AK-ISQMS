@@ -1,8 +1,8 @@
 package com.skb.google.tv.isqms;
 
 public class ISQMSData {
-	public static final boolean ACTION_ISQMS = true;
-	public static final boolean SHOW_LOG = true;
+	public static final boolean ACTION_ISQMS = false;
+	public static final boolean SHOW_LOG = false;
 
 	public static final int THREAD_WAIT_MILLE_SECONDS = 1000;
 	private static final int MESSAGE_REQUEST_AGENT = 20000;
@@ -41,6 +41,8 @@ public class ISQMSData {
 	public static final int MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE = MESSAGE_REQUEST_AGENT_EVNET_C + 18;
 	public static final int MESSAGE_REQUEST_AGENT_EVENT_C94_LGS_NORMAL_ACCESS = MESSAGE_REQUEST_AGENT_EVNET_C + 94;
 	public static final int MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS = MESSAGE_REQUEST_AGENT_EVNET_C + 95;
+	public static final int MESSAGE_REQUEST_AGENT_EVENT_C96_IPTV_QUALITY_STATUS = MESSAGE_REQUEST_AGENT_EVNET_C + 96;
+	public static final int MESSAGE_REQUEST_AGENT_EVENT_C98_VOD_QUALITY_STATUS = MESSAGE_REQUEST_AGENT_EVNET_C + 98;
 
 	public static final int MESSAGE_RESPONSE_AGENT = MESSAGE_REQUEST_AGENT + 10000;
 	public static final int MESSAGE_RESPONSE_AGENT_OK = MESSAGE_RESPONSE_AGENT + 1;

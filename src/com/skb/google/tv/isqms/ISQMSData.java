@@ -4,7 +4,7 @@ public class ISQMSData {
 	public static final boolean ACTION_ISQMS = false;
 	public static final boolean SHOW_LOG = false;
 
-	public static final int THREAD_WAIT_MILLE_SECONDS = 1000;
+	protected static final int THREAD_WAIT_MILLE_SECONDS = 1000;
 	private static final int MESSAGE_REQUEST_AGENT = 20000;
 	public static final int MESSAGE_REQUEST_AGENT_THREAD_DESTROY = MESSAGE_REQUEST_AGENT - 1;
 	public static final int MESSAGE_REQUEST_AGENT_BINDING = MESSAGE_REQUEST_AGENT;
@@ -50,48 +50,51 @@ public class ISQMSData {
 
 	public static final String ISQMS_STRING_STB_VER = "3.0";
 
-	public static final int ISQMS_SUCCESS = 0;
-	public static final int ISQMS_ERROR = -1;
+	protected static final int ISQMS_SUCCESS = 0;
+	protected static final int ISQMS_ERROR = -1;
 
-	public static final String RESULT_TRUE = "1"; // RESULT_TRUE
-	public static final String RESULT_FALSE = "0"; // RESULT_FALSE
+	protected static final String RESULT_TRUE = "1"; // RESULT_TRUE
+	protected static final String RESULT_FALSE = "0"; // RESULT_FALSE
 
-	public static final String ISQMS_STRING_OPEN = "open";
-	public static final String ISQMS_STRING_CLOSE = "close";
+	protected static final String ISQMS_STRING_OPEN = "open";
+	protected static final String ISQMS_STRING_CLOSE = "close";
 
-	public static final String ISQMS_STRING_UPG_UPGRADE_START = "000";
-	public static final String ISQMS_STRING_UPG_UPGRADE_SUCCESS = "100";
-	public static final String ISQMS_STRING_UPG_UPGRADE_FAIL = "9XX";
+	protected static final String ISQMS_STRING_UPG_UPGRADE_START = "000";
+	protected static final String ISQMS_STRING_UPG_UPGRADE_SUCCESS = "100";
+	protected static final String ISQMS_STRING_UPG_UPGRADE_FAIL = "9XX";
 
-	public static final String ISQMS_STRING_IPTV_CH_MODE_DIRECT_INPUT = "01";
-	public static final String ISQMS_STRING_IPTV_CH_MODE_CH_BUTTON = "02";
-	public static final String ISQMS_STRING_IPTV_CH_MODE_MINI_EPG = "03";
-	public static final String ISQMS_STRING_IPTV_CH_MODE_ALL_EPG = "04";
-	public static final String ISQMS_STRING_IPTV_CH_MODE_EPG = "05";
+	protected static final String ISQMS_STRING_VOD4_VOD_ERROR_SUCCESS = "1";
+	protected static final String ISQMS_STRING_VOD4_VOD_ERROR_FAIL = "0";
 
-	public static final String ISQMS_STRING_IPTV_ERROR_CODE_NORMAL = "000";
-	public static final String ISQMS_STRING_IPTV_ERROR_CODE_WEAK_SIGNAL = "001";
-	public static final String ISQMS_STRING_IPTV_ERROR_CODE_OTHER = "999";
+	protected static final String ISQMS_STRING_IPTV_CH_MODE_DIRECT_INPUT = "01";
+	protected static final String ISQMS_STRING_IPTV_CH_MODE_CH_BUTTON = "02";
+	protected static final String ISQMS_STRING_IPTV_CH_MODE_MINI_EPG = "03";
+	protected static final String ISQMS_STRING_IPTV_CH_MODE_ALL_EPG = "04";
+	protected static final String ISQMS_STRING_IPTV_CH_MODE_EPG = "05";
 
-	public static final String ISQMS_STRING_SCS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
-	public static final String ISQMS_STRING_SCS_ECODE_RECEIVE_NO_REPLY = "02";
-	public static final String ISQMS_STRING_SCS_ECODE_RESPONSE_ERROR = "03";
+	protected static final String ISQMS_STRING_IPTV_ERROR_CODE_NORMAL = "000";
+	protected static final String ISQMS_STRING_IPTV_ERROR_CODE_WEAK_SIGNAL = "001";
+	protected static final String ISQMS_STRING_IPTV_ERROR_CODE_OTHER = "999";
 
-	public static final String ISQMS_STRING_LGS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
-	public static final String ISQMS_STRING_LGS_ECODE_RECEIVE_NO_REPLY = "02";
-	public static final String ISQMS_STRING_LGS_ECODE_RESPONSE_ERROR = "03";
+	protected static final String ISQMS_STRING_SCS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
+	protected static final String ISQMS_STRING_SCS_ECODE_RECEIVE_NO_REPLY = "02";
+	protected static final String ISQMS_STRING_SCS_ECODE_RESPONSE_ERROR = "03";
 
-	public static final String ISQMS_STRING_WSCS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
-	public static final String ISQMS_STRING_WSCS_ECODE_RECEIVE_NO_REPLY = "02";
-	public static final String ISQMS_STRING_WSCS_ECODE_RESPONSE_ERROR = "03";
+	protected static final String ISQMS_STRING_LGS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
+	protected static final String ISQMS_STRING_LGS_ECODE_RECEIVE_NO_REPLY = "02";
+	protected static final String ISQMS_STRING_LGS_ECODE_RESPONSE_ERROR = "03";
 
-	public static final int //
+	protected static final String ISQMS_STRING_WSCS_ECODE_IMPOSSIBLE_TO_CONNECT = "01";
+	protected static final String ISQMS_STRING_WSCS_ECODE_RECEIVE_NO_REPLY = "02";
+	protected static final String ISQMS_STRING_WSCS_ECODE_RESPONSE_ERROR = "03";
+
+	protected static final int //
 			COMMON = 0, //
 			CURRENT_STATUS = 1, //
 			CHECK_RESULT = 2, //
 			RTST_INFO = 3;
 
-	public static final int //
+	protected static final int //
 			STATUS_ALL = -1, //
 			STATUS_CPU = 0, //
 			STATUS_MEM = 1, //
@@ -101,7 +104,7 @@ public class ISQMSData {
 			STATUS_XPG_2 = 5, //
 			STATUS_BBRATE = 6;
 
-	public static final int //
+	protected static final int //
 			CHECK_ALL = -1, //
 			CHECK_MSG = 0, //
 			CHECK_UPG_C_SW = 1, //
@@ -127,7 +130,7 @@ public class ISQMSData {
 			CHECK_ERRORCODE = 21, // 21
 			CATEGORY_CHECK_MAX = 21;
 
-	public static final String //
+	protected static final String //
 			EVENT_H01 = "H01", // 전체 주요 정보 보고
 			EVENT_H02 = "H02", // 네트워크설정정보 보고
 			EVENT_H06 = "H06", // Upgrade진행 상태 보고(시작, 실패/성공)
@@ -146,7 +149,7 @@ public class ISQMSData {
 	// EVENT_H34 = "H34", // 현재 설정되어 있는 동작 모듈 정보 확인시
 	// EVENT_H35 = "H35", // 설정되 zconfig.conf의 파일 정보
 
-	public static final String //
+	protected static final String //
 			EVENT_E03 = "E03", // 네트워크 연결 재개 후, 재 접속 가능 시 네트워크 재 접속 시작 보고
 			EVENT_E09 = "E09", // 기치 않은 화면정지 감지 시 보고 (추정원인코드/메시지)
 			EVENT_E14 = "E14", // VOD 요청 시 장애 전송, VOD 재생 시 장애 전송
@@ -170,7 +173,7 @@ public class ISQMSData {
 	// EVENT_E36 = "E36", // ISQMS bitrate 모듈 내 임계치 이하, Over-rate 3회 발생시
 	// EVENT_E37 = "E37"; // SDK Network error 발생시
 
-	public static final String //
+	protected static final String //
 			EVENT_C02 = "C02", // STB 인증 여부 처리
 			EVENT_C03 = "C03", // STB 전체 최신 Upgrade
 			EVENT_C04 = "C04", // STB 연령등급(시청제한나이) 조정

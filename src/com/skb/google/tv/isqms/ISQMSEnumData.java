@@ -53,6 +53,11 @@ public class ISQMSEnumData {
 		MODE_FAIL, // 9XX : 실패
 	}
 
+	public enum eVOD4_VOD_ERROR {
+		MODE_SUCCESS, // 1 : 성공
+		MODE_FAIL, // 0 : 실패
+	}
+
 	public enum eIPTV_CH_MODE {
 		MODE_DIRECT_INPUT, // 직접입력
 		MODE_CH_BUTTON, // 채널버튼

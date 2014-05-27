@@ -24,6 +24,7 @@ import com.skb.google.tv.isqms.ISQMSEnumData.eSCS_ECODE;
 import com.skb.google.tv.isqms.ISQMSEnumData.eTV_RATE_MODE;
 import com.skb.google.tv.isqms.ISQMSEnumData.eUPG_UPGRADE;
 import com.skb.google.tv.isqms.ISQMSEnumData.eVIDEO_RATE_MODE;
+import com.skb.google.tv.isqms.ISQMSEnumData.eVOD4_VOD_ERROR;
 import com.skb.google.tv.isqms.ISQMSEnumData.eWSCS_ECODE;
 import com.skb.google.tv.isqms.ISQMSListener.OnAdMetaFileDownloadListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnAdultAuthChangeListener;
@@ -1513,15 +1514,32 @@ public class ISQMSManager {
 	 * 
 	 * Data Define Description :
 	 * 1:성공
-	 * 0:실패 C_MSG 에러 정보
+	 * 0:실패
+	 * 실패 시 C_MSG 에러 정보
 	 * </pre>
 	 */
-	public void setCheckVod4VodErr(Integer key, String vodError) {
-		ISQMSUtil.debug(LOGD, "setCheckVod4VodErr() called. vodError : " + vodError);
+	public void setCheckVod4VodErr(Integer key, eVOD4_VOD_ERROR vod4_VOD_ERROR) {
+		ISQMSUtil.debug(LOGD, "setCheckVod4VodErr() called. vod4_VOD_ERROR : " + vod4_VOD_ERROR);
+		if (null == vod4_VOD_ERROR) {
+			ISQMSUtil.debug(LOGD, "setCheckVod4VodErr() vod4_VOD_ERROR is null");
+			return;
+		}
 		ISQMSCheckVOD mISQMSCheckVOD = mISQMSCheckVODList.get(key);
 		if (null == mISQMSCheckVOD) {
 			ISQMSUtil.debug(LOGD, "setCheckVod4VodErr() mISQMSCheckVOD is null");
 			return;
+		}
+
+		String vodError = null;
+		switch (vod4_VOD_ERROR) {
+			case MODE_SUCCESS:
+				vodError = ISQMSData.ISQMS_STRING_VOD4_VOD_ERROR_SUCCESS;
+				break;
+			case MODE_FAIL:
+				vodError = ISQMSData.ISQMS_STRING_VOD4_VOD_ERROR_FAIL;
+				break;
+			default:
+				break;
 		}
 		mISQMSCheckVOD.VOD4_C_VOD_ERR = vodError;
 	}

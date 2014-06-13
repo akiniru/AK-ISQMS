@@ -30,16 +30,16 @@ public class ISQMSDataBuilder {
 		StringBuilder builder = new StringBuilder();
 
 		// builder.append(";");
-		/** EVENT_ID */
+		// /** EVENT_ID */
 		// if (null != mISQMSCommon.EVENT_ID) {
 		// builder.append(mISQMSCommon.EVENT_ID);
 		// }
 		// builder.append(";");
-		/** EVENT_TS */
-		mISQMSCommon.EVENT_TS = ISQMSManager.getEventTS();
-		if (null != mISQMSCommon.EVENT_TS) {
-			builder.append(mISQMSCommon.EVENT_TS);
-		}
+		// /** EVENT_TS */
+		// mISQMSCommon.EVENT_TS = ISQMSManager.getEventTS();
+		// if (null != mISQMSCommon.EVENT_TS) {
+		// builder.append(mISQMSCommon.EVENT_TS);
+		// }
 		builder.append(";");
 		/** STB_VER */
 		if (null != mISQMSCommon.STB_VER) {
@@ -60,11 +60,21 @@ public class ISQMSDataBuilder {
 		if (null != mISQMSCommon.STB_SW_VER) {
 			builder.append(mISQMSCommon.STB_SW_VER);
 		}
+		// builder.append(";");
+		// /** STB_XPG_VER */
+		// if (null != mISQMSCommon.STB_XPG_VER) {
+		// builder.append(mISQMSCommon.STB_XPG_VER);
+		// }
 		builder.append(";");
-		/** STB_XPG_VER */
-		if (null != mISQMSCommon.STB_XPG_VER) {
-			builder.append(mISQMSCommon.STB_XPG_VER);
+		/** STB_EPG_VER */
+		if (null != mISQMSCommon.STB_EPG_VER) {
+			builder.append(mISQMSCommon.STB_EPG_VER);
 		}
+		// builder.append(";");
+		// /** STB_VAS_VER */
+		// if (null != mISQMSCommon.STB_VAS_VER) {
+		// builder.append(mISQMSCommon.STB_VAS_VER);
+		// }
 		builder.append(";");
 		/** STB_MODEL */
 		if (null != mISQMSCommon.STB_MODEL) {
@@ -96,10 +106,10 @@ public class ISQMSDataBuilder {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(";");
-		// /** S_NETWORK_MODE */
-		// if (null != mISQMSStatusNET.S_NETWORK_MODE) {
-		// builder.append(mISQMSStatusNET.S_NETWORK_MODE);
-		// }
+		/** S_NETWORK_MODE */
+		if (null != mISQMSStatusNET.S_NETWORK_MODE) {
+			builder.append(mISQMSStatusNET.S_NETWORK_MODE);
+		}
 		builder.append(";");
 		/** S_NET_DHCP_MODE */
 		if (null != mISQMSStatusNET.S_NET_DHCP_MODE) {
@@ -300,14 +310,14 @@ public class ISQMSDataBuilder {
 		}
 		builder.append(";");
 		/** SVC_C_PSWD_STB */
-		// if (null != mISQMSCheckSVC.SVC_C_PSWD_STB) {
-		// builder.append(mISQMSCheckSVC.SVC_C_PSWD_STB);
-		// }
+		if (null != mISQMSCheckSVC.SVC_C_PSWD_STB) {
+			builder.append(mISQMSCheckSVC.SVC_C_PSWD_STB);
+		}
 		builder.append(";");
 		/** SVC_C_PSWD_AGE */
-		// if (null != mISQMSCheckSVC.SVC_C_PSWD_AGE) {
-		// builder.append(mISQMSCheckSVC.SVC_C_PSWD_AGE);
-		// }
+		if (null != mISQMSCheckSVC.SVC_C_PSWD_AGE) {
+			builder.append(mISQMSCheckSVC.SVC_C_PSWD_AGE);
+		}
 
 		return builder.toString();
 	}
@@ -339,9 +349,9 @@ public class ISQMSDataBuilder {
 		}
 		builder.append(";");
 		/** VOD1_C_VOD_DOWN_IP */
-		// if (null != mISQMSCheckVOD.VOD1_C_VOD_DOWN_IP) {
-		// builder.append(mISQMSCheckVOD.VOD1_C_VOD_DOWN_IP);
-		// }
+		if (null != mISQMSCheckVOD.VOD1_C_VOD_DOWN_IP) {
+			builder.append(mISQMSCheckVOD.VOD1_C_VOD_DOWN_IP);
+		}
 		builder.append(";");
 		/** VOD1_C_VOD_DOWN_RT */
 		if (null != mISQMSCheckVOD.VOD1_C_VOD_DOWN_RT) {
@@ -427,6 +437,13 @@ public class ISQMSDataBuilder {
 		/** IPTV1_C_IPTV_CH_MODE */
 		if (null != mISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE) {
 			builder.append(mISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE);
+		} else {
+			// 이전 값으로 설정, 이전 겂도 없을 경우 무시
+			int beforeKey = mISQMSCheckIPTVList.keyAt(0);
+			ISQMSCheckIPTV beforeISQMSCheckIPTV = mISQMSCheckIPTVList.get(beforeKey);
+			if (null != beforeISQMSCheckIPTV && null != beforeISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE) {
+				builder.append(beforeISQMSCheckIPTV.IPTV1_C_IPTV_CH_MODE);
+			}
 		}
 
 		return builder.toString();
@@ -452,9 +469,9 @@ public class ISQMSDataBuilder {
 		}
 		builder.append(";");
 		/** IPTV2_C_MSG */
-		// if (null != mISQMSCheckIPTV2.IPTV2_C_MSG) {
-		// builder.append(mISQMSCheckIPTV2.IPTV2_C_MSG);
-		// }
+		if (null != mISQMSCheckIPTV.IPTV2_C_MSG) {
+			builder.append(mISQMSCheckIPTV.IPTV2_C_MSG);
+		}
 
 		return builder.toString();
 	}
@@ -467,19 +484,19 @@ public class ISQMSDataBuilder {
 
 		builder.append(";");
 		/** ERR1_ERR_DURATION */
-		// if (null != mISQMSCheckERR1.ERR1_ERR_DURATION) {
-		// builder.append(mISQMSCheckERR1.ERR1_ERR_DURATION);
-		// }
+		if (null != mISQMSCheckERR1.ERR1_ERR_DURATION) {
+			builder.append(mISQMSCheckERR1.ERR1_ERR_DURATION);
+		}
 		builder.append(";");
 		/** ERR1_ERR_REPEAT */
-		// if (null != mISQMSCheckERR1.ERR1_ERR_REPEAT) {
-		// builder.append(mISQMSCheckERR1.ERR1_ERR_REPEAT);
-		// }
+		if (null != mISQMSCheckERR1.ERR1_ERR_REPEAT) {
+			builder.append(mISQMSCheckERR1.ERR1_ERR_REPEAT);
+		}
 		builder.append(";");
 		/** ERR1_C_TS */
-		// if (null != mISQMSCheckERR1.ERR1_C_TS) {
-		// builder.append(mISQMSCheckERR1.ERR1_C_TS);
-		// }
+		if (null != mISQMSCheckERR1.ERR1_C_TS) {
+			builder.append(mISQMSCheckERR1.ERR1_C_TS);
+		}
 
 		return builder.toString();
 	}
@@ -492,9 +509,9 @@ public class ISQMSDataBuilder {
 
 		builder.append(";");
 		/** ERRORCODE_C_MSG */
-		// if (null != mISQMSCheckERRORCODE.ERRORCODE_C_MSG) {
-		// builder.append(mISQMSCheckERRORCODE.ERRORCODE_C_MSG);
-		// }
+		if (null != mISQMSCheckERRORCODE.ERRORCODE_C_MSG) {
+			builder.append(mISQMSCheckERRORCODE.ERRORCODE_C_MSG);
+		}
 
 		return builder.toString();
 	}
@@ -517,9 +534,9 @@ public class ISQMSDataBuilder {
 		}
 		builder.append(";");
 		/** SCS_C_MSG */
-		// if (null != mISQMSCheckSCS.SCS_C_MSG) {
-		// builder.append(mISQMSCheckSCS.SCS_C_MSG);
-		// }
+		if (null != mISQMSCheckSCS.SCS_C_MSG) {
+			builder.append(mISQMSCheckSCS.SCS_C_MSG);
+		}
 
 		return builder.toString();
 	}
@@ -537,14 +554,14 @@ public class ISQMSDataBuilder {
 		}
 		builder.append(";");
 		/** LGS_C_LGS_IP */
-		// if (null != mISQMSCheckLGS.LGS_C_LGS_IP) {
-		// builder.append(mISQMSCheckLGS.LGS_C_LGS_IP);
-		// }
+		if (null != mISQMSCheckLGS.LGS_C_LGS_IP) {
+			builder.append(mISQMSCheckLGS.LGS_C_LGS_IP);
+		}
 		builder.append(";");
 		/** LGS_C_MSG */
-		// if (null != mISQMSCheckLGS.LGS_C_MSG) {
-		// builder.append(mISQMSCheckLGS.LGS_C_MSG);
-		// }
+		if (null != mISQMSCheckLGS.LGS_C_MSG) {
+			builder.append(mISQMSCheckLGS.LGS_C_MSG);
+		}
 
 		return builder.toString();
 	}
@@ -562,14 +579,14 @@ public class ISQMSDataBuilder {
 		}
 		builder.append(";");
 		/** WSCS_C_WSCS_IP */
-		// if (null != mISQMSCheckWSCS.WSCS_C_WSCS_IP) {
-		// builder.append(mISQMSCheckWSCS.WSCS_C_WSCS_IP);
-		// }
+		if (null != mISQMSCheckWSCS.WSCS_C_WSCS_IP) {
+			builder.append(mISQMSCheckWSCS.WSCS_C_WSCS_IP);
+		}
 		builder.append(";");
 		/** WSCS_C_MSG */
-		// if (null != mISQMSCheckWSCS.WSCS_C_MSG) {
-		// builder.append(mISQMSCheckWSCS.WSCS_C_MSG);
-		// }
+		if (null != mISQMSCheckWSCS.WSCS_C_MSG) {
+			builder.append(mISQMSCheckWSCS.WSCS_C_MSG);
+		}
 
 		return builder.toString();
 	}
@@ -581,10 +598,10 @@ public class ISQMSDataBuilder {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(";");
-		// /** S_NETWORK_MODE */
-		// if (null != mISQMSCheckNET.S_NETWORK_MODE) {
-		// builder.append(mISQMSCheckNET.S_NETWORK_MODE);
-		// }
+		/** S_NETWORK_MODE */
+		if (null != mISQMSCheckNET.S_NETWORK_MODE) {
+			builder.append(mISQMSCheckNET.S_NETWORK_MODE);
+		}
 		builder.append(";");
 		/** S_NET_DHCP_MODE */
 		if (null != mISQMSCheckNET.S_NET_DHCP_MODE) {

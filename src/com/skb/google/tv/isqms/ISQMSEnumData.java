@@ -12,29 +12,28 @@ public class ISQMSEnumData {
 	// < DEFINITION Enumerate variables
 	// =========================================================================
 	public static enum eSCV_MODE {
-		SCV_MODE_SLP, //
-		SCV_MODE_WAK, //
-		SCV_MODE_HOM, //
-		SCV_MODE_0TV, //
-		SCV_MODE_ITV, //
-		SCV_MODE_VOD, //
-		SCV_MODE_VAS, //
+		SCV_MODE_SLP, // SLP
+		SCV_MODE_HOM, // HOM
+		SCV_MODE_ITV, // ITV : IPTV
+		SCV_MODE_VOD, // VOD : 로딩/엔딩광고 포함
+		SCV_MODE_VAS, // VAS : 펀&조이에서 App 진입
+		SCV_MODE_APP, // APP : 위젯, All Apps에서 App 진입
 	}
 
 	public enum eAGE_LIMIT_TYPE {
-		AGE_00, // 제한 없음
-		AGE_07, //
-		AGE_12, //
-		AGE_15, //
-		AGE_18, //
+		AGE_00, // 00 : 제한 없음
+		AGE_07, // 07 : 7세
+		AGE_12, // 12 : 12세
+		AGE_15, // 15 : 15세
+		AGE_18, // 18 : 18세이상
 	}
 
 	public enum eDISPLAY_MODE {
-		MODE_480i, //
-		MODE_480p, //
-		MODE_720p, //
-		MODE_1080i, //
-		MODE_1080p, //
+		MODE_480i, // 480i
+		MODE_480p, // 480p
+		MODE_720p, // 720p
+		MODE_1080i, // 1080i
+		MODE_1080p, // 1080p
 	}
 
 	public enum eTV_RATE_MODE {
@@ -59,34 +58,36 @@ public class ISQMSEnumData {
 	}
 
 	public enum eIPTV_CH_MODE {
-		MODE_DIRECT_INPUT, // 직접입력
-		MODE_CH_BUTTON, // 채널버튼
-		MODE_MINI_EPG, // miniEPG
-		MODE_ALL_EPG, // 전체PG
-		MODE_EPG, // EPG
+		MODE_DIRECT_INPUT, // 01 : 직접입력
+		MODE_CH_BUTTON, // 02 : 채널버튼
+		MODE_MINI_EPG, // 03 : miniEPG
+		MODE_ALL_EPG, // 04 : 편성표 메뉴, 실시간TV 메뉴
+		MODE_EPG, // 05 : 전체 메뉴
+		MODE_RESERVATION, // 06 : 예약
+		MODE_ETC, // 07 : 음성검색, 웹
 	}
 
 	public enum eIPTV_ERROR_CODE {
-		MODE_NORMAL, // 000:정상
-		MODE_WEAK_SIGNAL, // 001:신호약함
-		MODE_OTHER, // 999:기타
+		MODE_NORMAL, // 000 : 정상
+		MODE_WEAK_SIGNAL, // 001 : 신호약함
+		MODE_OTHER, // 999 : 기타
 	}
 
 	public enum eSCS_ECODE {
-		IMPOSSIBLE_TO_CONNECT, // 01:연결불가
-		RECEIVE_NO_REPLY, // 02:응답없음
-		RESPONSE_ERROR, // 03:응답오류
+		IMPOSSIBLE_TO_CONNECT, // 01 : 연결불가
+		RECEIVE_NO_REPLY, // 02 : 응답없음
+		RESPONSE_ERROR, // 03 : 응답오류
 	}
 
 	public enum eLGS_ECODE {
-		IMPOSSIBLE_TO_CONNECT, // 01:연결불가
-		RECEIVE_NO_REPLY, // 02:응답없음
-		RESPONSE_ERROR, // 03:응답오류
+		IMPOSSIBLE_TO_CONNECT, // 01 : 연결불가
+		RECEIVE_NO_REPLY, // 02 : 응답없음
+		RESPONSE_ERROR, // 03 : 응답오류
 	}
 
 	public enum eWSCS_ECODE {
-		IMPOSSIBLE_TO_CONNECT, // 01:연결불가
-		RECEIVE_NO_REPLY, // 02:응답없음
-		RESPONSE_ERROR, // 03:응답오류
+		IMPOSSIBLE_TO_CONNECT, // 01 : 연결불가
+		RECEIVE_NO_REPLY, // 02 : 응답없음
+		RESPONSE_ERROR, // 03 : 응답오류
 	}
 }

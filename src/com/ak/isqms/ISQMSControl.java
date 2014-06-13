@@ -14,14 +14,10 @@ import com.skb.google.tv.isqms.ISQMSListener.OnAgeLimitChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnAutoNextChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnChildLimitPasswordChangeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnChildLimitTimeChangeListener;
-import com.skb.google.tv.isqms.ISQMSListener.OnIptvQualityStatusListener;
-import com.skb.google.tv.isqms.ISQMSListener.OnLgsNormalAccessListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnRebootListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnRecentAllUpgradeListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnResolutionChangeListener;
-import com.skb.google.tv.isqms.ISQMSListener.OnScsNormalAccessListener;
 import com.skb.google.tv.isqms.ISQMSListener.OnStbPasswordChangeListener;
-import com.skb.google.tv.isqms.ISQMSListener.OnVodQualityStatusListener;
 import com.skb.google.tv.isqms.ISQMSManager;
 import com.skb.google.tv.isqms.ISQMSUtil;
 
@@ -46,10 +42,6 @@ public class ISQMSControl {
 		mIsqmsManager.setChildLimitPasswordChangeListener(mChildLimitPasswordChangeListener);
 		mIsqmsManager.setChildLimitTimeChangeListener(mChildLimitTimeChangeListener);
 		mIsqmsManager.setAdultAuthChangeListener(mAdultAuthChangeListener);
-		mIsqmsManager.setSCSNormalAccessListener(mScsNormalAccessListener);
-		mIsqmsManager.setLGSNormalAccessListener(mLgsNormalAccessListener);
-		mIsqmsManager.setIptvQualityStatusListener(mIptvQualityStatusListener);
-		mIsqmsManager.setVodQualityStatusListener(mVodQualityStatusListener);
 	}
 
 	public static ISQMSControl getInstance(MainActivity mainActivity) {
@@ -66,7 +58,6 @@ public class ISQMSControl {
 	private ISQMSListener.OnRecentAllUpgradeListener mRecentAllUpgradeListener = new OnRecentAllUpgradeListener() {
 		@Override
 		public void onRecentAllUpgrade() {
-			// TODO Auto-generated method stub
 			ISQMSUtil.info(LOGD, "OnRecentAllUpgradeListener.onRecentAllUpgrade() called.");
 
 			Message msg = new Message();
@@ -90,7 +81,6 @@ public class ISQMSControl {
 		@Override
 		public void onAutoNextChange(boolean result) {
 			ISQMSUtil.info(LOGD, "OnAutoNextChangeListener.onAutoNextChange() called. result : " + result);
-			mIsqmsManager.setStatusConfStbAutoNext(result);
 
 			Message msg = new Message();
 			msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE;
@@ -101,7 +91,6 @@ public class ISQMSControl {
 	private ISQMSListener.OnAdMetaFileDownloadListener mAdMetaFileDownloadListener = new OnAdMetaFileDownloadListener() {
 		@Override
 		public void onAdMetaFileDownload() {
-			// TODO Auto-generated method stub
 			ISQMSUtil.info(LOGD, "OnAdMetaFileDownloadListener.onAdMetaFileDownload() called.");
 
 			Message msg = new Message();
@@ -132,7 +121,6 @@ public class ISQMSControl {
 	private ISQMSListener.OnStbPasswordChangeListener mStbPasswordChangeListener = new OnStbPasswordChangeListener() {
 		@Override
 		public void onStbPasswordChange(String stbPassword) {
-			// TODO Auto-generated method stub
 			ISQMSUtil.info(LOGD, "OnStbPasswordChangeListener.onStbPasswordChange() called.");
 
 			Message msg = new Message();
@@ -144,7 +132,6 @@ public class ISQMSControl {
 	private ISQMSListener.OnChildLimitPasswordChangeListener mChildLimitPasswordChangeListener = new OnChildLimitPasswordChangeListener() {
 		@Override
 		public void onChildLimitPasswordChange(String childLimitPassword) {
-			// TODO Auto-generated method stub
 			ISQMSUtil.info(LOGD, "OnChildLimitPasswordChangeListener.onChildLimitPasswordChange() called.");
 
 			Message msg = new Message();
@@ -157,18 +144,6 @@ public class ISQMSControl {
 		@Override
 		public void onChildLimitTimeChange(String childLimitTime) {
 			ISQMSUtil.info(LOGD, "OnChildLimitTimeChangeListener.onChildLimitTimeChange() called. childLimitTime : " + childLimitTime);
-			if (null != childLimitTime && 0 < childLimitTime.length()) {
-				try {
-					Integer.parseInt(childLimitTime);
-					mIsqmsManager.setStatusConfStbAgeTime(childLimitTime);
-				} catch (NumberFormatException numberFormatException) {
-					numberFormatException.printStackTrace();
-					ISQMSUtil.debug(LOGD, "OnChildLimitTimeChangeListener.onChildLimitTimeChange() NumberFormatException!");
-				} catch (Exception e) {
-					e.printStackTrace();
-					ISQMSUtil.debug(LOGD, "OnChildLimitTimeChangeListener.onChildLimitTimeChange() Exception!");
-				}
-			}
 
 			Message msg = new Message();
 			msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE;
@@ -179,59 +154,10 @@ public class ISQMSControl {
 	private ISQMSListener.OnAdultAuthChangeListener mAdultAuthChangeListener = new OnAdultAuthChangeListener() {
 		@Override
 		public void onAdultAuthChange(boolean result) {
-			// TODO Auto-generated method stub
 			ISQMSUtil.info(LOGD, "OnAdultAuthChangeListener.onAdultAuthChange() called.");
 
 			Message msg = new Message();
 			msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE;
-			mIsqmsManager.sendResultHolePunchingEvent(msg);
-		}
-	};
-
-	private ISQMSListener.OnScsNormalAccessListener mScsNormalAccessListener = new OnScsNormalAccessListener() {
-		@Override
-		public void onScsNormalAccess() {
-			// TODO Auto-generated method stub
-			ISQMSUtil.info(LOGD, "OnScsNormalAccessListener.onScsNormalAccess() called.");
-
-			Message msg = new Message();
-			msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS;
-			mIsqmsManager.sendResultHolePunchingEvent(msg);
-		}
-	};
-
-	private ISQMSListener.OnLgsNormalAccessListener mLgsNormalAccessListener = new OnLgsNormalAccessListener() {
-		@Override
-		public void onLgsNormalAccess() {
-			// TODO Auto-generated method stub
-			ISQMSUtil.info(LOGD, "OnLgsNormalAccessListener.onLgsNormalAccess() called.");
-
-			Message msg = new Message();
-			msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C94_LGS_NORMAL_ACCESS;
-			mIsqmsManager.sendResultHolePunchingEvent(msg);
-		}
-	};
-
-	private ISQMSListener.OnIptvQualityStatusListener mIptvQualityStatusListener = new OnIptvQualityStatusListener() {
-		@Override
-		public void onIptvQualityStatus() {
-			// TODO Auto-generated method stub
-			ISQMSUtil.info(LOGD, "OnIptvQualityStatusListener.onIptvQualityStatus() called.");
-
-			Message msg = new Message();
-			msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C96_IPTV_QUALITY_STATUS;
-			mIsqmsManager.sendResultHolePunchingEvent(msg);
-		}
-	};
-
-	private ISQMSListener.OnVodQualityStatusListener mVodQualityStatusListener = new OnVodQualityStatusListener() {
-		@Override
-		public void onVodQualityStatus() {
-			// TODO Auto-generated method stub
-			ISQMSUtil.info(LOGD, "OnVodQualityStatusListener.onVodQualityStatus() called.");
-
-			Message msg = new Message();
-			msg.what = ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C98_VOD_QUALITY_STATUS;
 			mIsqmsManager.sendResultHolePunchingEvent(msg);
 		}
 	};

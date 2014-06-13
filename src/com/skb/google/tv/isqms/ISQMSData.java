@@ -2,7 +2,7 @@ package com.skb.google.tv.isqms;
 
 public class ISQMSData {
 	public static final boolean ACTION_ISQMS = false;
-	public static final boolean SHOW_LOG = false;
+	public static final boolean SHOW_LOG = true;
 
 	protected static final int THREAD_WAIT_MILLE_SECONDS = 1000;
 	private static final int MESSAGE_REQUEST_AGENT = 20000;
@@ -39,22 +39,16 @@ public class ISQMSData {
 	public static final int MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE = MESSAGE_REQUEST_AGENT_EVNET_C + 15;
 	public static final int MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE = MESSAGE_REQUEST_AGENT_EVNET_C + 17;
 	public static final int MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE = MESSAGE_REQUEST_AGENT_EVNET_C + 18;
-	public static final int MESSAGE_REQUEST_AGENT_EVENT_C94_LGS_NORMAL_ACCESS = MESSAGE_REQUEST_AGENT_EVNET_C + 94;
-	public static final int MESSAGE_REQUEST_AGENT_EVENT_C95_SCS_NORMAL_ACCESS = MESSAGE_REQUEST_AGENT_EVNET_C + 95;
-	public static final int MESSAGE_REQUEST_AGENT_EVENT_C96_IPTV_QUALITY_STATUS = MESSAGE_REQUEST_AGENT_EVNET_C + 96;
-	public static final int MESSAGE_REQUEST_AGENT_EVENT_C98_VOD_QUALITY_STATUS = MESSAGE_REQUEST_AGENT_EVNET_C + 98;
 
 	public static final int MESSAGE_RESPONSE_AGENT = MESSAGE_REQUEST_AGENT + 10000;
 	public static final int MESSAGE_RESPONSE_AGENT_OK = MESSAGE_RESPONSE_AGENT + 1;
 	public static final int MESSAGE_RESPONSE_AGENT_ERROR = MESSAGE_RESPONSE_AGENT + 2;
 
-	public static final String ISQMS_STRING_STB_VER = "3.0";
-
 	protected static final int ISQMS_SUCCESS = 0;
 	protected static final int ISQMS_ERROR = -1;
 
-	protected static final String RESULT_TRUE = "1"; // RESULT_TRUE
-	protected static final String RESULT_FALSE = "0"; // RESULT_FALSE
+	protected static final String RESULT_TRUE = "1";
+	protected static final String RESULT_FALSE = "0";
 
 	protected static final String ISQMS_STRING_OPEN = "open";
 	protected static final String ISQMS_STRING_CLOSE = "close";
@@ -71,6 +65,8 @@ public class ISQMSData {
 	protected static final String ISQMS_STRING_IPTV_CH_MODE_MINI_EPG = "03";
 	protected static final String ISQMS_STRING_IPTV_CH_MODE_ALL_EPG = "04";
 	protected static final String ISQMS_STRING_IPTV_CH_MODE_EPG = "05";
+	protected static final String ISQMS_STRING_IPTV_CH_MODE_RESERVATION = "06";
+	protected static final String ISQMS_STRING_IPTV_CH_MODE_ETC = "07";
 
 	protected static final String ISQMS_STRING_IPTV_ERROR_CODE_NORMAL = "000";
 	protected static final String ISQMS_STRING_IPTV_ERROR_CODE_WEAK_SIGNAL = "001";
@@ -174,7 +170,6 @@ public class ISQMSData {
 	// EVENT_E37 = "E37"; // SDK Network error 발생시
 
 	protected static final String //
-			EVENT_C02 = "C02", // STB 인증 여부 처리
 			EVENT_C03 = "C03", // STB 전체 최신 Upgrade
 			EVENT_C04 = "C04", // STB 연령등급(시청제한나이) 조정
 			EVENT_C05 = "C05", // STB 연속재생 여부 조정
@@ -184,13 +179,10 @@ public class ISQMSData {
 			EVENT_C14 = "C14", // STB비밀번호재설정
 			EVENT_C15 = "C15", // 성인 비밀번호재설정
 			EVENT_C17 = "C17", // 자녀시청 제한 시간 설정
-			EVENT_C18 = "C18", // 성인인증 사용여부 설정
-			EVENT_C94 = "C94", // LGS 정상 접근 확인 요청
-			EVENT_C95 = "C95", // SCS 정상 접근 확인 요청
-			EVENT_C96 = "C96", // IPTV시청 및 품질 상태 요청
-			EVENT_C98 = "C98"; // VOD시청 및 광고 재생 상태 요청
+			EVENT_C18 = "C18"; // 성인인증 사용여부 설정
 	// EVENT_C00 = "C00", // Hole punching 명령어
 	// EVENT_C01 = "C01", // 스크립트제어명령어
+	// EVENT_C02 = "C02", // STB 인증 여부 처리
 	// EVENT_C08 = "C08", // STB HDD최적화 실행
 	// EVENT_C10 = "C10", // IPTV 채널 Retune
 	// EVENT_C11 = "C11", // CPU사용율 임계 치 설정
@@ -202,5 +194,9 @@ public class ISQMSData {
 	// EVENT_C32 = "C32", // RTSP configuration 설정
 	// EVENT_C77 = "C77", // 모든 제어 명령의 진행 강제 취소 요청
 	// EVENT_C92 = "C92", // qi_uploader
+	// EVENT_C94 = "C94", // LGS 정상 접근 확인 요청
+	// EVENT_C95 = "C95", // SCS 정상 접근 확인 요청
+	// EVENT_C96 = "C96", // IPTV시청 및 품질 상태 요청
+	// EVENT_C98 = "C98", // VOD시청 및 광고 재생 상태 요청
 	// EVENT_C99 = "C99"; // 전체 주요 정보 보고 요청
 }

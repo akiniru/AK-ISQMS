@@ -6,9 +6,6 @@ import android.util.Log;
 
 import com.skb.google.tv.common.util.LogUtil;
 import com.skb.google.tv.isqms.ISQMSData;
-import com.skb.google.tv.isqms.ISQMSListener;
-import com.skb.google.tv.isqms.ISQMSListener.OnAutoNextChangeListener;
-import com.skb.google.tv.isqms.ISQMSListener.OnRebootListener;
 import com.skb.google.tv.isqms.ISQMSManager;
 
 public class MainActivity extends Activity {
@@ -25,11 +22,6 @@ public class MainActivity extends Activity {
 		ISQMSControl.getInstance(MainActivity.this);
 		mIsqmsManager = ISQMSManager.getInstance();
 		mIsqmsManager.bindingISQMSAgent(getApplicationContext());
-
-		// set Listener
-		mIsqmsManager.setAutoNextChangeListener(mAutoNextChangeListener);
-		mIsqmsManager.setRebootListener(mRebootListener);
-		// mIsqmsManager.setStbPasswordChangeListener(mStbPasswordChangeListener);
 
 		// set Common
 		mIsqmsManager.setCommonStbVer("1");
@@ -48,8 +40,6 @@ public class MainActivity extends Activity {
 		// 값 설정 : COMMON, CHECK_SVC, CHECK_VOD1, CHECK_VOD3
 		mIsqmsManager.setCheckSvcVodAid("VOD 재생용 광고 Id");
 		mIsqmsManager.setCheckSvcVodCid("VOD Content Id");
-		mIsqmsManager.setCheckSvcPswdStb("SetTop 구매인증 비밀번호");
-		mIsqmsManager.setCheckSvcPswdAge("성인(자녀제한) 비밀번호");
 
 		mIsqmsManager.setCheckVod1VodScsIp(keyEventH10, "IPv4 Address - SCS Server IP");
 		mIsqmsManager.setCheckVod1VodScsRt(keyEventH10, "SCS요청후 회신까지 소요시간");
@@ -78,31 +68,4 @@ public class MainActivity extends Activity {
 		super.onDestroy();
 		mIsqmsManager.unbindingISQMSAgent();
 	}
-
-	private ISQMSListener.OnRebootListener mRebootListener = new OnRebootListener() {
-		@Override
-		public void onReboot() {
-			LogUtil.info(LOGD, "OnRebootListener.onReboot() called.");
-		}
-	};
-
-	private ISQMSListener.OnAutoNextChangeListener mAutoNextChangeListener = new OnAutoNextChangeListener() {
-		@Override
-		public void onAutoNextChange(boolean result) {
-			LogUtil.info(LOGD, "OnAutoNextChangeListener.onAutoNextChange() called.");
-			mIsqmsManager.setStatusConfStbAutoNext(result);
-			try {
-				Thread.sleep(5 * 1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	};
-
-	// ISQMSListener.OnStbPasswordChangeListener mStbPasswordChangeListener = new OnStbPasswordChangeListener() {
-	// @Override
-	// public void onStbPasswordChange(String stbPassword) {
-	// mIsqmsManager.setStbVersion("2");
-	// }
-	// };
 }

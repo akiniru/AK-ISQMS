@@ -7,5 +7,5 @@ public class ISQMSCheckIPTV {
 
 	/** IPTV2 */
 	public String IPTV2_C_IPTV_ECODE;
-	// public String IPTV2_C_MSG; // 미사용
+	public String IPTV2_C_MSG;
 }

@@ -125,44 +125,4 @@ public interface ISQMSListener {
 	public interface OnAdultAuthChangeListener {
 		public void onAdultAuthChange(boolean result);
 	}
-
-	/**
-	 * <pre>
-	 * EVENT_ID : C94
-	 * 내용 : LGS 정상 접근 확인 요청
-	 * </pre>
-	 */
-	public interface OnLgsNormalAccessListener {
-		public void onLgsNormalAccess();
-	}
-
-	/**
-	 * <pre>
-	 * EVENT_ID : C95
-	 * 내용 : SCS 정상 접근 확인 요청
-	 * </pre>
-	 */
-	public interface OnScsNormalAccessListener {
-		public void onScsNormalAccess();
-	}
-
-	/**
-	 * <pre>
-	 * EVENT_ID : C96
-	 * 내용 : IPTV시청 및 품질 상태 요청
-	 * </pre>
-	 */
-	public interface OnIptvQualityStatusListener {
-		public void onIptvQualityStatus();
-	}
-
-	/**
-	 * <pre>
-	 * EVENT_ID : C98
-	 * 내용 : VOD시청 및 광고 재생 상태 요청
-	 * </pre>
-	 */
-	public interface OnVodQualityStatusListener {
-		public void onVodQualityStatus();
-	}
 }

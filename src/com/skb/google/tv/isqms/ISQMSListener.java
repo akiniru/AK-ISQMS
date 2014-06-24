@@ -17,7 +17,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnRecentAllUpgradeListener {
-		public void onRecentAllUpgrade();
+		public void onRecentAllUpgrade(final String ctrlSeq);
 	}
 
 	/**
@@ -29,7 +29,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnAgeLimitChangeListener {
-		public void onAgeLimitChange(eAGE_LIMIT_TYPE age_LIMIT_TYPE);
+		public void onAgeLimitChange(final eAGE_LIMIT_TYPE age_LIMIT_TYPE, final String ctrlSeq);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnAutoNextChangeListener {
-		public void onAutoNextChange(boolean result);
+		public void onAutoNextChange(final boolean result, final String ctrlSeq);
 	}
 
 	/**
@@ -51,7 +51,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnAdMetaFileDownloadListener {
-		public void onAdMetaFileDownload();
+		public void onAdMetaFileDownload(final String ctrlSeq);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnRebootListener {
-		public void onReboot();
+		public void onReboot(final String ctrlSeq);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnResolutionChangeListener {
-		public void onResolutionChange(eDISPLAY_MODE display_MODE, eVIDEO_RATE_MODE video_RATE_MODE, eTV_RATE_MODE rate_MODE);
+		public void onResolutionChange(final eDISPLAY_MODE display_MODE, final eVIDEO_RATE_MODE video_RATE_MODE, final eTV_RATE_MODE rate_MODE, final String ctrlSeq);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnStbPasswordChangeListener {
-		public void onStbPasswordChange(String stbPassword);
+		public void onStbPasswordChange(final String stbPassword, final String ctrlSeq);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnChildLimitPasswordChangeListener {
-		public void onChildLimitPasswordChange(String childLimitPassword);
+		public void onChildLimitPasswordChange(final String childLimitPassword, final String ctrlSeq);
 	}
 
 	/**
@@ -111,7 +111,7 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnChildLimitTimeChangeListener {
-		public void onChildLimitTimeChange(String childLimitTime);
+		public void onChildLimitTimeChange(final String childLimitTime, final String ctrlSeq);
 	}
 
 	/**
@@ -123,6 +123,6 @@ public interface ISQMSListener {
 	 * </pre>
 	 */
 	public interface OnAdultAuthChangeListener {
-		public void onAdultAuthChange(boolean result);
+		public void onAdultAuthChange(final boolean result, final String ctrlSeq);
 	}
 }

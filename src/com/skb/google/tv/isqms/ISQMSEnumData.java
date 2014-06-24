@@ -64,7 +64,12 @@ public class ISQMSEnumData {
 		MODE_ALL_EPG, // 04 : 편성표 메뉴, 실시간TV 메뉴
 		MODE_EPG, // 05 : 전체 메뉴
 		MODE_RESERVATION, // 06 : 예약
-		MODE_ETC, // 07 : 음성검색, 웹
+		MODE_VOICE_SEARCH, // 07 : 음성검색
+		MODE_GOOGLE_TV_APP, // 08 : 구글TV 앱
+		MODE_BACK_KEY, // 09 : 이전 키
+		MODE_FAVORITE_CHANNEL_KEY, // 10 : 선호채널 키
+		MODE_SEARCH, // 11 : 일반검색
+		MODE_ETC, // 99 : 기타
 	}
 
 	public enum eIPTV_ERROR_CODE {

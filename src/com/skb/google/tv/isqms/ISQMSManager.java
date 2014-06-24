@@ -1,6 +1,7 @@
 package com.skb.google.tv.isqms;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.SparseArray;
 
 import com.skb.google.tv.isqms.ISQMSEnumData.eAGE_LIMIT_TYPE;
@@ -123,8 +125,6 @@ public class ISQMSManager {
 		// Check Result data init
 		mISQMSCheckUPG = new ISQMSCheckUPG();
 		mISQMSCheckSVC = new ISQMSCheckSVC();
-		// mISQMSCheckVOD = new ISQMSCheckVOD();
-		// mISQMSCheckIPTV = new ISQMSCheckIPTV();
 		mISQMSCheckSCS = new ISQMSCheckSCS();
 		mISQMSCheckLGS = new ISQMSCheckLGS();
 		mISQMSCheckERR1 = new ISQMSCheckERR1();
@@ -157,7 +157,7 @@ public class ISQMSManager {
 		 */
 		@Override
 		public void onRecvEvent(String event_id, String data) throws RemoteException {
-			ISQMSUtil.debug(IAgentServiceToUIApp.class.getSimpleName(), "onRecvEvent() event_id = " + event_id + ", data = " + data);
+			ISQMSUtil.debug(LOGD, "onRecvEvent() event_id = " + event_id + ", data = " + data);
 			recv_event(event_id, data);
 		}
 	};
@@ -253,13 +253,16 @@ public class ISQMSManager {
 		return 0;
 	}
 
-	private int agent_send_data(int category_id, int sub_category_id, String data) {
+	private int agent_send_data(int category_id, int sub_category_id, int field_id, String data) {
 		ISQMSUtil.info(LOGD, "agent_send_data() called.");
-		ISQMSUtil.debug(LOGD, "agent_send_data() category_id : " + category_id + ", sub_category_id : " + sub_category_id + ", data : " + data);
+		ISQMSUtil.debug(LOGD, "agent_send_data() category_id : " + category_id + ", sub_category_id : " + sub_category_id + ", field_id : " + field_id + ", data : " + data);
+		if (null == data) {
+			data = "";
+		}
 		if (mBinder != null) {
 			try {
 				int nRet;
-				if ((nRet = mBinder.send_data(category_id, sub_category_id, data)) >= 0) {
+				if ((nRet = mBinder.send_data(category_id, sub_category_id, field_id, data)) >= 0) {
 					// no handle
 				}
 				return nRet;
@@ -374,12 +377,27 @@ public class ISQMSManager {
 								Looper.myLooper().quit();
 								break;
 
+							/**
+							 * <pre>
+							 * Agent와 바인딩이 이루어지면 호출됨 agent가 오류로 인해서 종료되는 경우 re-binding을 자동으로 수행하고
+							 * onBindedISQMSAgent를 다시 호출 하기 때문에 onBindedISQMSAgent에서는 항상 stat_agent 호출과 common의 일부 정보를 내려줄수 있도록 개발되어야함
+							 * </pre>
+							 */
 							case ISQMSData.MESSAGE_REQUEST_AGENT_BINDING:
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.COMMON, -1, ISQMSData.COMMON_STB_SW_VER, mISQMSCommon.STB_SW_VER);
+								agent_send_data(ISQMSData.COMMON, -1, ISQMSData.COMMON_STB_EPG_VER, mISQMSCommon.STB_EPG_VER);
+								agent_send_data(ISQMSData.COMMON, -1, ISQMSData.COMMON_STB_MODEL, mISQMSCommon.STB_MODEL);
+								agent_send_data(ISQMSData.COMMON, -1, ISQMSData.COMMON_STB_AUTH, mISQMSCommon.STB_AUTH);
+								agent_send_data(ISQMSData.COMMON, -1, ISQMSData.COMMON_STB_IPTV_AREA, mISQMSCommon.STB_IPTV_AREA);
+								agent_send_data(ISQMSData.COMMON, -1, ISQMSData.COMMON_STB_SVC_MODE, mISQMSCommon.STB_SVC_MODE);
+
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
@@ -387,11 +405,14 @@ public class ISQMSManager {
 								// 행동 : 전원ON, Reset시작 등 주요 핵심동작시
 								// 메시지 내용 : COMMON, STATUS_ALL
 								agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
+								// << 140611_AGENT >>
+								// TODO
 								agent_send_event(ISQMSData.EVENT_H01, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -400,8 +421,11 @@ public class ISQMSManager {
 								// 행동 : Network 설정변경시
 								// 메시지 내용 : COMMON, STATUS_NET
 								agent_send_event(ISQMSData.EVENT_H02, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+								// << 140611_AGENT >>
+								// TODO
 								agent_send_event(ISQMSData.EVENT_H02, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -410,8 +434,11 @@ public class ISQMSManager {
 								// 행동 : SW Upgrade 진행 중
 								// 메시지 내용 : COMMON, C_SW_UPGRADE
 								agent_send_event(ISQMSData.EVENT_H06, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_UPG_C_SW, ISQMSDataBuilder.getDataCheckSwUpgrade());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_UPG_C_SW, ISQMSDataBuilder.getDataCheckSwUpgrade());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_UPG_C_SW, -1, mISQMSCheckUPG.UPG_C_SW_UPGRADE);
 								agent_send_event(ISQMSData.EVENT_H06, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -420,17 +447,23 @@ public class ISQMSManager {
 								// 행동 : Channel Upgrade 진행 중
 								// 메시지 내용 : COMMON, C_CH_UPGRADE
 								agent_send_event(ISQMSData.EVENT_H08, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_UPG_C_CH, ISQMSDataBuilder.getDataCheckChUpgrade());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_UPG_C_CH, ISQMSDataBuilder.getDataCheckChUpgrade());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_UPG_C_CH, -1, mISQMSCheckUPG.UPG_C_CH_UPGRADE);
 								agent_send_event(ISQMSData.EVENT_H08, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
 
 							case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_H09:
-								// 행동 : 서비스상태변경시 
+								// 행동 : 서비스상태변경시
 								// 메시지 내용 : COMMON
 								agent_send_event(ISQMSData.EVENT_H09, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.COMMON, -1, ISQMSData.COMMON_STB_SVC_MODE, mISQMSCommon.STB_SVC_MODE);
 								agent_send_event(ISQMSData.EVENT_H09, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -439,10 +472,15 @@ public class ISQMSManager {
 								// 행동 : VOD요청 시
 								// 메시지 내용 : COMMON, CHECK_SVC, CHECK_VOD1, CHECK_VOD3
 								agent_send_event(ISQMSData.EVENT_H10, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD1, ISQMSDataBuilder.getDataCheckVOD1(key));
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD1, ISQMSDataBuilder.getDataCheckVOD1(key));
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, -1, ISQMSDataBuilder.getDataCheckSVC());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD1, -1, ISQMSDataBuilder.getDataCheckVOD1(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, -1, ISQMSDataBuilder.getDataCheckVOD3(key));
 								agent_send_event(ISQMSData.EVENT_H10, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -451,9 +489,13 @@ public class ISQMSManager {
 								// 행동 : 채널집입 후 5초 이상시 1회
 								// 메시지 내용 : COMMON, CHECK_IPTV1, CHECK_IPTV2
 								agent_send_event(ISQMSData.EVENT_H13, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_IPTV1, ISQMSDataBuilder.getDataCheckIPTV1(key));
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_IPTV2, ISQMSDataBuilder.getDataCheckIPTV2(key));
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_IPTV1, ISQMSDataBuilder.getDataCheckIPTV1(key));
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_IPTV2, ISQMSDataBuilder.getDataCheckIPTV2(key));
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_IPTV1, -1, ISQMSDataBuilder.getDataCheckIPTV1(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_IPTV2, -1, ISQMSDataBuilder.getDataCheckIPTV2(key));
 								agent_send_event(ISQMSData.EVENT_H13, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -462,7 +504,10 @@ public class ISQMSManager {
 								// 행동 : STB인증 시도시
 								// 메시지 내용 : COMMON
 								agent_send_event(ISQMSData.EVENT_H15, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// << 140611_AGENT >>
+								// TODO
 								agent_send_event(ISQMSData.EVENT_H15, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -471,9 +516,12 @@ public class ISQMSManager {
 								// 행동 : 네트워크 연결 불가
 								// 메시지 내용 : COMMON, STATUS_NET, CHECK_ERR1
 								agent_send_event(ISQMSData.EVENT_E03, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, -1, ISQMSDataBuilder.getDataCheckERR1());
 								agent_send_event(ISQMSData.EVENT_E03, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -482,11 +530,17 @@ public class ISQMSManager {
 								// 행동 : 화면정지시
 								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_SVC, CHECK_VOD3, CHECK_ERRORCODE
 								agent_send_event(ISQMSData.EVENT_E09, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERRORCODE, ISQMSDataBuilder.getDataCheckERRORCODE());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERRORCODE, ISQMSDataBuilder.getDataCheckERRORCODE());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, -1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, -1, ISQMSDataBuilder.getDataCheckSVC());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, -1, ISQMSDataBuilder.getDataCheckVOD3(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERRORCODE, -1, ISQMSDataBuilder.getDataCheckERRORCODE());
 								agent_send_event(ISQMSData.EVENT_E09, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -495,11 +549,17 @@ public class ISQMSManager {
 								// 행동 : VOD 장애 발생 시 (VOD 요청 시 장애 전송, VOD 재생시 장애 전송)
 								// 메시지 내용 : COMMON, CHECK_SVC, CHECK_VOD1, CHECK_VOD3, CHECK_VOD4
 								agent_send_event(ISQMSData.EVENT_E14, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD1, ISQMSDataBuilder.getDataCheckVOD1(key));
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD4, ISQMSDataBuilder.getDataCheckVOD4(key));
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, ISQMSDataBuilder.getDataCheckSVC());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD1, ISQMSDataBuilder.getDataCheckVOD1(key));
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, ISQMSDataBuilder.getDataCheckVOD3(key));
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD4, ISQMSDataBuilder.getDataCheckVOD4(key));
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SVC, -1, ISQMSDataBuilder.getDataCheckSVC());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD1, -1, ISQMSDataBuilder.getDataCheckVOD1(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD3, -1, ISQMSDataBuilder.getDataCheckVOD3(key));
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_VOD4, -1, ISQMSDataBuilder.getDataCheckVOD4(key));
 								agent_send_event(ISQMSData.EVENT_E14, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -508,9 +568,13 @@ public class ISQMSManager {
 								// 행동 : WSCS 장애 발생
 								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_WSCS
 								agent_send_event(ISQMSData.EVENT_E18, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_WSCS, ISQMSDataBuilder.getDataCheckWSCS());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_WSCS, ISQMSDataBuilder.getDataCheckWSCS());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, -1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_WSCS, -1, ISQMSDataBuilder.getDataCheckWSCS());
 								agent_send_event(ISQMSData.EVENT_E18, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -519,9 +583,13 @@ public class ISQMSManager {
 								// 행동 : 네트워크 변동시 문제 발생시
 								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_NET
 								agent_send_event(ISQMSData.EVENT_E19, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_NET, ISQMSDataBuilder.getDataCheckNET());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_NET, ISQMSDataBuilder.getDataCheckNET());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, -1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_NET, -1, ISQMSDataBuilder.getDataCheckNET());
 								agent_send_event(ISQMSData.EVENT_E19, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -530,9 +598,13 @@ public class ISQMSManager {
 								// 행동 : SCS관련 문제 발생시
 								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_SCS
 								agent_send_event(ISQMSData.EVENT_E20, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SCS, ISQMSDataBuilder.getDataCheckSCS());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SCS, ISQMSDataBuilder.getDataCheckSCS());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, -1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_SCS, -1, ISQMSDataBuilder.getDataCheckSCS());
 								agent_send_event(ISQMSData.EVENT_E20, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -541,9 +613,13 @@ public class ISQMSManager {
 								// 행동 : LGS관련 문제 발생시
 								// 메시지 내용 : COMMON, CHECK_ERR1, CHECK_LGS
 								agent_send_event(ISQMSData.EVENT_E21, ISQMSData.ISQMS_STRING_OPEN);
-								agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
-								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_LGS, ISQMSDataBuilder.getDataCheckLGS());
+								// << 140519_AGENT >>
+								// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, ISQMSDataBuilder.getDataCheckERR1());
+								// agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_LGS, ISQMSDataBuilder.getDataCheckLGS());
+								// << 140611_AGENT >>
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_ERR1, -1, ISQMSDataBuilder.getDataCheckERR1());
+								agent_send_data(ISQMSData.CHECK_RESULT, ISQMSData.CHECK_LGS, -1, ISQMSDataBuilder.getDataCheckLGS());
 								agent_send_event(ISQMSData.EVENT_E21, ISQMSData.ISQMS_STRING_CLOSE);
 								sendMessage(ISQMSData.MESSAGE_RESPONSE_AGENT_OK, null);
 								break;
@@ -594,51 +670,42 @@ public class ISQMSManager {
 					while (mReceiveEventList.size() == 0) {
 						try {
 							mLock.wait();
+							ISQMSUtil.info(LOGD, "ReceiveEventManager.wait() called");
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					}
 
 					final ISQMSReceiveEvent receiveEvent = mReceiveEventList.remove(0);
-					if (null == receiveEvent) {
+					if (null == receiveEvent || null == receiveEvent.event_id || receiveEvent.event_id.length() <= 0) {
 						continue;
 					}
+
 					String event_id = receiveEvent.event_id;
-					if (null == event_id || event_id.length() <= 0) {
-						continue;
-					}
-					ISQMSUtil.info(LOGD, "ReceiveEventManager.run() called. event_id : " + event_id);
+					String data = receiveEvent.data;
+					ISQMSUtil.info(LOGD, "ReceiveEventManager.run() called. event_id : " + event_id + ", data : " + data);
 
 					if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C03)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C04)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C05)) {
-						if (null != receiveEvent.data && 0 < receiveEvent.data.length()) {
-							if (receiveEvent.data.equalsIgnoreCase(ISQMSData.RESULT_TRUE)) {
-								requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE, Boolean.TRUE);
-							}
-							if (receiveEvent.data.equalsIgnoreCase(ISQMSData.RESULT_FALSE)) {
-								requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE, Boolean.FALSE);
-							}
-						} else {
-							ISQMSUtil.debug(LOGD, "ReceiveEventManager.run() receiveEvent.data : " + receiveEvent.data);
-						}
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C06)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C07)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C07_REBOOT, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C07_REBOOT, data);
 						mLockWakeHandler.sendEmptyMessage(0);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C09)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C14)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C15)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C17)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE, data);
 					} else if (event_id.equalsIgnoreCase(ISQMSData.EVENT_C18)) {
-						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE, null);
+						requestListener(ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE, data);
 					}
 				}
 			}
@@ -1109,6 +1176,10 @@ public class ISQMSManager {
 	 */
 	public void setStatusConfStbAgeTime(String childLimitTime) {
 		ISQMSUtil.debug(LOGD, "setStatusConfStbAgeTime() called. childLimitTime : " + childLimitTime);
+		if (null != childLimitTime && childLimitTime.equalsIgnoreCase("0")) {
+			childLimitTime = "00";
+			ISQMSUtil.debug(LOGD, "setStatusConfStbAgeTime() childLimitTime : " + childLimitTime);
+		}
 		mISQMSStatusCONF.STB_AGE_TIME = childLimitTime;
 	}
 
@@ -1355,6 +1426,13 @@ public class ISQMSManager {
 	 */
 	public void setCheckSvcVodAid(String vodAid) {
 		ISQMSUtil.debug(LOGD, "setCheckSvcVodAid() called. vodAid : " + vodAid);
+		// 마지막 세미콜론 제거
+		if (!TextUtils.isEmpty(vodAid)) {
+			int lastIndexOf = vodAid.lastIndexOf(";");
+			if (-1 != lastIndexOf) {
+				vodAid = vodAid.substring(0, lastIndexOf);
+			}
+		}
 		mISQMSCheckSVC.SVC_C_VOD_AID = vodAid;
 	}
 
@@ -1647,6 +1725,21 @@ public class ISQMSManager {
 				break;
 			case MODE_RESERVATION:
 				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_RESERVATION;
+				break;
+			case MODE_VOICE_SEARCH:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_VOICE_SEARCH;
+				break;
+			case MODE_GOOGLE_TV_APP:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_GOOGLE_TV_APP;
+				break;
+			case MODE_BACK_KEY:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_BACK_KEY;
+				break;
+			case MODE_FAVORITE_CHANNEL_KEY:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_FAVORITE_CHANNEL_KEY;
+				break;
+			case MODE_SEARCH:
+				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_SEARCH;
 				break;
 			case MODE_ETC:
 				iptvChMode = ISQMSData.ISQMS_STRING_IPTV_CH_MODE_ETC;
@@ -2015,132 +2108,185 @@ public class ISQMSManager {
 	// =========================================================================
 	// < reques IsQMS LISTENER
 	// =========================================================================
-	private void requestListener(int type, Object data) {
-		if (0 == type) {
-			return;
+	private void requestListener(int type, String data) {
+		ISQMSUtil.debug(LOGD, "requestListener() called. eLISTENER_TYPE : " + type);
+		StringTokenizer dataTokenizer = null;
+		ArrayList<String> valueList = new ArrayList<String>();
+		if (!TextUtils.isEmpty(data)) {
+			int index = 0;
+			dataTokenizer = new StringTokenizer(data, ";");
+			while (dataTokenizer.hasMoreTokens()) {
+				String value = (String) dataTokenizer.nextToken();
+				ISQMSUtil.debug(LOGD, "requestListener() value[" + index + "] : " + value);
+				valueList.add(value);
+				++index;
+			}
 		}
 
-		ISQMSUtil.debug(LOGD, "requestListener() called. eLISTENER_TYPE : " + type);
-		switch (type) {
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE:
-				if (null != mRecentAllUpgradeListener) {
-					mRecentAllUpgradeListener.onRecentAllUpgrade();
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mRecentAllUpgradeListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE:
-				if (null != mAgeLimitChangeListener) {
-					if (null != data && true == (data instanceof eAGE_LIMIT_TYPE)) {
-						eAGE_LIMIT_TYPE age_LIMIT_TYPE = (eAGE_LIMIT_TYPE) data;
-						mAgeLimitChangeListener.onAgeLimitChange(age_LIMIT_TYPE);
-					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() Data is Incorrect data");
-					}
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mAgeLimitChangeListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE:
-				if (null != mAutoNextChangeListener) {
-					if (null != data && true == (data instanceof Boolean)) {
-						Boolean result = (Boolean) data;
-						mAutoNextChangeListener.onAutoNextChange(result);
-					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() Data is Incorrect data");
-					}
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mAutoNextChangeListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD:
-				if (null != mAdMetaFileDownloadListener) {
-					mAdMetaFileDownloadListener.onAdMetaFileDownload();
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mAdMetaFileDownloadListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C07_REBOOT:
-				if (null != mRebootListener) {
-					mRebootListener.onReboot();
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mRebootListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE:
-				if (null != mResolutionChangeListener) {
-					if (null != data && true == (data instanceof ISQMSMessage)) {
-						ISQMSMessage message = (ISQMSMessage) data;
-						if (null != message.obj1 && null != message.obj2 && null != message.obj3 && //
-								true == (message.obj1 instanceof eDISPLAY_MODE && true == (message.obj2 instanceof eVIDEO_RATE_MODE) && true == (message.obj3 instanceof eTV_RATE_MODE))) {
-							eDISPLAY_MODE display_MODE = (eDISPLAY_MODE) message.obj1;
-							eVIDEO_RATE_MODE video_RATE_MODE = (eVIDEO_RATE_MODE) message.obj2;
-							eTV_RATE_MODE tv_RATE_MODE = (eTV_RATE_MODE) message.obj3;
-							mResolutionChangeListener.onResolutionChange(display_MODE, video_RATE_MODE, tv_RATE_MODE);
-						} else {
-							ISQMSUtil.debug(LOGD, "requestListener() Data is Incorrect data");
+		if (0 < valueList.size()) {
+			try {
+				String booleanValue = null;
+				boolean result = false;
+				String ctrlSeq = null;
+
+				switch (type) {
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE:
+						// 업그레이드 항목 : S/W버전, 업그레이드 모드 : NORMAL
+						// Sample data : ;S;0;201406231935320311
+						// 업그레이드 항목 : XPG버전, 업그레이드 모드 : FORCE
+						// Sample data = ;X;1;201406231936570312
+						if (null == mRecentAllUpgradeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mRecentAllUpgradeListener is null");
+							break;
 						}
-					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() Data is Incorrect data");
-					}
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mResolutionChangeListener is null");
+						ctrlSeq = valueList.get(0);
+						mRecentAllUpgradeListener.onRecentAllUpgrade(ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE:
+						// Sample data : ;7;201406231754270303, Sample data : ;19;201406231805490308
+						if (null == mAgeLimitChangeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mAgeLimitChangeListener is null");
+							break;
+						}
+						// eAGE_LIMIT_TYPE age_LIMIT_TYPE = eAGE_LIMIT_TYPE.valueOf(ISQMSEnumData.PREFIX_AGE_LIMIT_TYPE + valueList.get(0));
+						eAGE_LIMIT_TYPE age_LIMIT_TYPE = null;
+						String ageLimit = valueList.get(0);
+						if (ageLimit.equalsIgnoreCase("7")) {
+							age_LIMIT_TYPE = eAGE_LIMIT_TYPE.AGE_07;
+						} else if (ageLimit.equalsIgnoreCase("12")) {
+							age_LIMIT_TYPE = eAGE_LIMIT_TYPE.AGE_12;
+						} else if (ageLimit.equalsIgnoreCase("15")) {
+							age_LIMIT_TYPE = eAGE_LIMIT_TYPE.AGE_15;
+						} else if (ageLimit.equalsIgnoreCase("18")) {
+							age_LIMIT_TYPE = eAGE_LIMIT_TYPE.AGE_18;
+						} else if (ageLimit.equalsIgnoreCase("00")) {
+							age_LIMIT_TYPE = eAGE_LIMIT_TYPE.AGE_00;
+						}
+						if (null == age_LIMIT_TYPE) {
+							break;
+						}
+
+						ctrlSeq = valueList.get(1);
+						mAgeLimitChangeListener.onAgeLimitChange(age_LIMIT_TYPE, ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE:
+						// Sample data : ;0;201406231515140000
+						if (null == mAutoNextChangeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mAutoNextChangeListener is null");
+							break;
+						}
+						booleanValue = valueList.get(0);
+						if (booleanValue.equalsIgnoreCase(ISQMSData.RESULT_TRUE)) {
+							result = true;
+						} else if (booleanValue.equalsIgnoreCase(ISQMSData.RESULT_FALSE)) {
+							result = false;
+						}
+						ctrlSeq = valueList.get(1);
+						mAutoNextChangeListener.onAutoNextChange(result, ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD:
+						// Sample data = ;201406231745560302
+						if (null == mAdMetaFileDownloadListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mAdMetaFileDownloadListener is null");
+							break;
+						}
+						ctrlSeq = valueList.get(0);
+						mAdMetaFileDownloadListener.onAdMetaFileDownload(ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C07_REBOOT:
+						// Sample data : ;201406231931340310
+						if (null == mRebootListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mRebootListener is null");
+							break;
+						}
+						ctrlSeq = valueList.get(0);
+						mRebootListener.onReboot(ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE:
+						// Sample data : ;720p;SCR;16/9;201406202226280872
+						if (null == mResolutionChangeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mResolutionChangeListener is null");
+							break;
+						}
+						eDISPLAY_MODE display_MODE = eDISPLAY_MODE.valueOf(ISQMSEnumData.PREFIX_DISPLAY_MODE + valueList.get(0));
+						eVIDEO_RATE_MODE video_RATE_MODE = eVIDEO_RATE_MODE.valueOf(ISQMSEnumData.PREFIX_VIDEO_RATE_MODE + valueList.get(1));
+						eTV_RATE_MODE tv_RATE_MODE = eTV_RATE_MODE.valueOf(ISQMSEnumData.PREFIX_TV_RATE_MODE + valueList.get(2).replace("/", "_"));
+						ctrlSeq = valueList.get(3);
+						mResolutionChangeListener.onResolutionChange(display_MODE, video_RATE_MODE, tv_RATE_MODE, ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE:
+						// Sample data : ;1234;201406231532560000
+						if (null == mStbPasswordChangeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mSTBPasswordChangeListener is null");
+							break;
+						}
+						String stbPassword = valueList.get(0);
+						if (null == stbPassword || 4 != stbPassword.length()) {
+							break;
+						}
+						ctrlSeq = valueList.get(1);
+						mStbPasswordChangeListener.onStbPasswordChange(stbPassword, ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE:
+						// Sample data : ;1234;201406231700590366
+						if (null == mChildLimitPasswordChangeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mChildLimitPasswordChangeListener is null");
+							break;
+						}
+						String childLimitPassword = valueList.get(0);
+						if (null == childLimitPassword || 4 != childLimitPassword.length()) {
+							break;
+						}
+						ctrlSeq = valueList.get(1);
+						mChildLimitPasswordChangeListener.onChildLimitPasswordChange(childLimitPassword, ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE:
+						// Sample data : ;00;201406232023530314
+						// Sample data : ;01;201406232044350315
+						if (null == mChildLimitTimeChangeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mChildLimitTimeChangeListener is null");
+							break;
+						}
+						String childLimitTime = valueList.get(0);
+						ctrlSeq = valueList.get(1);
+						mChildLimitTimeChangeListener.onChildLimitTimeChange(childLimitTime, ctrlSeq);
+						return;
+
+					case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE:
+						// Sample data : ;1;201406231405570298
+						if (null == mAdultAuthChangeListener) {
+							ISQMSUtil.debug(LOGD, "requestListener() mAdultAuthChangeListener is null");
+							break;
+						}
+						booleanValue = valueList.get(0);
+						if (booleanValue.equalsIgnoreCase(ISQMSData.RESULT_TRUE)) {
+							result = true;
+						} else if (booleanValue.equalsIgnoreCase(ISQMSData.RESULT_FALSE)) {
+							result = false;
+						}
+						ctrlSeq = valueList.get(1);
+						mAdultAuthChangeListener.onAdultAuthChange(result, ctrlSeq);
+						return;
+
+					default:
+						break;
 				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE:
-				if (null != mStbPasswordChangeListener) {
-					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
-						String stbPassword = (String) data;
-						mStbPasswordChangeListener.onStbPasswordChange(stbPassword);
-					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() Data is Incorrect data");
-					}
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mSTBPasswordChangeListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE:
-				if (null != mChildLimitPasswordChangeListener) {
-					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
-						String childLimitPassword = (String) data;
-						mChildLimitPasswordChangeListener.onChildLimitPasswordChange(childLimitPassword);
-					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() Data is Incorrect data");
-					}
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mChildLimitPasswordChangeListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE:
-				if (null != mChildLimitTimeChangeListener) {
-					if (null != data && true == (data instanceof String) && 0 != ((String) data).length()) {
-						String childLimitTime = (String) data;
-						mChildLimitTimeChangeListener.onChildLimitTimeChange(childLimitTime);
-					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() Data is Incorrect data");
-					}
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mChildLimitTimeChangeListener is null");
-				}
-				break;
-			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE:
-				if (null != mAdultAuthChangeListener) {
-					if (null != data && true == (data instanceof Boolean)) {
-						Boolean result = (Boolean) data;
-						mAdultAuthChangeListener.onAdultAuthChange(result);
-					} else {
-						ISQMSUtil.debug(LOGD, "requestListener() mAdultAuthChangeListener is null");
-					}
-				} else {
-					ISQMSUtil.debug(LOGD, "requestListener() mAdultAuthChangeListener is null");
-				}
-				break;
-			default:
-				ISQMSUtil.debug(LOGD, "requestListener() type is default");
-				Message msg = new Message();
-				sendResultHolePunchingEvent(msg);
-				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+
+		ISQMSUtil.debug(LOGD, "requestListener() type is default");
+		Message msg = new Message();
+		sendResultHolePunchingEvent(msg);
 	}
 
 	/** Key */
@@ -2203,40 +2349,46 @@ public class ISQMSManager {
 		String CtrlSeq = (String) msg.obj;
 		switch (msg.what) {
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C03_RECENT_ALL_UPGRADE:
-				agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
+				// agent_send_data(ISQMSData.COMMON, 0, ISQMSDataBuilder.getDataCommon());
+				// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_NET, ISQMSDataBuilder.getDataStatusNET());
+				// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
+				// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_XPG_2, ISQMSDataBuilder.getDataStatusXPG2());
+				// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_BBRATE, ISQMSDataBuilder.getDataStatusBBRATE());
 				agent_send_event(ISQMSData.EVENT_C03, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C04_AGE_LIMIT_CHANGE:
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
+				// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
 				agent_send_event(ISQMSData.EVENT_C04, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C05_AUTO_NEXT_CHANGE:
-				agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
+				// agent_send_data(ISQMSData.CURRENT_STATUS, ISQMSData.STATUS_CONF, ISQMSDataBuilder.getDataStatusCONF());
 				agent_send_event(ISQMSData.EVENT_C05, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C06_ADMETA_FILE_DOWNLOAD:
+				agent_send_event(ISQMSData.EVENT_C06, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C09_RESOLUTION_CHANGE:
+				agent_send_event(ISQMSData.EVENT_C09, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C14_STB_PASSWORD_CHANGE:
+				agent_send_event(ISQMSData.EVENT_C14, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C15_CHILDLIMIT_PASSWORD_CHANGE:
+				agent_send_event(ISQMSData.EVENT_C15, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C17_CHILDLIMIT_TIME_CHANGE:
+				agent_send_event(ISQMSData.EVENT_C17, CtrlSeq);
 				break;
 
 			case ISQMSData.MESSAGE_REQUEST_AGENT_EVENT_C18_ADULT_AUTH_CHANGE:
+				agent_send_event(ISQMSData.EVENT_C18, CtrlSeq);
 				break;
 			default:
 				mLockWakeHandler.sendEmptyMessage(0);
